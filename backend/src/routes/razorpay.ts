@@ -123,15 +123,26 @@ router.post('/create-order', async (req, res) => {
 // ARCHITECTURE IMPROVEMENT: Removed redundant /record-payment route
 // All payment processing now goes through /verify-payment for consistency
 
+// router.post('/verify-payment', authenticate, async (req, res) => {
+//   const parse = verifySchema.safeParse(req.body);
+//   if (!parse.success) {
+//     // SECURITY FIX: Don't expose validation details to client
+//     console.error('Invalid verification request:', parse.error.errors);
+//     return res.status(400).json({ error: 'Invalid request' });
+//   }
+//   const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount, currency } = parse.data;
+//   const userJwt = req.user as import('jsonwebtoken').JwtPayload;
+//   const user_id = userJwt && typeof userJwt === 'object' && 'id' in userJwt ? (userJwt.id as number) : undefined;
+//   if (!user_id) return res.status(401).json({ error: 'Unauthorized' });
+
 router.post('/verify-payment', authenticate, async (req, res) => {
   const parse = verifySchema.safeParse(req.body);
   if (!parse.success) {
-    // SECURITY FIX: Don't expose validation details to client
     console.error('Invalid verification request:', parse.error.errors);
     return res.status(400).json({ error: 'Invalid request' });
   }
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount, currency } = parse.data;
-  const userJwt = req.user as import('jsonwebtoken').JwtPayload;
+  const userJwt = req.user as JwtPayload;
   const user_id = userJwt && typeof userJwt === 'object' && 'id' in userJwt ? (userJwt.id as number) : undefined;
   if (!user_id) return res.status(401).json({ error: 'Unauthorized' });
 

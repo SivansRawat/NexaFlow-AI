@@ -2432,7 +2432,167 @@ Overall: 🟢 READY TO LAUNCH
 FILE: .\README.md
 ====================================================================================================
 
+```markdown
 # NexaFlow AI
+
+**NexaFlow AI** is  all‑in‑one AI automation platform for businesses. It provides 15+ AI‑powered tools including Excel analysis, PDF chat, email generation, social media caption writing, and bulk document processing – all powered by a self‑hosted RAG (Retrieval‑Augmented Generation) pipeline with local LLMs.
+
+---
+
+## 🚀 Features
+
+- **📊 Excel Genius Suite** – AI Sheet Summarizer, Formula Master, Error & Trend Detector, Chart Builder, Export Wizard.
+- **📄 PDF Intelligence Hub** – PDF Brain (summarization), PDF Chat Agent (ask your PDF), Smart Data Extractor, Bulk PDF Toolkit, PDF Converter Pro.
+- **🧠 AI Workmate** – ChatGPT‑level assistant, prompt library, chat history.
+- **✉️ MailCraft AI** – Email Wizard, Subject Line Optimizer, Tone Polisher.
+- **📱 Social Pro Toolkit** – CaptionPro, Hashtag Strategist, Ad Caption Generator, Caption Rewriter.
+- **📑 SmartDocs Generator** – Offer Letter Composer, Smart Invoice Builder.
+- **📨 BulkMailer Pro** – Excel‑to‑Email Engine, Mail Merge AI, Smart Template Library.
+- **💳 Payments & Auth** – Razorpay integration, JWT authentication, Google OAuth, usage limits.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer          | Technologies                                                |
+| -------------- | ----------------------------------------------------------- |
+| **Frontend**   | React 18, TypeScript, Tailwind CSS, Vite, React Router DOM  |
+| **Backend**    | Node.js, Express.js, Prisma ORM, PostgreSQL                 |
+| **AI/ML**      | FastAPI, Ollama (Llama 3.2, nomic‑embed‑text), ChromaDB     |
+| **RAG**        | Custom RAG pipeline – chunking, embeddings, semantic search |
+| **Payment**    | Razorpay API                                                |
+| **Auth**       | JWT (access/refresh tokens), Google OAuth                   |
+| **Deployment** | Docker Compose, Vercel (frontend), Neon PostgreSQL          |
+
+---
+
+## 🏗️ Architecture
+```
+
+Frontend (React) → Backend (Express) → LLM Service (FastAPI) → Ollama (LLM + Embeddings)
+↓ ↓
+PostgreSQL (metadata) ChromaDB (vectors)
+
+````
+
+- **RAG flow**: PDF/Excel upload → text extraction → chunking → embedding → ChromaDB storage → query → retrieval → LLM answer.
+- **Multi‑tenant isolation**: per‑user ChromaDB collections (`user_{id}_documents`).
+- **Graceful fallback**: RAG → context window → raw LLM.
+
+---
+
+## 📦 Quick Start (5 minutes)
+
+### Prerequisites
+- Node.js 18+, Python 3.10+, Docker & Docker Compose
+
+### 1. Clone & Install
+```bash
+git clone https://github.com/yourusername/nexaflow-ai.git
+cd nexaflow-ai
+
+# Backend
+cd backend && npm install
+
+# Frontend
+cd ../frontend && npm install
+
+# LLM service
+cd ../llm-service/llm-ms && pip install -r requirements.txt
+````
+
+2. Environment Variables
+
+Copy .env.example to .env in each service and fill in your keys (Razorpay, Google OAuth, etc.).
+Never commit .env files.
+
+3. Run with Docker Compose
+
+```bash
+cd ..  # back to project root
+docker compose up -d
+```
+
+4. Run Services
+
+```bash
+# Terminal 1 – Backend
+cd backend && npm run dev
+
+# Terminal 2 – LLM Service
+cd llm-service/llm-ms && python run.py
+
+# Terminal 3 – Frontend
+cd frontend && npm run dev
+```
+
+5. Access
+
+· Frontend: http://localhost:3000
+· Backend API: http://localhost:5000
+· LLM Service Docs: http://localhost:8001/docs
+
+---
+
+🧪 Testing RAG
+
+```bash
+# Ingest a test document
+curl -X POST http://localhost:8001/api/rag/ingest \
+  -H "Content-Type: application/json" \
+  -d '{"document_id":"test","document_text":"Revenue was $5M in 2024"}'
+
+# Query RAG
+curl -X POST http://localhost:8001/api/rag/query \
+  -H "Content-Type: application/json" \
+  -d '{"query":"What was revenue?"}'
+```
+
+---
+
+📁 Project Structure
+
+```
+nexaflow-ai/
+├── backend/               # Express.js + Prisma
+│   ├── src/
+│   ├── prisma/
+│   └── .env
+├── frontend/              # React + Vite
+│   ├── src/
+│   └── .env
+├── llm-service/           # FastAPI + Ollama + ChromaDB
+│   └── llm-ms/
+├── docker-compose.yml
+└── README.md
+```
+
+---
+
+🤝 Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+📄 License
+
+MIT
+
+---
+
+Acknowledgements
+
+· Ollama for local LLMs
+· ChromaDB for vector database
+· FastAPI for the LLM microservice
+· Razorpay for payment integration
+
+---
+
+```
+
+```
 
 
 
@@ -7114,11 +7274,397 @@ export default {
 FILE: .\backend\src\controllers\excel\errorTrendController.ts
 ====================================================================================================
 
+// import { Request, Response } from 'express';
+// import * as XLSX from 'xlsx';
+// import { aiClient, AI_MODEL, requireAIKey } from '../../services/aiProvider';
+// import prisma from '../../lib/prisma';
+// import { JwtPayload } from 'jsonwebtoken';
+
+// interface AnalysisResult {
+//   id: number;
+//   fileName: string;
+//   fileSize: number;
+//   fileType: string;
+//   insight: string;
+//   errors: string[];
+//   trends: string[];
+//   createdAt: Date;
+// }
+
+// // Helper function for outlier detection
+// const detectOutliers = (data: any[], column: string): string[] => {
+//   const values = data
+//     .map(row => parseFloat(row[column]))
+//     .filter(v => !isNaN(v) && v !== null);
+  
+//   if (values.length < 3) return [];
+
+//   const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
+//   const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
+//   const stdDev = Math.sqrt(variance);
+//   const threshold = 2; // 2 standard deviations
+
+//   const outliers: string[] = [];
+//   data.forEach((row, index) => {
+//     const value = parseFloat(row[column]);
+//     if (!isNaN(value) && Math.abs(value - mean) > threshold * stdDev) {
+//       outliers.push(`Row ${index + 2}: Value '${value}' in column '${column}' is a potential outlier`);
+//     }
+//   });
+
+//   return outliers;
+// };
+
+// // Helper function to safely convert JSON to string array
+// const safeJsonToStringArray = (json: any): string[] => {
+//   if (!json || !Array.isArray(json)) return [];
+//   return json.filter((item): item is string => typeof item === 'string');
+// };
+
+// // POST /api/error-trend/analyze
+// export const analyzeExcelForErrorsAndTrends = async (req: Request, res: Response) => {
+//   try {
+//     requireAIKey();
+
+//     // Check authentication
+//     const user = req.user as JwtPayload;
+//     if (!user || !user.id) {
+//       return res.status(401).json({ error: 'Authentication required' });
+//     }
+
+//     // Check file upload
+//     const file = req.file;
+//     if (!file) {
+//       return res.status(400).json({ error: 'No file uploaded' });
+//     }
+
+//     // Validate file type
+//     const allowedTypes = [
+//       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+//       'application/vnd.ms-excel',
+//       'application/octet-stream'
+//     ];
+    
+//     const allowedExtensions = ['.xlsx', '.xls'];
+//     const fileExtension = file.originalname.toLowerCase().substring(file.originalname.lastIndexOf('.'));
+    
+//     if (!allowedTypes.includes(file.mimetype) && !allowedExtensions.includes(fileExtension)) {
+//       return res.status(400).json({ error: 'Only Excel files (.xlsx, .xls) are allowed' });
+//     }
+
+//     // Parse Excel file
+//     const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+//     const sheetName = workbook.SheetNames[0];
+//     const worksheet = workbook.Sheets[sheetName];
+//     const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: null }) as any[];
+
+//     if (!jsonData || jsonData.length === 0) {
+//       return res.status(400).json({ error: 'No data found in the Excel file' });
+//     }
+
+//     // Basic data quality checks
+//     const errors: string[] = [];
+//     const columns = Object.keys(jsonData[0] || {});
+
+//     // Check for missing values
+//     jsonData.forEach((row, rowIndex) => {
+//       columns.forEach(col => {
+//         if (row[col] === null || row[col] === undefined || row[col] === '') {
+//           errors.push(`Missing value in row ${rowIndex + 2}, column '${col}'`);
+//         }
+//       });
+//     });
+
+//     // Check for duplicate rows
+//     const seen = new Set();
+//     const duplicates: number[] = [];
+//     jsonData.forEach((row, rowIndex) => {
+//       const rowString = JSON.stringify(row);
+//       if (seen.has(rowString)) {
+//         duplicates.push(rowIndex + 2);
+//       } else {
+//         seen.add(rowString);
+//       }
+//     });
+    
+//     if (duplicates.length > 0) {
+//       errors.push(`Found ${duplicates.length} duplicate rows (rows: ${duplicates.slice(0, 5).join(', ')}${duplicates.length > 5 ? '...' : ''})`);
+//     }
+
+//     // Check for outliers in numeric columns
+//     const numericColumns = columns.filter(col => 
+//       jsonData.slice(0, Math.min(100, jsonData.length)).every(row => 
+//         row[col] === null || typeof row[col] === 'number' || !isNaN(parseFloat(row[col]))
+//       )
+//     );
+
+//     numericColumns.forEach(col => {
+//       const outliers = detectOutliers(jsonData, col);
+//       errors.push(...outliers);
+//     });
+
+//     // Prepare data summary for AI analysis
+//     const dataSummary = {
+//       rowCount: jsonData.length,
+//       columnCount: columns.length,
+//       columns: columns,
+//       sampleData: jsonData.slice(0, 5),
+//       errors: errors.slice(0, 10),
+//       numericColumns: numericColumns
+//     };
+
+//     // AI Analysis
+//     const openai = aiClient;
+    
+//     const systemPrompt = `You are an expert data analyst. Analyze the provided Excel data and identify:
+// 1. Key insights about the data
+// 2. Important trends and patterns
+// 3. Data quality issues and errors
+
+// Be concise and provide actionable insights.`;
+
+//     const userPrompt = `Analyze this Excel data:
+
+// Data Summary:
+// - ${dataSummary.rowCount} rows, ${dataSummary.columnCount} columns
+// - Columns: ${dataSummary.columns.join(', ')}
+// - Numeric columns: ${dataSummary.numericColumns.join(', ')}
+
+// Sample Data (first 5 rows):
+// ${JSON.stringify(dataSummary.sampleData, null, 2)}
+
+// Detected Issues:
+// ${dataSummary.errors.length > 0 ? dataSummary.errors.join('\n') : 'No major issues detected'}
+
+// Please provide:
+// 1. A main insight about the data
+// 2. Up to 5 key trends
+// 3. Up to 5 critical errors or issues
+
+// Format your response as JSON with keys: "insight", "trends", "errors"`;
+
+//     const completion = await openai.chat.completions.create({
+//       model: AI_MODEL,
+//       messages: [
+//         { role: 'system', content: systemPrompt },
+//         { role: 'user', content: userPrompt }
+//       ],
+//       response_format: { type: 'json_object' },
+//       max_tokens: 800,
+//       temperature: 0.3
+//     });
+
+//     let aiInsight = 'Could not generate AI insight';
+//     let aiTrends: string[] = [];
+//     let aiErrors: string[] = [];
+
+//     try {
+//       const aiResponse = completion.choices[0].message?.content;
+//       if (aiResponse) {
+//         const parsed = JSON.parse(aiResponse);
+//         aiInsight = parsed.insight || aiInsight;
+//         aiTrends = Array.isArray(parsed.trends) ? parsed.trends : [];
+//         aiErrors = Array.isArray(parsed.errors) ? parsed.errors : [];
+//       }
+//     } catch (e) {
+//       console.error('Failed to parse AI response:', e);
+//     }
+
+//     // Combine all errors
+//     const allErrors = [...new Set([...errors.slice(0, 10), ...aiErrors])];
+
+//     // Update user limit after successful OpenAI response
+//     try {
+//       const token = req.headers.authorization?.split(' ')[1];
+//       if (token) {
+//         await fetch(`${process.env.BACKEND_URL || 'http://localhost:5000'}/api/user/update-limit`, {
+//           method: 'POST',
+//           headers: {
+//             'Content-Type': 'application/json',
+//             'Authorization': `Bearer ${token}`
+//           },
+//           body: JSON.stringify({ limitType: 'message' })
+//         });
+//       }
+//     } catch (limitError) {
+//       console.error('Failed to update user limit:', limitError);
+//       // Don't fail the request if limit update fails
+//     }
+
+//     // Save to database
+//     const analysis = await prisma.excelAnalysis.create({
+//   data: {
+//     userId: user.id,
+//     fileName: (file.originalname || '').slice(0, 255), // if fileName is also limited
+//     fileSize: file.size,
+//     fileType: (file.mimetype || '').slice(0, 64),      // <-- fix here
+//     errors: allErrors,
+//     trends: aiTrends,
+//     insight: aiInsight,
+//     chatHistory: undefined
+//   }
+// });
+
+//     // Return formatted response
+//     const result: AnalysisResult = {
+//       id: analysis.id,
+//       fileName: analysis.fileName || file.originalname,
+//       fileSize: analysis.fileSize || file.size,
+//       fileType: analysis.fileType || file.mimetype,
+//       insight: analysis.insight || aiInsight,
+//       errors: safeJsonToStringArray(analysis.errors),
+//       trends: safeJsonToStringArray(analysis.trends),
+//       createdAt: analysis.createdAt
+//     };
+
+//     res.json(result);
+
+//   } catch (error: any) {
+//     console.error('Error analyzing Excel file:', error);
+//     res.status(500).json({ 
+//       error: 'Failed to analyze Excel file',
+//       details: error.message 
+//     });
+//   }
+// };
+
+// // GET /api/error-trend/analysis/:id
+// export const getAnalysisById = async (req: Request, res: Response) => {
+//   try {
+//     const user = req.user as JwtPayload;
+//     if (!user || !user.id) {
+//       return res.status(401).json({ error: 'Authentication required' });
+//     }
+
+//     const analysisId = parseInt(req.params.id);
+//     if (isNaN(analysisId)) {
+//       return res.status(400).json({ error: 'Invalid analysis ID' });
+//     }
+
+//     const analysis = await prisma.excelAnalysis.findUnique({
+//       where: { id: analysisId }
+//     });
+
+//     if (!analysis) {
+//       return res.status(404).json({ error: 'Analysis not found' });
+//     }
+
+//     if (analysis.userId !== user.id) {
+//       return res.status(403).json({ error: 'Access denied' });
+//     }
+
+//     const result: AnalysisResult = {
+//       id: analysis.id,
+//       fileName: analysis.fileName || '',
+//       fileSize: analysis.fileSize || 0,
+//       fileType: analysis.fileType || '',
+//       insight: analysis.insight || '',
+//       errors: safeJsonToStringArray(analysis.errors),
+//       trends: safeJsonToStringArray(analysis.trends),
+//       createdAt: analysis.createdAt
+//     };
+
+//     res.json(result);
+
+//   } catch (error: any) {
+//     console.error('Error fetching analysis:', error);
+//     res.status(500).json({ 
+//       error: 'Failed to fetch analysis',
+//       details: error.message 
+//     });
+//   }
+// };
+
+// // GET /api/error-trend/latest
+// export const getLatestAnalysis = async (req: Request, res: Response) => {
+//   try {
+//     const user = req.user as JwtPayload;
+//     if (!user || !user.id) {
+//       return res.status(401).json({ error: 'Authentication required' });
+//     }
+
+//     const analysis = await prisma.excelAnalysis.findFirst({
+//       where: { userId: user.id },
+//       orderBy: { createdAt: 'desc' }
+//     });
+
+//     if (!analysis) {
+//       return res.status(404).json({ error: 'No analysis found' });
+//     }
+
+//     const result: AnalysisResult = {
+//       id: analysis.id,
+//       fileName: analysis.fileName || '',
+//       fileSize: analysis.fileSize || 0,
+//       fileType: analysis.fileType || '',
+//       insight: analysis.insight || '',
+//       errors: safeJsonToStringArray(analysis.errors),
+//       trends: safeJsonToStringArray(analysis.trends),
+//       createdAt: analysis.createdAt
+//     };
+
+//     res.json(result);
+
+//   } catch (error: any) {
+//     console.error('Error fetching latest analysis:', error);
+//     res.status(500).json({ 
+//       error: 'Failed to fetch latest analysis',
+//       details: error.message 
+//     });
+//   }
+// };
+
+// // DELETE /api/error-trend/analysis/:id
+// export const deleteAnalysis = async (req: Request, res: Response) => {
+//   try {
+//     const user = req.user as JwtPayload;
+//     if (!user || !user.id) {
+//       return res.status(401).json({ error: 'Authentication required' });
+//     }
+
+//     const analysisId = parseInt(req.params.id);
+//     if (isNaN(analysisId)) {
+//       return res.status(400).json({ error: 'Invalid analysis ID' });
+//     }
+
+//     const analysis = await prisma.excelAnalysis.findUnique({
+//       where: { id: analysisId }
+//     });
+
+//     if (!analysis) {
+//       return res.status(404).json({ error: 'Analysis not found' });
+//     }
+
+//     if (analysis.userId !== user.id) {
+//       return res.status(403).json({ error: 'Access denied' });
+//     }
+
+//     await prisma.excelAnalysis.delete({
+//       where: { id: analysisId }
+//     });
+
+//     res.status(204).send();
+
+//   } catch (error: any) {
+//     console.error('Error deleting analysis:', error);
+//     res.status(500).json({ 
+//       error: 'Failed to delete analysis',
+//       details: error.message 
+//     });
+//   }
+// }; 
+
+
 import { Request, Response } from 'express';
 import * as XLSX from 'xlsx';
 import { aiClient, AI_MODEL, requireAIKey } from '../../services/aiProvider';
 import prisma from '../../lib/prisma';
 import { JwtPayload } from 'jsonwebtoken';
+import ragService from '../../services/ragService';
+
+// RAG configuration for Error & Trend Detector
+const USE_RAG_ERROR_TREND = process.env.USE_RAG_ERROR_TREND === 'true';
+const ERROR_TREND_CHUNK_SIZE = parseInt(process.env.ERROR_TREND_CHUNK_SIZE || '100', 10); // rows per chunk
 
 interface AnalysisResult {
   id: number;
@@ -7131,7 +7677,7 @@ interface AnalysisResult {
   createdAt: Date;
 }
 
-// Helper function for outlier detection
+// Helper function for outlier detection (unchanged)
 const detectOutliers = (data: any[], column: string): string[] => {
   const values = data
     .map(row => parseFloat(row[column]))
@@ -7155,7 +7701,7 @@ const detectOutliers = (data: any[], column: string): string[] => {
   return outliers;
 };
 
-// Helper function to safely convert JSON to string array
+// Helper function to safely convert JSON to string array (unchanged)
 const safeJsonToStringArray = (json: any): string[] => {
   if (!json || !Array.isArray(json)) return [];
   return json.filter((item): item is string => typeof item === 'string');
@@ -7202,7 +7748,7 @@ export const analyzeExcelForErrorsAndTrends = async (req: Request, res: Response
       return res.status(400).json({ error: 'No data found in the Excel file' });
     }
 
-    // Basic data quality checks
+    // Basic data quality checks (same as before)
     const errors: string[] = [];
     const columns = Object.keys(jsonData[0] || {});
 
@@ -7243,7 +7789,39 @@ export const analyzeExcelForErrorsAndTrends = async (req: Request, res: Response
       errors.push(...outliers);
     });
 
-    // Prepare data summary for AI analysis
+    // --- RAG Ingestion (if enabled) ---
+    let docId: string | null = null;
+    if (USE_RAG_ERROR_TREND && jsonData.length > 0) {
+      try {
+        // Chunk the rows into groups of ERROR_TREND_CHUNK_SIZE
+        const chunks: string[] = [];
+        for (let i = 0; i < jsonData.length; i += ERROR_TREND_CHUNK_SIZE) {
+          const chunkRows = jsonData.slice(i, i + ERROR_TREND_CHUNK_SIZE);
+          chunks.push(JSON.stringify(chunkRows));
+        }
+        const chunkText = chunks.join('\n---\n');
+
+        docId = `error_trend_${Date.now()}_${user.id}`;
+        await ragService.ingestDocument({
+          documentId: docId,
+          documentText: chunkText,
+          metadata: {
+            fileName: file.originalname,
+            fileSize: file.size,
+            userId: user.id,
+            rowCount: jsonData.length,
+            chunkSize: ERROR_TREND_CHUNK_SIZE,
+            errorsCount: errors.length
+          },
+          collectionName: `user_${user.id}_error_trend`
+        });
+        console.log(`✅ Ingested Excel into RAG for error detection: ${file.originalname}`);
+      } catch (ragError) {
+        console.error('Error Trend RAG ingestion failed, falling back to direct mode:', ragError);
+      }
+    }
+
+    // Prepare data summary (original, used as fallback)
     const dataSummary = {
       rowCount: jsonData.length,
       columnCount: columns.length,
@@ -7253,19 +7831,72 @@ export const analyzeExcelForErrorsAndTrends = async (req: Request, res: Response
       numericColumns: numericColumns
     };
 
-    // AI Analysis
-    const openai = aiClient;
-    
-    const systemPrompt = `You are an expert data analyst. Analyze the provided Excel data and identify:
+    let aiInsight = 'Could not generate AI insight';
+    let aiTrends: string[] = [];
+    let aiErrors: string[] = [];
+    let usedRag = false;
+
+    // --- Try RAG retrieval if enabled and ingestion succeeded ---
+    if (USE_RAG_ERROR_TREND && docId) {
+      try {
+        // The user prompt is fixed: "Analyze this Excel data"
+        const query = "Analyze this Excel data for errors and trends";
+        const retrieved = await ragService.retrieveContext(
+          query,
+          `user_${user.id}_error_trend`,
+          5  // top 5 chunks
+        );
+
+        if (retrieved.chunks.length > 0) {
+          const contextText = retrieved.chunks.map(c => c.text).join('\n\n---\n\n');
+          
+          const systemPrompt = `You are an expert data analyst. Analyze the provided Excel data context and identify:
 1. Key insights about the data
 2. Important trends and patterns
 3. Data quality issues and errors
 
-Be concise and provide actionable insights.`;
+Be concise and provide actionable insights. Format your response as JSON with keys: "insight", "trends", "errors".`;
 
-    const userPrompt = `Analyze this Excel data:
+          const userPrompt = `Excel Data Context (retrieved chunks):\n${contextText}\n\nDetected Issues (from basic checks):\n${errors.slice(0, 10).join('\n') || 'None'}\n\nPlease provide analysis as JSON.`;
 
-Data Summary:
+          const completion = await aiClient.chat.completions.create({
+            model: AI_MODEL,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt }
+            ],
+            response_format: { type: 'json_object' },
+            max_tokens: 800,
+            temperature: 0.3
+          });
+
+          const aiResponse = completion.choices[0].message?.content;
+          if (aiResponse) {
+            const parsed = JSON.parse(aiResponse);
+            aiInsight = parsed.insight || aiInsight;
+            aiTrends = Array.isArray(parsed.trends) ? parsed.trends : [];
+            aiErrors = Array.isArray(parsed.errors) ? parsed.errors : [];
+          }
+          usedRag = true;
+          console.log('✅ RAG answer generated for Error & Trend Detector');
+        } else {
+          console.log('No relevant chunks retrieved, falling back to direct analysis');
+        }
+      } catch (ragError) {
+        console.error('Error Trend RAG retrieval failed, falling back to direct LLM:', ragError);
+      }
+    }
+
+    // --- Fallback to original summary-based analysis if RAG not used ---
+    if (!usedRag) {
+      const systemPrompt = `You are an expert data analyst. Analyze the provided Excel data and identify:
+1. Key insights about the data
+2. Important trends and patterns
+3. Data quality issues and errors
+
+Be concise and provide actionable insights. Format your response as JSON with keys: "insight", "trends", "errors".`;
+
+      const userPrompt = `Data Summary:
 - ${dataSummary.rowCount} rows, ${dataSummary.columnCount} columns
 - Columns: ${dataSummary.columns.join(', ')}
 - Numeric columns: ${dataSummary.numericColumns.join(', ')}
@@ -7276,44 +7907,36 @@ ${JSON.stringify(dataSummary.sampleData, null, 2)}
 Detected Issues:
 ${dataSummary.errors.length > 0 ? dataSummary.errors.join('\n') : 'No major issues detected'}
 
-Please provide:
-1. A main insight about the data
-2. Up to 5 key trends
-3. Up to 5 critical errors or issues
+Please provide: insight, trends (up to 5), errors (up to 5).`;
 
-Format your response as JSON with keys: "insight", "trends", "errors"`;
+      const completion = await aiClient.chat.completions.create({
+        model: AI_MODEL,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        response_format: { type: 'json_object' },
+        max_tokens: 800,
+        temperature: 0.3
+      });
 
-    const completion = await openai.chat.completions.create({
-      model: AI_MODEL,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ],
-      response_format: { type: 'json_object' },
-      max_tokens: 800,
-      temperature: 0.3
-    });
-
-    let aiInsight = 'Could not generate AI insight';
-    let aiTrends: string[] = [];
-    let aiErrors: string[] = [];
-
-    try {
       const aiResponse = completion.choices[0].message?.content;
       if (aiResponse) {
-        const parsed = JSON.parse(aiResponse);
-        aiInsight = parsed.insight || aiInsight;
-        aiTrends = Array.isArray(parsed.trends) ? parsed.trends : [];
-        aiErrors = Array.isArray(parsed.errors) ? parsed.errors : [];
+        try {
+          const parsed = JSON.parse(aiResponse);
+          aiInsight = parsed.insight || aiInsight;
+          aiTrends = Array.isArray(parsed.trends) ? parsed.trends : [];
+          aiErrors = Array.isArray(parsed.errors) ? parsed.errors : [];
+        } catch (e) {
+          console.error('Failed to parse AI response:', e);
+        }
       }
-    } catch (e) {
-      console.error('Failed to parse AI response:', e);
     }
 
-    // Combine all errors
+    // Combine all errors (basic + AI)
     const allErrors = [...new Set([...errors.slice(0, 10), ...aiErrors])];
 
-    // Update user limit after successful OpenAI response
+    // Update user limit after successful AI response
     try {
       const token = req.headers.authorization?.split(' ')[1];
       if (token) {
@@ -7328,22 +7951,21 @@ Format your response as JSON with keys: "insight", "trends", "errors"`;
       }
     } catch (limitError) {
       console.error('Failed to update user limit:', limitError);
-      // Don't fail the request if limit update fails
     }
 
     // Save to database
     const analysis = await prisma.excelAnalysis.create({
-  data: {
-    userId: user.id,
-    fileName: (file.originalname || '').slice(0, 255), // if fileName is also limited
-    fileSize: file.size,
-    fileType: (file.mimetype || '').slice(0, 64),      // <-- fix here
-    errors: allErrors,
-    trends: aiTrends,
-    insight: aiInsight,
-    chatHistory: undefined
-  }
-});
+      data: {
+        userId: user.id,
+        fileName: (file.originalname || '').slice(0, 255),
+        fileSize: file.size,
+        fileType: (file.mimetype || '').slice(0, 64),
+        errors: allErrors,
+        trends: aiTrends,
+        insight: aiInsight,
+        chatHistory: undefined
+      }
+    });
 
     // Return formatted response
     const result: AnalysisResult = {
@@ -7368,7 +7990,7 @@ Format your response as JSON with keys: "insight", "trends", "errors"`;
   }
 };
 
-// GET /api/error-trend/analysis/:id
+// GET /api/error-trend/analysis/:id (unchanged)
 export const getAnalysisById = async (req: Request, res: Response) => {
   try {
     const user = req.user as JwtPayload;
@@ -7415,7 +8037,7 @@ export const getAnalysisById = async (req: Request, res: Response) => {
   }
 };
 
-// GET /api/error-trend/latest
+// GET /api/error-trend/latest (unchanged)
 export const getLatestAnalysis = async (req: Request, res: Response) => {
   try {
     const user = req.user as JwtPayload;
@@ -7454,7 +8076,7 @@ export const getLatestAnalysis = async (req: Request, res: Response) => {
   }
 };
 
-// DELETE /api/error-trend/analysis/:id
+// DELETE /api/error-trend/analysis/:id (unchanged)
 export const deleteAnalysis = async (req: Request, res: Response) => {
   try {
     const user = req.user as JwtPayload;
@@ -7492,22 +8114,188 @@ export const deleteAnalysis = async (req: Request, res: Response) => {
       details: error.message 
     });
   }
-}; 
-
+};
 
 
 ====================================================================================================
 FILE: .\backend\src\controllers\excel\excelaiController.ts
 ====================================================================================================
 
+// import { Request, Response } from 'express';
+// import * as XLSX from 'xlsx';
+// import { aiClient, AI_MODEL, requireAIKey } from '../../services/aiProvider';
+// import prisma from '../../lib/prisma';
+// import { JwtPayload } from 'jsonwebtoken';
+// import type { ChatCompletionUserMessageParam, ChatCompletionAssistantMessageParam, ChatCompletionMessageParam } from 'openai/resources/chat/completions';
+
+
+// // Helper function for outlier detection
+// const getOutliers = (data: any[], column: string) => {
+//     const values = data.map(row => parseFloat(row[column])).filter(v => !isNaN(v));
+//     if (values.length < 2) return [];
+
+//     const mean = values.reduce((acc, v) => acc + v, 0) / values.length;
+//     const stdDev = Math.sqrt(values.map(v => Math.pow(v - mean, 2)).reduce((acc, v) => acc + v, 0) / values.length);
+//     const outliers = [];
+//     const threshold = 3; // 3 standard deviations
+
+//     for (let i = 0; i < data.length; i++) {
+//         const value = parseFloat(data[i][column]);
+//         if (!isNaN(value) && Math.abs(value - mean) > threshold * stdDev) {
+//             outliers.push(`Row ${i + 2}: Value '${value}' in column '${column}' is a potential outlier.`);
+//         }
+//     }
+//     return outliers;
+// };
+
+// // POST /api/ai/analyze-excel
+// export const analyzeExcel = async (req: Request, res: Response) => {
+//   try {
+//     requireAIKey();
+//     const openai = aiClient;
+
+//     const user = req.user as JwtPayload;
+//     let { chatId, prompt } = req.body;
+
+
+
+//     const file = req.file;
+//     if (!file) {
+//       return res.status(400).json({ error: 'No file uploaded' });
+//     }
+
+//     let currentChat;
+//     if (chatId) {
+//         currentChat = await prisma.chat.findUnique({
+//           where: { id: Number(chatId) }
+//         });
+//         if (!currentChat || currentChat.userId !== user.id) {
+//             return res.status(403).json({ error: "Access denied." });
+//         }
+//     } else {
+//         currentChat = await prisma.chat.create({
+//           data: {
+//             userId: user.id,
+//             toolType: 'sheet_summarizer',
+//             title: file.originalname
+//           }
+//         });
+//         await prisma.chatMessage.create({
+//           data: {
+//             chatId: currentChat.id,
+//             sender: 'user',
+//             content: `File: ${file.originalname}`,
+//             metadata: { fileName: file.originalname, fileSize: file.size, fileType: file.mimetype }
+//           }
+//         });
+//     }
+
+//     const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+//     const sheetName = workbook.SheetNames[0];
+//     const worksheet = workbook.Sheets[sheetName];
+//     const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+        
+//     if (!jsonData || jsonData.length === 0) {
+//       return res.status(400).json({ error: 'No data found in the uploaded Excel file.' });
+//     }
+
+//     const fullDataText = JSON.stringify(jsonData, null, 2);
+
+//     // Save the user's message first
+//     if (prompt) {
+//         await prisma.chatMessage.create({
+//           data: { 
+//             chatId: currentChat.id, 
+//             sender: 'user', 
+//             content: prompt 
+//           }
+//         });
+//     }
+        
+//     let openaiMessages: ChatCompletionMessageParam[] = [];
+//     if (currentChat) {
+//         // Fetch all previous messages for this chat, including the one we just saved
+//         const previousMessages = await prisma.chatMessage.findMany({
+//           where: { chatId: currentChat.id },
+//           orderBy: { createdAt: 'asc' }
+//         });
+//         openaiMessages = previousMessages
+//             .filter((m: any) => m.sender === 'user' || m.sender === 'bot')
+//             .map((m: any) => ({
+//                 role: m.sender === 'user' ? 'user' as const : 'assistant' as const,
+//                 content: m.content
+//             }));
+//     }
+
+//     const systemPromptText = `You are an expert data analyst. Given the following Excel sheet data and your chat history, provide a concise summary and actionable insights. Format your response as a JSON object with keys "summary" and "insights". Full Data: \n${fullDataText}`;
+//     const systemPrompt: ChatCompletionMessageParam = { role: 'system', content: systemPromptText };
+        
+//     const messagesForOpenAI: ChatCompletionMessageParam[] = [
+//         systemPrompt,
+//         ...openaiMessages
+//     ];
+
+//     const completion = await openai.chat.completions.create({
+//         model: AI_MODEL,
+//         messages: messagesForOpenAI,
+//         response_format: { "type": "json_object" },
+//         max_tokens: 500,
+//         temperature: 0.3,
+//     });
+
+//     let aiContent = completion.choices[0].message?.content || '{"summary": "Could not generate analysis.", "insights": []}';
+//     await prisma.chatMessage.create({
+//       data: { 
+//         chatId: currentChat.id, 
+//         sender: 'bot', 
+//         content: aiContent 
+//       }
+//     });
+
+//     // Update user limit after successful OpenAI response
+//     try {
+//       const token = req.headers.authorization?.split(' ')[1];
+//       if (token) {
+//         await fetch(`${process.env.BACKEND_URL || 'http://localhost:5000'}/api/user/update-limit`, {
+//           method: 'POST',
+//           headers: {
+//             'Content-Type': 'application/json',
+//             'Authorization': `Bearer ${token}`
+//           },
+//           body: JSON.stringify({ limitType: 'message' })
+//         });
+//       }
+//     } catch (limitError) {
+//       console.error('Failed to update user limit:', limitError);
+//       // Don't fail the request if limit update fails
+//     }
+        
+//     const messages = await prisma.chatMessage.findMany({
+//       where: { chatId: currentChat.id },
+//       orderBy: { createdAt: 'asc' }
+//     });
+    
+//     res.json({ chat: currentChat, messages });
+
+//     } catch (err) {
+//         res.status(500).json({ error: 'Failed to analyze Excel file' });
+//     }
+// }; 
+
+
 import { Request, Response } from 'express';
 import * as XLSX from 'xlsx';
 import { aiClient, AI_MODEL, requireAIKey } from '../../services/aiProvider';
 import prisma from '../../lib/prisma';
 import { JwtPayload } from 'jsonwebtoken';
-import type { ChatCompletionUserMessageParam, ChatCompletionAssistantMessageParam, ChatCompletionMessageParam } from 'openai/resources/chat/completions';
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
+import ragService from '../../services/ragService';
 
-// Helper function for outlier detection
+// RAG configuration for Excel
+const USE_RAG_EXCEL = process.env.USE_RAG_EXCEL === 'true';
+const EXCEL_CHUNK_SIZE = parseInt(process.env.EXCEL_CHUNK_SIZE || '50', 10);
+
+// Helper function for outlier detection (unchanged)
 const getOutliers = (data: any[], column: string) => {
     const values = data.map(row => parseFloat(row[column])).filter(v => !isNaN(v));
     if (values.length < 2) return [];
@@ -7577,6 +8365,39 @@ export const analyzeExcel = async (req: Request, res: Response) => {
 
     const fullDataText = JSON.stringify(jsonData, null, 2);
 
+    // --- RAG Ingestion (if enabled) ---
+    let docId: string | null = null;
+    if (USE_RAG_EXCEL && jsonData.length > 0) {
+      try {
+        // Chunk the rows into groups of EXCEL_CHUNK_SIZE
+        const chunks: string[] = [];
+        for (let i = 0; i < jsonData.length; i += EXCEL_CHUNK_SIZE) {
+          const chunkRows = jsonData.slice(i, i + EXCEL_CHUNK_SIZE);
+          chunks.push(JSON.stringify(chunkRows));
+        }
+        const chunkText = chunks.join('\n---\n');
+
+        docId = `excel_${currentChat.id}_${Date.now()}`;
+        await ragService.ingestDocument({
+          documentId: docId,
+          documentText: chunkText,
+          metadata: {
+            fileName: file.originalname,
+            fileSize: file.size,
+            chatId: currentChat.id,
+            userId: user.id,
+            rowCount: jsonData.length,
+            chunkSize: EXCEL_CHUNK_SIZE
+          },
+          collectionName: `user_${user.id}_excel`
+        });
+        console.log(`✅ Ingested Excel into RAG: ${file.originalname}`);
+      } catch (ragError) {
+        console.error('Excel RAG ingestion failed, falling back to direct mode:', ragError);
+        // Continue without RAG
+      }
+    }
+
     // Save the user's message first
     if (prompt) {
         await prisma.chatMessage.create({
@@ -7588,38 +8409,83 @@ export const analyzeExcel = async (req: Request, res: Response) => {
         });
     }
         
-    let openaiMessages: ChatCompletionMessageParam[] = [];
-    if (currentChat) {
-        // Fetch all previous messages for this chat, including the one we just saved
-        const previousMessages = await prisma.chatMessage.findMany({
-          where: { chatId: currentChat.id },
-          orderBy: { createdAt: 'asc' }
-        });
-        openaiMessages = previousMessages
-            .filter((m: any) => m.sender === 'user' || m.sender === 'bot')
-            .map((m: any) => ({
-                role: m.sender === 'user' ? 'user' as const : 'assistant' as const,
-                content: m.content
-            }));
+    // Fetch all previous messages for this chat (for conversation context)
+    const previousMessages = await prisma.chatMessage.findMany({
+      where: { chatId: currentChat.id },
+      orderBy: { createdAt: 'asc' }
+    });
+    const openaiMessages: ChatCompletionMessageParam[] = previousMessages
+        .filter((m: any) => m.sender === 'user' || m.sender === 'bot')
+        .map((m: any) => ({
+            role: m.sender === 'user' ? 'user' as const : 'assistant' as const,
+            content: m.content
+        }));
+
+    let aiContent = '';
+    let usedRag = false;
+
+    // --- Try RAG retrieval if enabled and ingestion succeeded ---
+    if (USE_RAG_EXCEL && docId) {
+      try {
+        // Use ragService.retrieveContext to get relevant chunks
+        const userPrompt = prompt || 'Summarize this data';
+        const retrieved = await ragService.retrieveContext(
+          userPrompt,
+          `user_${user.id}_excel`,
+          5  // top 5 chunks
+        );
+
+        if (retrieved.chunks.length > 0) {
+          const contextText = retrieved.chunks.map(c => c.text).join('\n\n---\n\n');
+          const ragPrompt = `Answer the question based on the Excel data context below.\n\nContext:\n${contextText}\n\nQuestion: ${userPrompt}\n\nAnswer:`;
+
+          // Build messages with conversation history + RAG context
+          const messagesForOpenAI: ChatCompletionMessageParam[] = [
+            { role: 'system', content: 'You are an expert data analyst. Use the provided Excel data context to answer the user\'s question accurately and concisely.' },
+            ...openaiMessages,
+            { role: 'user', content: ragPrompt }
+          ];
+
+          const completion = await openai.chat.completions.create({
+            model: AI_MODEL,
+            messages: messagesForOpenAI,
+            max_tokens: 800,
+            temperature: 0.3,
+          });
+
+          aiContent = completion.choices[0].message?.content || 'No answer generated.';
+          usedRag = true;
+          console.log('✅ RAG answer generated for Excel');
+        } else {
+          console.log('No relevant chunks retrieved, falling back to direct analysis');
+        }
+      } catch (ragError) {
+        console.error('Excel RAG retrieval failed, falling back to direct LLM:', ragError);
+      }
     }
 
-    const systemPromptText = `You are an expert data analyst. Given the following Excel sheet data and your chat history, provide a concise summary and actionable insights. Format your response as a JSON object with keys "summary" and "insights". Full Data: \n${fullDataText}`;
-    const systemPrompt: ChatCompletionMessageParam = { role: 'system', content: systemPromptText };
+    // --- Fallback to original direct analysis if RAG not used ---
+    if (!usedRag) {
+      const systemPromptText = `You are an expert data analyst. Given the following Excel sheet data and your chat history, provide a concise summary and actionable insights. Format your response as a JSON object with keys "summary" and "insights". Full Data: \n${fullDataText}`;
+      const systemPrompt: ChatCompletionMessageParam = { role: 'system', content: systemPromptText };
         
-    const messagesForOpenAI: ChatCompletionMessageParam[] = [
-        systemPrompt,
-        ...openaiMessages
-    ];
+      const messagesForOpenAI: ChatCompletionMessageParam[] = [
+          systemPrompt,
+          ...openaiMessages
+      ];
 
-    const completion = await openai.chat.completions.create({
-        model: AI_MODEL,
-        messages: messagesForOpenAI,
-        response_format: { "type": "json_object" },
-        max_tokens: 500,
-        temperature: 0.3,
-    });
+      const completion = await openai.chat.completions.create({
+          model: AI_MODEL,
+          messages: messagesForOpenAI,
+          response_format: { "type": "json_object" },
+          max_tokens: 500,
+          temperature: 0.3,
+      });
 
-    let aiContent = completion.choices[0].message?.content || '{"summary": "Could not generate analysis.", "insights": []}';
+      aiContent = completion.choices[0].message?.content || '{"summary": "Could not generate analysis.", "insights": []}';
+    }
+
+    // Save the bot's response
     await prisma.chatMessage.create({
       data: { 
         chatId: currentChat.id, 
@@ -7628,7 +8494,7 @@ export const analyzeExcel = async (req: Request, res: Response) => {
       }
     });
 
-    // Update user limit after successful OpenAI response
+    // Update user limit after successful AI response
     try {
       const token = req.headers.authorization?.split(' ')[1];
       if (token) {
@@ -7654,9 +8520,10 @@ export const analyzeExcel = async (req: Request, res: Response) => {
     res.json({ chat: currentChat, messages });
 
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'Failed to analyze Excel file' });
     }
-}; 
+};
 
 
 ====================================================================================================
@@ -12400,6 +13267,7 @@ FILE: .\frontend\package.json
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.2",
     "lucide-react": "^0.263.1",
+    "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^2.16.105",
     "pptxgenjs": "^4.0.1",
     "react": "^18.2.0",
@@ -12694,6 +13562,7 @@ import SubjectLineOptimizer from "./components/premium/mailcraftai/subjectlineop
 import TonePolisher from "./components/premium/mailcraftai/tonepolisher";
 import PayButton from "./components/razorpay/PayButton";
 import { Header } from "@/components/homepage/header";
+
 import { InteractiveFeatureCards } from "@/components/homepage/interactive-feature-cards";
 import { HowItWorks } from "@/components/homepage/how-it-works";
 import { MainHero } from "@/components/homepage/main-hero";
@@ -12735,6 +13604,8 @@ import CaptionRewriterPage from "./components/premium/socialpro/CaptionRewriterP
 import SmartDataExtractorPage from "./components/premium/pdf/SmartDataExtractorPage";
 import PDFConverterPro from "./components/premium/pdf/PDFConverterPro";
 import MailMergeAI from "./components/premium/bulkmailer/mailmergeai";
+
+import BulkPDFToolkitPage from "./components/premium/pdf/BulkPDFToolkitPage";
 
 function HomePage() {
   return (
@@ -12828,6 +13699,7 @@ function App() {
               <Route path="excel" element={<ExcelSuitePage />}>
                 <Route index element={<ExcelSuite />} />
                 <Route path="chartbuilder" element={<ChartBuilderPage />} />
+     
                 <Route path="aisheet/:chatId?" element={<AISheetSummarizerPage />} />
                 <Route path="formulamaster/:chatId?" element={<FormulaMaster />} />
                 <Route path="detect/:analysisId?" element={<ErrorTrendDetectorNew />} />
@@ -12837,6 +13709,7 @@ function App() {
               <Route path="pdfhub/brain" element={<PDFBrainPageWrapper />} />
               <Route path="pdfhub/chatagent" element={<PDFChatAgentPage />} />
               <Route path="pdfhub/smartdata" element={<SmartDataExtractorPage />} />  
+                         <Route path="pdfhub/bulk-toolkit" element={<BulkPDFToolkitPage />} />
               <Route path="pdfhub/converterpro" element={<PDFConverterPro />} />
               <Route path="aiworkmate/:sessionId?" element={<AIWorkmatePage />} />
               <Route path="aiworkmate/aiagent" element={<AIAgentPage />} />
@@ -13451,7 +14324,8 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onMenuToggle, isSidebarOpen, 
         <div className="flex items-center space-x-3 lg:ml-0 ml-2 flex-shrink-0 min-w-0">
           <div className="relative flex items-center h-20 overflow-hidden">
             <img
-              src="/nexaflow-logo-header.png"
+              src={isDarkMode ? "/nexaflow-logo2.png" : "/nexaflow-logo2.png"}
+              // src="/nexaflow-logo2.png"
               alt="NexaFlow AI"
               className="h-12 w-auto object-contain transition-all duration-300"
             />
@@ -14305,6 +15179,8 @@ import { useRef } from "react";
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  // Track dark mode preference to adjust logo filter
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user, isAuthenticated, logout, token, login } = useAuth();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -14316,6 +15192,19 @@ export function Header() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  // detect system dark mode preference
+  useEffect(() => {
+    const mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+    const apply = () => setIsDarkMode(!!(mq ? mq.matches : false));
+    apply();
+    if (mq && mq.addEventListener) mq.addEventListener('change', apply);
+    else if (mq && mq.addListener) mq.addListener(apply);
+    return () => {
+      if (mq && mq.removeEventListener) mq.removeEventListener('change', apply);
+      else if (mq && mq.removeListener) mq.removeListener(apply);
+    };
+  }, []);
 
   // Fetch latest user info on mount if authenticated
   useEffect(() => {
@@ -14377,10 +15266,10 @@ export function Header() {
           {/* Logo - Fixed positioning to stay left-aligned */}
           <div className="flex items-center space-x-3 flex-shrink-0">
             <img 
-              src="/nexaflow-logo-header.png" 
+              // src="/nexaflow-logo-header.png" 
+              src={isDarkMode ? "/nexaflow-logo2.png" : "/nexaflow-logo2.png"}
               alt="NexaFlow AI" 
-              className="h-12 sm:h-12 md:h-14 w-auto object-contain"
-            />
+              className="h-12 sm:h-12 md:h-14 w-auto object-contain"            />
           </div>
 
           {/* Desktop Navigation */}
@@ -17935,7 +18824,7 @@ FILE: .\frontend\src\components\premium\components\ExcelSuite.tsx
 
 import React from 'react';
 import ToolCard from './ToolCard';
-import { BarChart3, Brain, FileDown } from 'lucide-react';
+import { BarChart3, Brain, FileDown, Calculator, AlertTriangle } from 'lucide-react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 
 interface ExcelSuiteProps {
@@ -17963,33 +18852,72 @@ const ExcelSuite: React.FC<ExcelSuiteProps> = () => {
     );
   }
 
-  const tools = [
-    {
-        title: 'Chart Builder',
-        description: 'Create stunning, publication-quality charts from your data.',
-        icon: BarChart3,
-        path: 'chartbuilder',
-        pro: true,
-        gradient: 'bg-gradient-to-r from-teal-400 to-cyan-500'
-    },
+//   const tools = [
+//     {
+//         title: 'Chart Builder',
+//         description: 'Create stunning, publication-quality charts from your data.',
+//         icon: BarChart3,
+//         path: 'chartbuilder',
+//         pro: true,
+//         gradient: 'bg-gradient-to-r from-teal-400 to-cyan-500'
+//     },
    
-    {
-        title: 'AI Sheet Summarizer',
-        description: 'Get key insights and summaries from your spreadsheets instantly.',
-        icon: Brain,
-        path: 'aisheet',
-        pro: false,
-        gradient: 'bg-gradient-to-r from-purple-500 to-pink-500'
-    },
+//     {
+//         title: 'AI Sheet Summarizer',
+//         description: 'Get key insights and summaries from your spreadsheets instantly.',
+//         icon: Brain,
+//         path: 'aisheet',
+//         pro: false,
+//         gradient: 'bg-gradient-to-r from-purple-500 to-pink-500'
+//     },
     
-    {
-        title: 'Export Wizard',
-        description: 'Export your data to various formats like Excel, CSV, and JSON.',
-        icon: FileDown,
-        path: 'exportwizard',
-        pro: false,
-        gradient: 'bg-gradient-to-r from-green-500 to-teal-500'
-    }
+//     {
+//         title: 'Export Wizard',
+//         description: 'Export your data to various formats like Excel, CSV, and JSON.',
+//         icon: FileDown,
+//         path: 'exportwizard',
+//         pro: false,
+//         gradient: 'bg-gradient-to-r from-green-500 to-teal-500'
+//     }
+// ];
+
+
+const tools = [
+  {
+    title: 'Chart Builder',
+    description: 'Create stunning, publication-quality charts from your data.',
+    icon: BarChart3,
+    path: 'chartbuilder',
+    gradient: 'bg-gradient-to-r from-teal-400 to-cyan-500'
+  },
+  {
+    title: 'AI Sheet Summarizer',
+    description: 'Get key insights and summaries from your spreadsheets instantly.',
+    icon: Brain,
+    path: 'aisheet',
+    gradient: 'bg-gradient-to-r from-purple-500 to-pink-500'
+  },
+  {
+    title: 'Formula Master',
+    description: 'Write and explain Excel formulas with AI.',
+    icon: Calculator,   // make sure to import Calculator from lucide-react
+    path: 'formulamaster',
+    gradient: 'bg-gradient-to-r from-green-500 to-emerald-500'
+  },
+  {
+    title: 'Error & Trend Detector',
+    description: 'Identify data issues and discover patterns automatically.',
+    icon: AlertTriangle, // import AlertTriangle from lucide-react
+    path: 'detect',
+    gradient: 'bg-gradient-to-r from-orange-500 to-red-500'
+  },
+  {
+    title: 'Export Wizard',
+    description: 'Export your data to various formats like Excel, CSV, and JSON.',
+    icon: FileDown,
+    path: 'exportwizard',
+    gradient: 'bg-gradient-to-r from-blue-500 to-indigo-500'
+  }
 ];
 
   const handleToolClick = (route: string) => {
@@ -18092,16 +19020,39 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isSidebarOpen, onSearch, 
         </button>
 
         {/* Logo Section */}
-        <div className="flex items-center space-x-3 lg:ml-0 ml-2 flex-shrink-0 min-w-0">
+        {/* <div className="flex items-center space-x-3 lg:ml-0 ml-2 flex-shrink-0 min-w-0">
           <div className="relative flex items-center h-20 overflow-hidden">
-            <img
-              src="/nexaflow-logo-header.png"
-              alt="NexaFlow AI"
-              className="h-12 w-auto object-contain transition-all duration-300"
-            />
+               <img src="/nexaflow-logo-header2.png" alt="nexaFlow AI" className={`h-16 md:h-20 lg:h-24 w-auto rounded-lg transition-all duration-300 ${
+              isDarkMode ? 'filter brightness-0 invert' : 'filter brightness-0'
+            }`} />
           </div>
-        </div>
+        </div> */}
 
+{/* <div className="flex items-center justify-center lg:justify-start flex-shrink-0">
+  <div className="flex items-center">
+    <img 
+      src="/nexaflow-logo-header2.png" 
+      alt="NexaFlow AI" 
+      className={`h-12 md:h-14 lg:h-16 w-auto rounded-lg transition-all duration-300 ${
+        isDarkMode ? 'filter brightness-0 invert' : 'filter brightness-0'
+      }`} 
+    />
+  </div>
+</div> */}
+
+
+
+<div className="flex items-center justify-center lg:justify-start flex-shrink-0">
+  <div className="flex items-center">
+    <img 
+      src="/nexaflow-logo-header2.png" 
+      alt="NexaFlow AI" 
+      className={`h-16 md:h-20 lg:h-24 w-auto rounded-lg transition-all duration-300 ${
+        isDarkMode ? 'filter brightness-0 invert' : 'filter brightness-0'
+      }`} 
+    />
+  </div>
+</div>
         {/* Search Bar */}
         <div className="hidden md:flex items-center flex-1 max-w-md mx-4 lg:mx-8">
           <div className="relative w-full">
@@ -18281,9 +19232,79 @@ export default MailCraft;
 FILE: .\frontend\src\components\premium\components\PDFHub.tsx
 ====================================================================================================
 
+// import React from 'react';
+// import ToolCard from './ToolCard';
+// import { FileText, MessageSquare, FileDown } from 'lucide-react';
+// import { useOutletContext, useNavigate } from 'react-router-dom';
+
+// interface PDFHubProps {
+//   isDarkMode?: boolean;
+// }
+
+// const PDFHub: React.FC<PDFHubProps> = () => {
+//   const outletContext = useOutletContext<{ isDarkMode?: boolean }>() || {};
+//   const isDarkMode = outletContext.isDarkMode ?? false;
+//   const navigate = useNavigate();
+//   const tools = [
+//     {
+//       title: 'PDF Brain',
+//       description: 'Intelligent PDF summarization and analysis',
+//       icon: FileText,
+//       gradient: 'bg-gradient-to-r from-purple-500 to-indigo-500',
+//       onClick: () => navigate('/premium/pdfhub/brain'),
+//     },
+//     {
+//       title: 'PDF Chat Agent',
+//       description: 'Ask questions about your PDF documents',
+//       icon: MessageSquare,
+//       gradient: 'bg-gradient-to-r from-blue-500 to-cyan-500',
+//       onClick: () => navigate('/premium/pdfhub/chatagent'),
+//     },
+    
+//     {
+//       title: 'PDF Converter Pro',
+//       description: 'Convert PDFs to Word, Excel, and more',
+//       icon: FileDown,
+//       gradient: 'bg-gradient-to-r from-orange-500 to-red-500',
+//         onClick: () => navigate('/premium/pdfhub/converterpro'),
+//     },
+   
+//   ];
+
+//   return (
+//     <div className="space-y-6 w-full">
+//       <div className="mb-12"> {/* Increased margin-bottom for a larger, consistent gap */}
+//         <h1 className={`text-3xl font-bold mb-2 ${
+//           isDarkMode ? 'text-gray-100' : 'text-white'
+//         }`}>PDF Intelligence Hub</h1>
+//         <p className={`${
+//           isDarkMode ? 'text-gray-400' : 'text-white'
+//         }`}>Automate and chat with your documents</p>
+//       </div>
+
+//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full items-start justify-start">
+//         {tools.map((tool) => (
+//           <ToolCard
+//             key={tool.title}
+//             title={tool.title}
+//             description={tool.description}
+//             icon={tool.icon}
+//             gradient={tool.gradient}
+//             isDarkMode={isDarkMode}
+//             onClick={tool.onClick || (() => console.log(`Opening ${tool.title}`))}
+//           />
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default PDFHub;
+
+
 import React from 'react';
 import ToolCard from './ToolCard';
-import { FileText, MessageSquare, FileDown } from 'lucide-react';
+import { FileText, MessageSquare, FileDown, Package, Database } from 'lucide-react'; // added Package, Database
 import { useOutletContext, useNavigate } from 'react-router-dom';
 
 interface PDFHubProps {
@@ -18294,6 +19315,7 @@ const PDFHub: React.FC<PDFHubProps> = () => {
   const outletContext = useOutletContext<{ isDarkMode?: boolean }>() || {};
   const isDarkMode = outletContext.isDarkMode ?? false;
   const navigate = useNavigate();
+
   const tools = [
     {
       title: 'PDF Brain',
@@ -18309,26 +19331,49 @@ const PDFHub: React.FC<PDFHubProps> = () => {
       gradient: 'bg-gradient-to-r from-blue-500 to-cyan-500',
       onClick: () => navigate('/premium/pdfhub/chatagent'),
     },
-    
+    {
+      title: 'Smart Data Extractor',
+      description: 'Extract structured data from PDFs automatically',
+      icon: Database,  // or FileSearch, etc.
+      gradient: 'bg-gradient-to-r from-green-500 to-teal-500',
+      onClick: () => navigate('/premium/pdfhub/smartdata'),
+    },
     {
       title: 'PDF Converter Pro',
       description: 'Convert PDFs to Word, Excel, and more',
       icon: FileDown,
       gradient: 'bg-gradient-to-r from-orange-500 to-red-500',
-        onClick: () => navigate('/premium/pdfhub/converterpro'),
+      onClick: () => navigate('/premium/pdfhub/converterpro'),
     },
-   
+    // {
+    //   title: 'Bulk PDF Toolkit',
+    //   description: 'Process multiple PDFs at once – merge, split, compress',
+    //   icon: Package,
+    //   gradient: 'bg-gradient-to-r from-pink-500 to-rose-500',
+    //   onClick: () => {
+    //     // TODO: Create Bulk PDF Toolkit page or show coming soon
+    //     alert('Bulk PDF Toolkit coming soon!');
+    //   },
+    // },
+
+    {
+  title: 'Bulk PDF Toolkit',
+  description: 'Process multiple PDFs at once – merge, split, compress',
+  icon: Package,
+  gradient: 'bg-gradient-to-r from-pink-500 to-rose-500',
+  onClick: () => navigate('/premium/pdfhub/bulk-toolkit'),
+},
   ];
 
   return (
     <div className="space-y-6 w-full">
-      <div className="mb-12"> {/* Increased margin-bottom for a larger, consistent gap */}
-        <h1 className={`text-3xl font-bold mb-2 ${
-          isDarkMode ? 'text-gray-100' : 'text-white'
-        }`}>PDF Intelligence Hub</h1>
-        <p className={`${
-          isDarkMode ? 'text-gray-400' : 'text-white'
-        }`}>Automate and chat with your documents</p>
+      <div className="mb-12">
+        <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-white'}`}>
+          PDF Intelligence Hub
+        </h1>
+        <p className={`${isDarkMode ? 'text-gray-400' : 'text-white'}`}>
+          Automate and chat with your documents
+        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full items-start justify-start">
@@ -18340,7 +19385,7 @@ const PDFHub: React.FC<PDFHubProps> = () => {
             icon={tool.icon}
             gradient={tool.gradient}
             isDarkMode={isDarkMode}
-            onClick={tool.onClick || (() => console.log(`Opening ${tool.title}`))}
+            onClick={tool.onClick}
           />
         ))}
       </div>
@@ -21486,6 +22531,251 @@ const TonePolisher = () => {
 export default TonePolisher;
 
 
+
+
+====================================================================================================
+FILE: .\frontend\src\components\premium\pdf\BulkPDFToolkitPage.tsx
+====================================================================================================
+
+import React, { useState, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { Upload, FileText, Merge, Split, Download, Trash2, AlertCircle } from 'lucide-react';
+import { PDFDocument } from 'pdf-lib';
+import { saveAs } from 'file-saver';
+
+type ToolMode = 'merge' | 'split';
+
+const BulkPDFToolkitPage: React.FC = () => {
+  const [mode, setMode] = useState<ToolMode>('merge');
+  const [files, setFiles] = useState<File[]>([]);
+  const [splitPageRanges, setSplitPageRanges] = useState<string>(''); // e.g., "1-3,4-6,7"
+  const [processing, setProcessing] = useState(false);
+
+  // Dropzone for merge mode (multiple files)
+  const onDropMerge = useCallback((acceptedFiles: File[]) => {
+    setFiles(prev => [...prev, ...acceptedFiles]);
+  }, []);
+
+  // Dropzone for split mode (single file)
+  const onDropSplit = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 0) {
+      setFiles([acceptedFiles[0]]);
+    }
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: mode === 'merge' ? onDropMerge : onDropSplit,
+    accept: { 'application/pdf': ['.pdf'] },
+    multiple: mode === 'merge',
+  });
+
+  const removeFile = (index: number) => {
+    setFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Merge PDFs
+  const handleMerge = async () => {
+    if (files.length < 2) {
+      alert('Please select at least 2 PDF files to merge.');
+      return;
+    }
+    setProcessing(true);
+    try {
+      const mergedPdf = await PDFDocument.create();
+      for (const file of files) {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await PDFDocument.load(arrayBuffer);
+        const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+        pages.forEach(page => mergedPdf.addPage(page));
+      }
+      const pdfBytes = await mergedPdf.save();
+      const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
+      saveAs(blob, 'merged.pdf');
+    } catch (error) {
+      console.error('Merge failed:', error);
+      alert('Failed to merge PDFs. Please check the files and try again.');
+    }
+    setProcessing(false);
+  };
+
+  // Split PDF by page ranges
+  const handleSplit = async () => {
+    if (files.length !== 1) {
+      alert('Please select exactly one PDF file to split.');
+      return;
+    }
+    if (!splitPageRanges.trim()) {
+      alert('Please enter page ranges (e.g., 1-3,4-6,7).');
+      return;
+    }
+
+    setProcessing(true);
+    try {
+      const arrayBuffer = await files[0].arrayBuffer();
+      const sourcePdf = await PDFDocument.load(arrayBuffer);
+      const totalPages = sourcePdf.getPageCount();
+
+      // Parse ranges: "1-3,4-6,7" -> [[1,3],[4,6],[7,7]]
+      const ranges = splitPageRanges.split(',').map(part => {
+        const trimmed = part.trim();
+        if (trimmed.includes('-')) {
+          const [start, end] = trimmed.split('-').map(Number);
+          return { start, end: end || start };
+        } else {
+          const page = Number(trimmed);
+          return { start: page, end: page };
+        }
+      });
+
+      for (let i = 0; i < ranges.length; i++) {
+        const { start, end } = ranges[i];
+        if (isNaN(start) || isNaN(end) || start < 1 || end > totalPages || start > end) {
+          alert(`Invalid range: ${ranges[i].start}-${ranges[i].end}. Pages 1-${totalPages}`);
+          return;
+        }
+        const newPdf = await PDFDocument.create();
+        const pageIndices = Array.from({ length: end - start + 1 }, (_, idx) => start - 1 + idx);
+        const pages = await newPdf.copyPages(sourcePdf, pageIndices);
+        pages.forEach(page => newPdf.addPage(page));
+        const pdfBytes = await newPdf.save();
+        const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
+        saveAs(blob, `split_${start}-${end}.pdf`);
+      }
+      alert('Split completed!');
+    } catch (error) {
+      console.error('Split failed:', error);
+      alert('Failed to split PDF. Check the page ranges.');
+    }
+    setProcessing(false);
+  };
+
+  const handleCompress = () => {
+    alert('Compression requires server-side processing. This feature will be available soon.');
+  };
+
+  const clearFiles = () => setFiles([]);
+
+  return (
+    <div className="w-full max-w-6xl mx-auto bg-[#181c2a] rounded-2xl shadow-2xl p-8 mt-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-extrabold text-white">Bulk PDF Toolkit</h1>
+        <p className="text-blue-300 mt-2">Merge, split, and compress multiple PDFs</p>
+      </div>
+
+      {/* Mode Tabs */}
+      <div className="flex gap-4 mb-8 border-b border-blue-900 pb-2">
+        <button
+          onClick={() => { setMode('merge'); clearFiles(); }}
+          className={`px-6 py-2 rounded-t-lg font-semibold transition ${mode === 'merge' ? 'bg-blue-600 text-white' : 'text-blue-300 hover:text-white'}`}
+        >
+          <Merge className="inline w-4 h-4 mr-2" /> Merge PDFs
+        </button>
+        <button
+          onClick={() => { setMode('split'); clearFiles(); setSplitPageRanges(''); }}
+          className={`px-6 py-2 rounded-t-lg font-semibold transition ${mode === 'split' ? 'bg-blue-600 text-white' : 'text-blue-300 hover:text-white'}`}
+        >
+          <Split className="inline w-4 h-4 mr-2" /> Split PDF
+        </button>
+        <button
+          onClick={handleCompress}
+          className="px-6 py-2 rounded-t-lg font-semibold text-blue-300 hover:text-white"
+        >
+          <Download className="inline w-4 h-4 mr-2" /> Compress
+        </button>
+      </div>
+
+      {/* Dropzone Area */}
+      <div
+        {...getRootProps()}
+        className={`border-2 border-dashed rounded-xl p-10 cursor-pointer transition text-center ${
+          isDragActive ? 'border-blue-400 bg-blue-950' : 'border-blue-900 hover:border-blue-400'
+        }`}
+      >
+        <input {...getInputProps()} />
+        <Upload className="w-12 h-12 mx-auto mb-4 text-blue-400" />
+        {mode === 'merge' ? (
+          <p className="text-blue-200">Drop PDF files here or click to browse (multiple files)</p>
+        ) : (
+          <p className="text-blue-200">Drop a single PDF file here to split</p>
+        )}
+        <p className="text-blue-400 text-sm mt-2">Max 20MB per file</p>
+      </div>
+
+      {/* File List */}
+      {files.length > 0 && (
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold text-white mb-3">
+            {mode === 'merge' ? `${files.length} file(s) selected` : 'Selected file:'}
+          </h3>
+          <div className="space-y-2">
+            {files.map((file, idx) => (
+              <div key={idx} className="flex items-center justify-between bg-[#23263a] p-3 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <FileText className="w-5 h-5 text-blue-400" />
+                  <span className="text-blue-100">{file.name}</span>
+                  <span className="text-xs text-blue-400">({(file.size / 1024).toFixed(0)} KB)</span>
+                </div>
+                <button onClick={() => removeFile(idx)} className="text-red-400 hover:text-red-300">
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Split Options */}
+      {mode === 'split' && files.length === 1 && (
+        <div className="mt-6">
+          <label className="block text-blue-200 mb-2">Page ranges (comma separated)</label>
+          <input
+            type="text"
+            value={splitPageRanges}
+            onChange={e => setSplitPageRanges(e.target.value)}
+            placeholder="e.g., 1-3,4-6,7"
+            className="w-full px-4 py-2 rounded-lg bg-[#23263a] border border-blue-900 text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <p className="text-xs text-blue-400 mt-1">Example: "1-3,4-6,7" creates three PDFs: pages 1-3, 4-6, and page 7.</p>
+        </div>
+      )}
+
+      {/* Action Buttons */}
+      <div className="mt-8 flex gap-4 justify-end">
+        <button
+          onClick={clearFiles}
+          className="px-6 py-2 rounded-lg bg-gray-700 text-white hover:bg-gray-600 transition"
+        >
+          Clear
+        </button>
+        {mode === 'merge' && (
+          <button
+            onClick={handleMerge}
+            disabled={files.length < 2 || processing}
+            className="px-8 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold disabled:opacity-50 transition"
+          >
+            {processing ? 'Merging...' : 'Merge PDFs'}
+          </button>
+        )}
+        {mode === 'split' && (
+          <button
+            onClick={handleSplit}
+            disabled={files.length !== 1 || !splitPageRanges.trim() || processing}
+            className="px-8 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold disabled:opacity-50 transition"
+          >
+            {processing ? 'Splitting...' : 'Split PDF'}
+          </button>
+        )}
+      </div>
+
+      <div className="mt-6 text-center text-blue-400 text-sm">
+        <AlertCircle className="inline w-4 h-4 mr-1" />
+        All processing is done in your browser – your files are never uploaded.
+      </div>
+    </div>
+  );
+};
+
+export default BulkPDFToolkitPage;
 
 
 ====================================================================================================

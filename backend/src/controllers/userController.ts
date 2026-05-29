@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { JwtPayload,VerifyErrors } from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
 import { OAuth2Client } from 'google-auth-library';
+
 
 const passwordMinLength = 8;
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -262,6 +263,33 @@ const refreshSchema = z.object({
     refreshToken: z.string()
 });
 
+// export const refreshToken = (req: Request, res: Response) => {
+//     const parsed = refreshSchema.safeParse(req.body);
+//     if (!parsed.success) return res.status(400).json({
+//         error: parsed.error.errors[0] && parsed.error.errors[0].message ? parsed.error.errors[0].message : 'Invalid input'
+//     });
+//     const { refreshToken } = parsed.data;
+//     const accessSecret = process.env.JWT_ACCESS_SECRET as string;
+//     const refreshSecret = process.env.JWT_REFRESH_SECRET as string;
+//     jwt.verify(refreshToken, refreshSecret, (err, decoded) => {
+//         if (err || !decoded || typeof decoded === 'string') return res.status(401).json({
+//             error: 'Invalid refresh token'
+//         });
+//         // decoded is JwtPayload
+//         const accessToken = jwt.sign({
+//             id: (decoded as JwtPayload).id,
+//             role: (decoded as JwtPayload).role,
+//             username: (decoded as JwtPayload).username
+//         }, accessSecret, {
+//             expiresIn: (process.env.JWT_ACCESS_EXPIRES_IN || '1h') as any
+//         });
+//         res.json({
+//             accessToken
+//         });
+//     });
+// };
+
+
 export const refreshToken = (req: Request, res: Response) => {
     const parsed = refreshSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({
@@ -270,21 +298,18 @@ export const refreshToken = (req: Request, res: Response) => {
     const { refreshToken } = parsed.data;
     const accessSecret = process.env.JWT_ACCESS_SECRET as string;
     const refreshSecret = process.env.JWT_REFRESH_SECRET as string;
-    jwt.verify(refreshToken, refreshSecret, (err, decoded) => {
+    jwt.verify(refreshToken, refreshSecret, (err: VerifyErrors | null, decoded: any) => {
         if (err || !decoded || typeof decoded === 'string') return res.status(401).json({
             error: 'Invalid refresh token'
         });
-        // decoded is JwtPayload
         const accessToken = jwt.sign({
-            id: (decoded as JwtPayload).id,
-            role: (decoded as JwtPayload).role,
-            username: (decoded as JwtPayload).username
+            id: decoded.id,
+            role: decoded.role,
+            username: decoded.username
         }, accessSecret, {
             expiresIn: (process.env.JWT_ACCESS_EXPIRES_IN || '1h') as any
         });
-        res.json({
-            accessToken
-        });
+        res.json({ accessToken });
     });
 };
 
