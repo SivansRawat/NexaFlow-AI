@@ -1,10 +1,6 @@
 ```markdown
 # NexaFlow AI
 
-[![Live Demo](https://img.shields.io/badge/demo-live-green)](https://www.nexaflowai.com)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
-
 **NexaFlow AI** is  all‑in‑one AI automation platform for businesses. It provides 15+ AI‑powered tools including Excel analysis, PDF chat, email generation, social media caption writing, and bulk document processing – all powered by a self‑hosted RAG (Retrieval‑Augmented Generation) pipeline with local LLMs.
 
 ---
