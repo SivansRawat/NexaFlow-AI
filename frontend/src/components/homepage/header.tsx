@@ -96,14 +96,24 @@ export function Header() {
       >
         <div className="flex items-center justify-between px-4 sm:px-6 h-full">
           {/* Logo - Fixed positioning to stay left-aligned */}
-          <div className="flex items-center space-x-3 flex-shrink-0">
+          {/* <div className="flex items-center space-x-3 flex-shrink-0">
             <img 
               // src="/nexaflow-logo-header.png" 
               src={isDarkMode ? "/nexaflow-logo2.png" : "/nexaflow-logo2.png"}
               alt="NexaFlow AI" 
               className="h-12 sm:h-12 md:h-14 w-auto object-contain"            />
-          </div>
-
+          </div> */}
+<div className="flex items-center justify-center lg:justify-start flex-shrink-0">
+  <div className="flex items-center">
+    <img 
+      src="/nexaflow-logo-header2.png" 
+      alt="NexaFlow AI" 
+      className={`h-16 md:h-20 lg:h-24 w-auto rounded-lg transition-all duration-300 ${
+        isDarkMode ? 'filter brightness-0 invert' : 'filter brightness-0'
+      }`} 
+    />
+  </div>
+</div>
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {navItems.map((item) => (

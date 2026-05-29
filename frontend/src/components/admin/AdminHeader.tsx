@@ -47,7 +47,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onMenuToggle, isSidebarOpen, 
         </button>
 
         {/* Logo Section */}
-        <div className="flex items-center space-x-3 lg:ml-0 ml-2 flex-shrink-0 min-w-0">
+        {/* <div className="flex items-center space-x-3 lg:ml-0 ml-2 flex-shrink-0 min-w-0">
           <div className="relative flex items-center h-20 overflow-hidden">
             <img
               src={isDarkMode ? "/nexaflow-logo2.png" : "/nexaflow-logo2.png"}
@@ -56,8 +56,20 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onMenuToggle, isSidebarOpen, 
               className="h-12 w-auto object-contain transition-all duration-300"
             />
           </div>
-        </div>
+        </div> */}
 
+
+<div className="flex items-center justify-center lg:justify-start flex-shrink-0">
+  <div className="flex items-center">
+    <img 
+      src="/nexaflow-logo-header2.png" 
+      alt="NexaFlow AI" 
+      className={`h-16 md:h-20 lg:h-24 w-auto rounded-lg transition-all duration-300 ${
+        isDarkMode ? 'filter brightness-0 invert' : 'filter brightness-0'
+      }`} 
+    />
+  </div>
+</div>
         {/* Search Bar */}
         <div className="hidden md:flex items-center flex-1 max-w-md mx-4 lg:mx-8">
           <div className="relative w-full">
