@@ -108,13 +108,46 @@ Always respond in a helpful, professional manner.`;
   }
 };
 
+// export const getTonePolisherChatById = async (req: Request, res: Response) => {
+//   try {
+//     const userId = (req as any).user?.id;
+//     if (!userId) return res.status(401).json({ error: 'User not authenticated.' });
+
+//     const { chat_id } = req.params;
+//     const chatId = parseInt(chat_id);
+
+//     if (isNaN(chatId)) {
+//       return res.status(400).json({ error: 'Invalid chat ID' });
+//     }
+
+//     const chat = await prisma.tonePolisherChat.findFirst({
+//       where: { id: chatId, userId },
+//       include: {
+//         messages: {
+//           orderBy: { createdAt: 'asc' }
+//         }
+//       }
+//     });
+
+//     if (!chat) {
+//       return res.status(404).json({ error: 'Chat not found' });
+//     }
+
+//     res.json(chat);
+//   } catch (error) {
+//     console.error('Get tone polisher chat error:', error);
+//     res.status(500).json({ error: 'Failed to retrieve chat' });
+//   }
+// };
+
+
 export const getTonePolisherChatById = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
     if (!userId) return res.status(401).json({ error: 'User not authenticated.' });
 
     const { chat_id } = req.params;
-    const chatId = parseInt(chat_id);
+    const chatId = parseInt(String(chat_id));  // ✅ FIXED: ensure string type
 
     if (isNaN(chatId)) {
       return res.status(400).json({ error: 'Invalid chat ID' });

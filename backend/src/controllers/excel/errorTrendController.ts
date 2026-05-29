@@ -260,7 +260,7 @@
 //       return res.status(401).json({ error: 'Authentication required' });
 //     }
 
-//     const analysisId = parseInt(req.params.id);
+//     const analysisId = parseInt(String(req.params.id));
 //     if (isNaN(analysisId)) {
 //       return res.status(400).json({ error: 'Invalid analysis ID' });
 //     }
@@ -346,7 +346,7 @@
 //       return res.status(401).json({ error: 'Authentication required' });
 //     }
 
-//     const analysisId = parseInt(req.params.id);
+//     const analysisId = parseInt(String(req.params.id));
 //     if (isNaN(analysisId)) {
 //       return res.status(400).json({ error: 'Invalid analysis ID' });
 //     }
@@ -722,7 +722,7 @@ export const getAnalysisById = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    const analysisId = parseInt(req.params.id);
+    const analysisId = parseInt(String(req.params.id));
     if (isNaN(analysisId)) {
       return res.status(400).json({ error: 'Invalid analysis ID' });
     }
@@ -808,7 +808,7 @@ export const deleteAnalysis = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    const analysisId = parseInt(req.params.id);
+    const analysisId = parseInt(String(req.params.id));
     if (isNaN(analysisId)) {
       return res.status(400).json({ error: 'Invalid analysis ID' });
     }
