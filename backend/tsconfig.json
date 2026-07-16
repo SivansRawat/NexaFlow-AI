@@ -1,6 +1,6 @@
 
 
-
+// // backend/tsconfig.json
 // {
 //   "compilerOptions": {
 //     "target": "ES2020",
@@ -21,7 +21,6 @@
 
 
 
-// backend/tsconfig.json
 {
   "compilerOptions": {
     "target": "ES2020",
@@ -33,8 +32,7 @@
     "moduleResolution": "node16",
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "types": ["node", "express"]
+    "resolveJsonModule": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
