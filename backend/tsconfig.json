@@ -1,25 +1,3 @@
-
-
-// // backend/tsconfig.json
-// {
-//   "compilerOptions": {
-//     "target": "ES2020",
-//     "module": "Node16",
-//     "rootDir": "./src",
-//     "outDir": "./dist",
-//     "strict": true,
-//     "esModuleInterop": true,
-//     "moduleResolution": "node16",
-//     "skipLibCheck": true,
-//     "forceConsistentCasingInFileNames": true,
-//     "resolveJsonModule": true,
-//     "types": ["node", "express"]
-//   },
-//   "include": ["src/**/*"],
-//   "exclude": ["node_modules", "dist"]
-// }
-
-
 {
   "compilerOptions": {
     "target": "ES2020",
@@ -28,13 +6,15 @@
     "outDir": "./dist",
     "strict": false,
     "noImplicitAny": false,
+    "noEmitOnError": false,
     "esModuleInterop": true,
     "moduleResolution": "node16",
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "checkJs": false
+    "checkJs": false,
+    "skipDefaultLibCheck": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

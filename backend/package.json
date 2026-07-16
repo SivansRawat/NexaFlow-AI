@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "Backend API for NexaFlow AI SaaS platform",
   "main": "dist/app.js",
-  "scripts": {
+"scripts": {
     "start": "node dist/app.js",
     "dev": "nodemon --exec ts-node src/app.ts",
-    "build": "tsc --skipLibCheck --noEmitOnError false",
+    "build": "tsc --noEmitOnError false --skipLibCheck",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
