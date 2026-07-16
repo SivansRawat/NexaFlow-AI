@@ -10,6 +10,15 @@
 
 // // Middleware
 // app.use(helmet());
+// // const allowedOrigins = [
+// //   'https://nexaflowai.com',
+// //   'https://www.nexaflowai.com',
+// //   'https://hoppscotch.io',
+// //   'http://localhost:3000',
+// //   'http://localhost:5173',
+// //   'http://127.0.0.1:5173',
+// // ];
+
 // const allowedOrigins = [
 //   'https://nexaflowai.com',
 //   'https://www.nexaflowai.com',
@@ -17,10 +26,11 @@
 //   'http://localhost:3000',
 //   'http://localhost:5173',
 //   'http://127.0.0.1:5173',
+//   'https://nexa-flow-ai.vercel.app',  // ✅ Add your Vercel frontend URL
 // ];
 
 // app.use(cors({
-//   origin: function (origin, callback) {
+//   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
 //     // allow requests with no origin (like curl or Postman)
 //     if (!origin) return callback(null, true);
 //     if (allowedOrigins.includes(origin)) {
@@ -180,7 +190,6 @@
 
 // // Note: robots.txt and sitemap.xml are served by the frontend at the root domain
 
-
 // // FIXED: Single error handler (removed duplicate)
 // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 //   console.error('❌ Global error handler caught:', err);
@@ -208,32 +217,42 @@
 // const PORT = process.env.PORT || 5000;
 // app.listen(PORT, () => {
 //   console.log(`🚀 Server started on port ${PORT}`);
-  
 // });
 
 
 
 
+
+
+
+
+// backend/src/app.ts
 import dotenv from 'dotenv';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import path from 'path';
+import fs from 'fs';
 // Removed dynamic sitemap/robots serving; now served statically from frontend
+
+// Import new modules
+import healthRoutes from './routes/health';
+import { apiRateLimiter, ragRateLimiter, uploadRateLimiter } from './middlewares/rateLimiter';
+import { errorHandler, AppError } from './middlewares/errorHandler';
+import { logger } from './utils/logger';
 
 dotenv.config();
 
 const app = express();
 
+// Ensure logs directory exists
+const logDir = path.join(process.cwd(), 'logs');
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
+
 // Middleware
 app.use(helmet());
-// const allowedOrigins = [
-//   'https://nexaflowai.com',
-//   'https://www.nexaflowai.com',
-//   'https://hoppscotch.io',
-//   'http://localhost:3000',
-//   'http://localhost:5173',
-//   'http://127.0.0.1:5173',
-// ];
 
 const allowedOrigins = [
   'https://nexaflowai.com',
@@ -242,7 +261,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
   'http://127.0.0.1:5173',
-  'https://nexa-flow-ai.vercel.app',  // ✅ Add your Vercel frontend URL
+  'https://nexa-flow-ai.vercel.app',
 ];
 
 app.use(cors({
@@ -262,10 +281,16 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Health check
+// Health check - basic
 app.get('/api/health', (req: Request, res: Response) => res.json({
   status: 'ok server is running'
 }));
+
+// Apply rate limiting to API routes
+app.use('/api/rag', ragRateLimiter);
+app.use('/api/ai', apiRateLimiter);
+app.use('/api/pdf/chatagent', uploadRateLimiter);
+app.use('/api/pdf/smartdata', uploadRateLimiter);
 
 // Route imports with per-route error handling so one optional module cannot
 // block the core auth routes from mounting.
@@ -273,20 +298,22 @@ const safeLoadRoute = (routePath: string, label: string) => {
   try {
     const routeModule = require(routePath);
     const route = routeModule.default;
-    console.log(`${label} routes imported successfully:`, typeof route);
+    logger.info(`${label} routes imported successfully`);
     return route;
   } catch (error) {
-    console.error(`❌ ERROR IMPORTING ${label} ROUTES:`, error);
+    logger.error(`❌ ERROR IMPORTING ${label} ROUTES:`, error);
     if (error instanceof Error) {
-      console.error('Error details:', error.message);
-      console.error('Stack trace:', error.stack);
-    } else {
-      console.error('Error details:', error);
+      logger.error('Error details:', error.message);
+      logger.error('Stack trace:', error.stack);
     }
     return null;
   }
 };
 
+// Import health routes
+app.use('/api', healthRoutes);
+
+// Import all other routes
 const userRoutes = safeLoadRoute('./routes/user', 'User');
 if (userRoutes) app.use('/api/user', userRoutes);
 
@@ -406,31 +433,34 @@ app.get('/api/debug/routes', (req: Request, res: Response) => {
 
 // Note: robots.txt and sitemap.xml are served by the frontend at the root domain
 
-// FIXED: Single error handler (removed duplicate)
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error('❌ Global error handler caught:', err);
-  console.error('Error message:', err.message);
-  console.error('Error stack:', err.stack);
-  res.status(500).json({ 
-    message: 'Internal Server Error',
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
-  });
-});
+// Test LLM endpoint (for debugging)
+import { testLLMConnection } from './controllers/testLLM';
+app.get('/api/test-llm', testLLMConnection);
 
-// 404 handler for all other routes
+// === ERROR HANDLING MIDDLEWARE ===
+// All error handling middleware must come AFTER all route definitions
+
+// 404 handler for unmatched routes
 app.use('*', (req: Request, res: Response) => {
+  const error = new AppError(`Route not found: ${req.method} ${req.originalUrl}`, 404);
   res.status(404).json({ 
-    error: 'Route not found',
+    success: false,
+    error: error.message,
+    code: 'NOT_FOUND',
     method: req.method,
     url: req.originalUrl
   });
 });
 
-// Test LLM endpoint (for debugging)
-import { testLLMConnection } from './controllers/testLLM';
-app.get('/api/test-llm', testLLMConnection);
+// Global error handler (must be last)
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server started on port ${PORT}`);
+  logger.info(`🚀 Server started on port ${PORT}`);
+  logger.info(`📚 Environment: ${process.env.NODE_ENV || 'development'}`);
+  logger.info(`🔗 Health check: http://localhost:${PORT}/api/health`);
+  logger.info(`🔗 RAG health: http://localhost:${PORT}/api/rag/rag/health`);
 });
+
+export default app;

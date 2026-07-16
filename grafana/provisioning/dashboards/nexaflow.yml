@@ -1,0 +1,12 @@
+# grafana/provisioning/dashboards/nexaflow.yml
+apiVersion: 1
+
+providers:
+  - name: 'NexaFlow AI'
+    orgId: 1
+    folder: 'NexaFlow AI'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

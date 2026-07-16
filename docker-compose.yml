@@ -1,3 +1,181 @@
+
+
+
+
+
+
+# services:
+#   postgres:
+#     image: postgres:16-alpine
+#     container_name: nexaflow_postgres
+#     ports:
+#       - "5433:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     environment:
+#       - POSTGRES_USER=nexaflow
+#       - POSTGRES_PASSWORD=nexaflow_secure_password
+#       - POSTGRES_DB=nexaflow
+#     restart: unless-stopped
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U nexaflow"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+#     networks:
+#       - nexaflow-network
+#     deploy:
+#       resources:
+#         limits:
+#           memory: 1G
+#           cpus: '0.5'
+#         reservations:
+#           memory: 256M
+
+#   redis:
+#     image: redis:7-alpine
+#     container_name: nexaflow_redis
+#     ports:
+#       - "6379:6379"
+#     volumes:
+#       - redis_data:/data
+#     restart: unless-stopped
+#     healthcheck:
+#       test: ["CMD", "redis-cli", "ping"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 3
+#     networks:
+#       - nexaflow-network
+#     command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+#     deploy:
+#       resources:
+#         limits:
+#           memory: 512M
+#           cpus: '0.5'
+#         reservations:
+#           memory: 128M
+
+#   ollama:
+#     image: ollama/ollama:latest
+#     container_name: nexaflow_ollama
+#     ports:
+#       - "18080:11434"
+#     volumes:
+#       - ollama_data:/root/.ollama
+#     environment:
+#       - OLLAMA_HOST=0.0.0.0
+#       - OLLAMA_KEEP_ALIVE=30m
+#       - OLLAMA_NUM_PARALLEL=4
+#     restart: unless-stopped
+#     networks:
+#       - nexaflow-network
+#     entrypoint: ["/bin/sh", "-c"]
+#     command:
+#       - |
+#         ollama serve &
+#         pid=$$!
+#         sleep 10
+#         ollama pull llama3.2:latest
+#         ollama pull nomic-embed-text:latest
+#         wait $$pid
+#     deploy:
+#       resources:
+#         limits:
+#           memory: 8G
+#           cpus: '2'
+#         reservations:
+#           memory: 4G
+
+#   chromadb:
+#     image: chromadb/chroma:latest
+#     container_name: nexaflow_chroma
+#     ports:
+#       - "8000:8000"
+#     volumes:
+#       - chroma_data:/chroma/chroma
+#     environment:
+#       - IS_PERSISTENT=TRUE
+#       - CHROMA_SERVER_AUTH_CREDENTIALS_PROVIDER=chromadb.auth.token_authn.TokenAuthenticationServerProvider
+#       - CHROMA_SERVER_AUTH_CREDENTIALS=nexaflow_secret_token
+#       - CHROMA_SERVER_AUTH_PROVIDER=chromadb.auth.token_authn.TokenAuthServerProvider
+#       - CHROMA_SERVER_GRPC_MAX_MESSAGE_LENGTH=104857600
+#     restart: unless-stopped
+#     networks:
+#       - nexaflow-network
+#     deploy:
+#       resources:
+#         limits:
+#           memory: 2G
+#           cpus: '1'
+#         reservations:
+#           memory: 512M
+
+#   prometheus:
+#     image: prom/prometheus:latest
+#     container_name: nexaflow_prometheus
+#     ports:
+#       - "9090:9090"
+#     volumes:
+#       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+#       - prometheus_data:/prometheus
+#     command:
+#       - '--config.file=/etc/prometheus/prometheus.yml'
+#       - '--storage.tsdb.path=/prometheus'
+#       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+#       - '--web.console.templates=/usr/share/prometheus/consoles'
+#     restart: unless-stopped
+#     networks:
+#       - nexaflow-network
+#     deploy:
+#       resources:
+#         limits:
+#           memory: 512M
+#           cpus: '0.5'
+
+#   grafana:
+#     image: grafana/grafana:latest
+#     container_name: nexaflow_grafana
+#     ports:
+#       - "3001:3000"
+#     volumes:
+#       - grafana_data:/var/lib/grafana
+#       - ./grafana/provisioning:/etc/grafana/provisioning
+#     environment:
+#       - GF_SECURITY_ADMIN_PASSWORD=admin
+#       - GF_INSTALL_PLUGINS=grafana-piechart-panel
+#       - GF_AUTH_ANONYMOUS_ENABLED=false
+#     restart: unless-stopped
+#     networks:
+#       - nexaflow-network
+#     depends_on:
+#       - prometheus
+#     deploy:
+#       resources:
+#         limits:
+#           memory: 256M
+#           cpus: '0.3'
+
+# volumes:
+#   postgres_data:
+#     driver: local
+#   redis_data:
+#     driver: local
+#   ollama_data:
+#     driver: local
+#   chroma_data:
+#     driver: local
+#   prometheus_data:
+#     driver: local
+#   grafana_data:
+#     driver: local
+
+# networks:
+#   nexaflow-network:
+#     driver: bridge
+
+
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -16,6 +194,22 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - nexaflow-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: nexaflow_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       - nexaflow-network
 
@@ -39,6 +233,7 @@ services:
         pid=$$!
         sleep 10
         ollama pull llama3.2:latest
+        ollama pull nomic-embed-text:latest
         wait $$pid
 
   chromadb:
@@ -50,20 +245,17 @@ services:
       - chroma_data:/chroma/chroma
     environment:
       - IS_PERSISTENT=TRUE
-      - CHROMA_SERVER_AUTH_CREDENTIALS_PROVIDER=chromadb.auth.token_authn.TokenAuthenticationServerProvider
-      - CHROMA_SERVER_AUTH_CREDENTIALS=nexaflow_secret_token
-      - CHROMA_SERVER_AUTH_PROVIDER=chromadb.auth.token_authn.TokenAuthServerProvider
+      - ANONYMIZED_TELEMETRY=FALSE
+      # Remove auth for local development
     restart: unless-stopped
     networks:
       - nexaflow-network
 
 volumes:
   postgres_data:
-    driver: local
+  redis_data:
   ollama_data:
-    driver: local
   chroma_data:
-    driver: local
 
 networks:
   nexaflow-network:
