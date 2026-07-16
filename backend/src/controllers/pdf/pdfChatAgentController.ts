@@ -57,7 +57,8 @@ export const chatWithPDF = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'User not authenticated. Please log in.' });
     }
     
-    const files = (req.files as Express.Multer.File[]) || [];
+    // const files = (req.files as any[]) || [];
+    const files = (req.files as any) || [];
     if (!files.length) {
       return res.status(400).json({ error: 'No PDF files uploaded' });
     }

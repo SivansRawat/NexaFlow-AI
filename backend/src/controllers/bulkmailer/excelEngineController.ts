@@ -8,7 +8,8 @@ export const uploadAndGenerate = async (req: Request, res: Response) => {
     const userId = (req as any).user?.id as number | undefined;
     if (!userId) return res.status(401).json({ error: 'User not authenticated' });
 
-    const file = (req as any).file as Express.Multer.File | undefined;
+    // const file = (req as any).file as any;
+    const file = (req as any).file as any;
     const { prompt, chatId } = req.body as { prompt?: string; chatId?: string };
     if (!file) return res.status(400).json({ error: 'No file uploaded' });
     if (!prompt || typeof prompt !== 'string') return res.status(400).json({ error: 'Prompt is required' });

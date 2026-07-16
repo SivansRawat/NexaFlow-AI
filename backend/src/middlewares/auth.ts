@@ -104,9 +104,18 @@ import jwt, { JwtPayload, VerifyErrors } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../lib/prisma';
 
-declare module 'express-serve-static-core' {
-  interface Request {
-    user?: string | JwtPayload;
+// declare module 'express-serve-static-core' {
+//   interface Request {
+//     user?: string | JwtPayload;
+//   }
+// }
+
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
   }
 }
 
