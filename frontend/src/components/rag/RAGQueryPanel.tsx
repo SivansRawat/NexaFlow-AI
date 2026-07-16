@@ -1,5 +1,9 @@
+
+
+
+
 // // frontend/src/components/rag/RAGQueryPanel.tsx
-// import React, { useState, useCallback } from 'react';
+// import React, { useState, useCallback, useEffect } from 'react';
 // import { useRAGStore } from '../../store/ragStore';
 // import { Send, Loader2, FileText, X } from 'lucide-react';
 
@@ -16,7 +20,7 @@
 //   const { collections, getCollections, queryDocument, error, clearError } = useRAGStore();
 
 //   // Load collections on mount
-//   React.useEffect(() => {
+//   useEffect(() => {
 //     getCollections();
 //   }, [getCollections]);
 
@@ -49,11 +53,11 @@
 //         </label>
 //         <select
 //           value={selectedCollection}
-//           onChange={(e) => setSelectedCollection(e.target.value)}
+//           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCollection(e.target.value)}
 //           className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
 //         >
 //           <option value="">Select a collection...</option>
-//           {collections.map((collection) => (
+//           {collections.map((collection: string) => (
 //             <option key={collection} value={collection}>
 //               {collection}
 //             </option>
@@ -66,7 +70,7 @@
 //         <input
 //           type="text"
 //           value={query}
-//           onChange={(e) => setQuery(e.target.value)}
+//           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
 //           placeholder="Ask a question about your documents..."
 //           className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
 //           disabled={isLoading}
@@ -106,19 +110,20 @@
 
 
 
-
-
 // frontend/src/components/rag/RAGQueryPanel.tsx
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRAGStore } from '../../store/ragStore';
 import { Send, Loader2, FileText, X } from 'lucide-react';
 
 interface RAGQueryPanelProps {
-  userId: number;
+  userId?: number;  // Make it optional with ?
   className?: string;
 }
 
-export const RAGQueryPanel: React.FC<RAGQueryPanelProps> = ({ userId, className = '' }) => {
+export const RAGQueryPanel: React.FC<RAGQueryPanelProps> = ({ 
+  userId: _userId,  // Prefix with underscore to indicate intentionally unused
+  className = '' 
+}) => {
   const [query, setQuery] = useState('');
   const [answer, setAnswer] = useState('');
   const [isLoading, setIsLoading] = useState(false);
