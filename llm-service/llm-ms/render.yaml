@@ -1,0 +1,32 @@
+# llm-service/llm-ms/render.yaml
+services:
+  - type: web
+    name: nexaflow-llm-service
+    runtime: python
+    repo: https://github.com/SivansRawat/NexaFlow-AI
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    rootDir: llm-service/llm-ms
+    envVars:
+      - key: PORT
+        value: 8001
+      - key: OLLAMA_BASE_URL
+        value: https://nexaflow-ollama.onrender.com
+      - key: MODEL_NAME
+        value: llama3.2:latest
+      - key: CHROMA_HOST
+        value: https://nexaflow-chroma.onrender.com
+      - key: CHROMA_PORT
+        value: 443
+      - key: EMBEDDING_MODEL
+        value: nomic-embed-text:latest
+      - key: CHUNK_SIZE
+        value: 1000
+      - key: CHUNK_OVERLAP
+        value: 200
+      - key: CORS_ORIGINS
+        value: https://nexaflow-ai.onrender.com,https://nexaflow-ai.vercel.app
+      - key: LOG_LEVEL
+        value: info
