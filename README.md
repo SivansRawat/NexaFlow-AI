@@ -1,161 +1,219 @@
-```markdown
-# NexaFlow AI
+# 🚀 NexaFlow AI
 
-**NexaFlow AI** is  all‑in‑one AI automation platform for businesses. It provides 15+ AI‑powered tools including Excel analysis, PDF chat, email generation, social media caption writing, and bulk document processing – all powered by a self‑hosted RAG (Retrieval‑Augmented Generation) pipeline with local LLMs.
+[![React](https://img.shields.io/badge/React-18-blue?logo=react)](https://react.dev)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green?logo=fastapi)](https://fastapi.tiangolo.com)
+[![Express](https://img.shields.io/badge/Express-4.18-lightgrey?logo=express)](https://expressjs.com)
+[![Prisma](https://img.shields.io/badge/Prisma-6.13-purple?logo=prisma)](https://prisma.io)
+[![ChromaDB](https://img.shields.io/badge/ChromaDB-1.1.0-orange)](https://trychroma.com)
+[![Docker](https://img.shields.io/badge/Docker-Compose-blue?logo=docker)](https://docker.com)
 
----
+**NexaFlow AI** is an enterprise-grade, all-in-one AI automation platform designed for modern businesses. It provides a suite of 15+ AI-powered modules covering spreadsheets, PDF documents, email generation, copy writing, and template orchestration. 
 
-## 🚀 Features
-
-- **📊 Excel Genius Suite** – AI Sheet Summarizer, Formula Master, Error & Trend Detector, Chart Builder, Export Wizard.
-- **📄 PDF Intelligence Hub** – PDF Brain (summarization), PDF Chat Agent (ask your PDF), Smart Data Extractor, Bulk PDF Toolkit, PDF Converter Pro.
-- **🧠 AI Workmate** – ChatGPT‑level assistant, prompt library, chat history.
-- **✉️ MailCraft AI** – Email Wizard, Subject Line Optimizer, Tone Polisher.
-- **📱 Social Pro Toolkit** – CaptionPro, Hashtag Strategist, Ad Caption Generator, Caption Rewriter.
-- **📑 SmartDocs Generator** – Offer Letter Composer, Smart Invoice Builder.
-- **📨 BulkMailer Pro** – Excel‑to‑Email Engine, Mail Merge AI, Smart Template Library.
-- **💳 Payments & Auth** – Razorpay integration, JWT authentication, Google OAuth, usage limits.
+At its core, the platform operates on a **self-hosted Retrieval-Augmented Generation (RAG)** pipeline utilizing local Large Language Models (LLMs) and vector embeddings, guaranteeing absolute data privacy and substantial API cost reductions compared to public cloud alternatives.
 
 ---
 
-## 🛠️ Tech Stack
+## 🗺️ Architectural Topology
 
-| Layer          | Technologies                                                |
-| -------------- | ----------------------------------------------------------- |
-| **Frontend**   | React 18, TypeScript, Tailwind CSS, Vite, React Router DOM  |
-| **Backend**    | Node.js, Express.js, Prisma ORM, PostgreSQL                 |
-| **AI/ML**      | FastAPI, Ollama (Llama 3.2, nomic‑embed‑text), ChromaDB     |
-| **RAG**        | Custom RAG pipeline – chunking, embeddings, semantic search |
-| **Payment**    | Razorpay API                                                |
-| **Auth**       | JWT (access/refresh tokens), Google OAuth                   |
-| **Deployment** | Docker Compose, Vercel (frontend), Neon PostgreSQL          |
+NexaFlow AI is built as a microservices architecture to ensure scalability, ease of development, and strict separation of concerns.
 
----
-
-## 🏗️ Architecture
+```mermaid
+graph TD
+    A[React Client] <-->|REST HTTP / Auth| B[Node.js Express Server]
+    B <-->|ORM| C[(PostgreSQL Metadata)]
+    B <-->|REST HTTP| D[FastAPI LLM Microservice]
+    D <-->|Embedding / Chat APIs| E[Ollama Server]
+    D <-->|Vector Queries| F[(ChromaDB Vector Store)]
+    B -.->|Graceful API Fallback| G[OpenAI Cloud API]
 ```
 
-Frontend (React) → Backend (Express) → LLM Service (FastAPI) → Ollama (LLM + Embeddings)
-↓ ↓
-PostgreSQL (metadata) ChromaDB (vectors)
+---
 
-````
+## 🌟 Modules & Features
 
-- **RAG flow**: PDF/Excel upload → text extraction → chunking → embedding → ChromaDB storage → query → retrieval → LLM answer.
-- **Multi‑tenant isolation**: per‑user ChromaDB collections (`user_{id}_documents`).
-- **Graceful fallback**: RAG → context window → raw LLM.
+### 📄 PDF Intelligence Hub
+* **PDF Brain:** Get rapid summary reports and key insight breakdowns of uploaded manuals, contracts, or long reports.
+* **PDF Chat Agent:** Converse directly with your documents. Ask questions, seek verification, and trace exact citations.
+* **Smart Data Extractor:** Automatically parse unstructured PDFs to pull structured fields (e.g., invoices, dates, amounts) into clean JSON data.
+* **Bulk PDF Toolkit:** Process multiple files in batch pipelines.
+
+### 📊 Excel Genius Suite
+* **AI Sheet Summarizer:** Synthesize sheets to understand data ranges, column schemas, and summary tables.
+* **Formula Master:** Convert plain-english commands into correct Excel or Google Sheets formulas.
+* **Error & Trend Detector:** Surface data anomalies, logical calculation errors, and future predictions.
+
+### 🧠 AI Workmate
+* **AI Chat:** A persistent chat dashboard featuring user prompt templates, search utilities, and conversation logging.
+* **Multi-Turn Context:** Preserves conversation threads using PostgreSQL state logs.
+
+### ✉️ MailCraft AI & Social Pro
+* **Email Wizard:** Create drafts matching customized tones, contexts, or email lengths.
+* **CaptionPro & Ad Generator:** Build highly converting captions, advertisements, and optimized hashtag listings.
 
 ---
 
-## 📦 Quick Start (5 minutes)
+## 🛠️ Technology Stack
+
+| Layer | Technology | Key Usage |
+| :--- | :--- | :--- |
+| **Frontend** | React 18, TypeScript, Tailwind CSS, Vite | Responsive dashboard UI, charts, and file upload systems |
+| **Backend** | Node.js, Express.js, TypeScript | API routing, JWT session validation, user limits, payment webhook |
+| **Database** | PostgreSQL, Prisma ORM | Stores accounts, chat histories, transactions, and usage quotas |
+| **AI Service** | FastAPI (Python 3.10+), Uvicorn | High-performance embedding orchestration, chunking, and RAG routing |
+| **Vector DB** | ChromaDB | High-speed similarity search for user document vectors |
+| **Local LLM** | Ollama (`llama3.2`, `nomic-embed-text`) | Local vectorization and local text generation |
+| **Infrastructure** | Docker & Docker Compose | Multi-container setups for Postgres, Redis, ChromaDB, and Ollama |
+
+---
+
+## ⚙️ Quick Start (Local Setup)
 
 ### Prerequisites
-- Node.js 18+, Python 3.10+, Docker & Docker Compose
+* **Node.js:** v18+
+* **Python:** v3.10+
+* **Docker & Docker Compose** installed and running.
 
-### 1. Clone & Install
+---
+
+### Step 1: Clone and Install Dependencies
+
 ```bash
+# Clone the repository
 git clone https://github.com/yourusername/nexaflow-ai.git
 cd nexaflow-ai
 
-# Backend
+# Install Backend dependencies
 cd backend && npm install
 
-# Frontend
+# Install Frontend dependencies
 cd ../frontend && npm install
 
-# LLM service
+# Install LLM FastAPI dependencies
 cd ../llm-service/llm-ms && pip install -r requirements.txt
-````
+```
 
-2. Environment Variables
+---
 
-Copy .env.example to .env in each service and fill in your keys (Razorpay, Google OAuth, etc.).
-Never commit .env files.
+### Step 2: Spin Up Infrastructure Containers
 
-3. Run with Docker Compose
+Run the core Docker containers (PostgreSQL, Redis, ChromaDB, and Ollama). This command downloads and boots all required services:
 
 ```bash
-cd ..  # back to project root
+cd .. # Back to the project root
 docker compose up -d
 ```
 
-4. Run Services
-
-```bash
-# Terminal 1 – Backend
-cd backend && npm run dev
-
-# Terminal 2 – LLM Service
-cd llm-service/llm-ms && python run.py
-
-# Terminal 3 – Frontend
-cd frontend && npm run dev
-```
-
-5. Access
-
-· Frontend: http://localhost:3000
-· Backend API: http://localhost:5000
-· LLM Service Docs: http://localhost:8001/docs
+*(Note: The Ollama container is pre-configured in [docker-compose.yml](file:///Users/sivansrawat/Documents/NexaFlow-AI/docker-compose.yml) to automatically pull `llama3.2:latest` and `nomic-embed-text:latest` on startup).*
 
 ---
 
-🧪 Testing RAG
+### Step 3: Run Migrations and Set Environment Variables
 
+1. Populate the database schema using Prisma:
 ```bash
-# Ingest a test document
+cd backend
+npx prisma db push
+```
+
+2. Duplicate the environment configuration template:
+   * Rename `.env.example` files in both the `backend` and `frontend` folders to `.env`.
+   * Add your Google OAuth keys and Razorpay secrets in `backend/.env`.
+
+---
+
+### Step 4: Launch Applications
+
+Start the developments servers in three separate terminal screens:
+
+#### 1. Backend Server
+```bash
+cd backend
+npm run dev
+```
+*App launches at:* `http://localhost:5000`
+
+#### 2. LLM Microservice
+```bash
+cd llm-service/llm-ms
+python run.py
+```
+*App launches at:* `http://localhost:8001` (Docs at `http://localhost:8001/docs`)
+
+#### 3. Frontend Web Dashboard
+```bash
+cd frontend
+npm run dev
+```
+*App launches at:* `http://localhost:3000`
+
+---
+
+## 🔍 Ingestion & Query Verification (RAG Testing)
+
+You can quickly verify that the FastAPI RAG service is working independently using `curl` commands:
+
+### 1. Ingest a Test Document Chunk
+```bash
 curl -X POST http://localhost:8001/api/rag/ingest \
   -H "Content-Type: application/json" \
-  -d '{"document_id":"test","document_text":"Revenue was $5M in 2024"}'
+  -d '{
+    "document_id": "doc_test_101",
+    "document_text": "NexaFlow AI has recorded a net profit of 1.2 million dollars for Q2 of 2026.",
+    "collection_name": "user_demo_documents"
+  }'
+```
 
-# Query RAG
+### 2. Query the Knowledge Base (Retrieval Search)
+```bash
 curl -X POST http://localhost:8001/api/rag/query \
   -H "Content-Type: application/json" \
-  -d '{"query":"What was revenue?"}'
+  -d '{
+    "query": "How much profit was recorded for Q2?",
+    "collection_name": "user_demo_documents"
+  }'
 ```
 
 ---
 
-📁 Project Structure
+## 📂 Project Structure Map
 
 ```
 nexaflow-ai/
-├── backend/               # Express.js + Prisma
+├── backend/                  # Node.js + Express API
 │   ├── src/
-│   ├── prisma/
-│   └── .env
-├── frontend/              # React + Vite
+│   │   ├── controllers/      # Route controllers (AI, PDF, auth, etc.)
+│   │   ├── middlewares/      # Security, limit checks, and JWT auth
+│   │   └── services/         # Clients for LLM and RAG Python services
+│   ├── prisma/               # PostgreSQL schema declaration
+│   └── package.json          # Node dependencies (see backend/package.json)
+│
+├── frontend/                 # React client
 │   ├── src/
-│   └── .env
-├── llm-service/           # FastAPI + Ollama + ChromaDB
-│   └── llm-ms/
-├── docker-compose.yml
-└── README.md
+│   │   ├── components/       # Reusable views (PDF toolkit, Excel optimizer, etc.)
+│   │   ├── context/          # Auth state managers
+│   │   └── lib/              # API and helper utilities
+│   └── package.json          # React dependencies (see frontend/package.json)
+│
+├── llm-service/llm-ms/       # Python FastAPI AI service
+│   ├── app/
+│   │   ├── routes/           # FastAPI router endpoints (RAG, Chat completions)
+│   │   └── services/         # Vector searches, chunking, and Ollama clients
+│   └── requirements.txt      # Python dependencies
+│
+├── grafana/                  # System monitoring configurations
+├── docker-compose.yml        # Orchestration script for services
+├── install.sh                # Automation setup shell script
+└── README.md                 # Project guide
 ```
 
 ---
 
-🤝 Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
----
-
-📄 License
-
-MIT
+## 📈 Monitoring & Health Checking
+* The system is provisioned to support telemetry using **Prometheus** and **Grafana** (configured in the `grafana` directory).
+* To track active load, spin times, and database metrics, uncomment the `prometheus` and `grafana` services in [docker-compose.yml](file:///Users/sivansrawat/Documents/NexaFlow-AI/docker-compose.yml) and launch.
+* A live health check is exposed at `http://localhost:8001/api/llm/health`.
 
 ---
 
-Acknowledgements
-
-· Ollama for local LLMs
-· ChromaDB for vector database
-· FastAPI for the LLM microservice
-· Razorpay for payment integration
-
----
-
-```
-
-```
+## 📄 License
+Licensed under the [MIT License](LICENSE).
