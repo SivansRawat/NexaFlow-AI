@@ -1,6 +1,6 @@
 import React from 'react';
 import ToolCard from './ToolCard';
-import { Mail, Type, Edit3 } from 'lucide-react';
+import { Mail, Type, Edit3, Sparkles } from 'lucide-react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 
 interface MailCraftProps {
@@ -9,44 +9,59 @@ interface MailCraftProps {
 
 const MailCraft: React.FC<MailCraftProps> = () => {
   const outletContext = useOutletContext<{ isDarkMode?: boolean }>() || {};
-  const isDarkMode = outletContext.isDarkMode ?? false;
+  const isDarkMode = outletContext.isDarkMode ?? true;
   const navigate = useNavigate();
+
   const tools = [
     {
       title: 'Email Wizard',
-      description: 'Create cold, sales, and HR emails instantly',
+      description: 'Create high-converting cold, sales, outreach, and HR emails instantly using AI.',
       icon: Mail,
-      gradient: 'bg-gradient-to-r from-green-500 to-emerald-500',
+      gradient: 'from-green-500 to-emerald-500',
       onClick: () => navigate('/premium/mailcraft/emailwizard'),
     },
     {
       title: 'Subject Line Optimizer',
-      description: 'Generate high-converting email subject lines',
+      description: 'Generate high-open-rate email subject lines tailored to your target audience.',
       icon: Type,
-      gradient: 'bg-gradient-to-r from-blue-500 to-cyan-500',
+      gradient: 'from-blue-500 to-cyan-500',
       onClick: () => navigate('/premium/mailcraft/subjectlineoptimizer'),
     },
     {
       title: 'Tone Polisher',
-      description: 'Fix grammar and improve email tone',
+      description: 'Polish email grammar, adjust tone to executive/formal, and increase email impact.',
       icon: Edit3,
-      gradient: 'bg-gradient-to-r from-purple-500 to-pink-500',
+      gradient: 'from-purple-500 to-pink-500',
       onClick: () => navigate('/premium/mailcraft/tonepolisher'),
     }
   ];
 
   return (
-    <div className="space-y-6 w-full">
-      <div className="mb-12"> {/* Increased margin-bottom for a larger, consistent gap */}
-        <h1 className={`text-3xl font-bold mb-2 ${
-          isDarkMode ? 'text-gray-100' : 'text-white'
-        }`}>MailCraft AI</h1>
-        <p className={`${
-          isDarkMode ? 'text-gray-400' : 'text-white'
-        }`}>Email automation tools for crafting perfect emails</p>
+    <div className="space-y-8 w-full pt-2 pb-12">
+      {/* Header Banner */}
+      <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all duration-300 ${
+        isDarkMode 
+          ? 'bg-gradient-to-r from-cyan-950/40 via-blue-950/30 to-gray-900 border-cyan-500/30 shadow-xl shadow-cyan-900/10' 
+          : 'bg-gradient-to-r from-cyan-50 via-blue-50 to-indigo-50 border-cyan-200 shadow-lg'
+      }`}>
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Email Automation Suite</span>
+          </div>
+          <h1 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            MailCraft AI
+          </h1>
+          <p className={`text-sm max-w-2xl leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            Craft persuasive sales emails, generate click-worthy subject lines, and refine message tone with AI precision.
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full items-start justify-start">
+      {/* Tool Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-stretch">
         {tools.map((tool) => (
           <ToolCard
             key={tool.title}
@@ -55,7 +70,7 @@ const MailCraft: React.FC<MailCraftProps> = () => {
             icon={tool.icon}
             gradient={tool.gradient}
             isDarkMode={isDarkMode}
-            onClick={tool.onClick || (() => {})}
+            onClick={tool.onClick}
           />
         ))}
       </div>

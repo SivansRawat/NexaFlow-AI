@@ -1,6 +1,6 @@
 import React from 'react';
 import ToolCard from './ToolCard';
-import { Share2, Hash, Megaphone, Edit3 } from 'lucide-react';
+import { Share2, Hash, Sparkles, RefreshCw, Megaphone } from 'lucide-react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 
 interface SocialProProps {
@@ -9,56 +9,66 @@ interface SocialProProps {
 
 const SocialPro: React.FC<SocialProProps> = () => {
   const outletContext = useOutletContext<{ isDarkMode?: boolean }>() || {};
-  const isDarkMode = outletContext.isDarkMode ?? false;
+  const isDarkMode = outletContext.isDarkMode ?? true;
   const navigate = useNavigate();
-  
+
   const tools = [
     {
-      title: 'LinkedIn/Insta Caption Pro',
-      description: 'Create engaging social media captions',
+      title: 'CaptionPro',
+      description: 'Generate viral, engaging social media captions for Instagram, LinkedIn, and Twitter.',
       icon: Share2,
-      gradient: 'bg-gradient-to-r from-yellow-500 to-orange-500',
-      path: '/premium/socialpro/captionpro'
+      gradient: 'from-pink-500 to-rose-500',
+      onClick: () => navigate('/premium/socialpro/captionpro'),
     },
     {
       title: 'Hashtag Strategist',
-      description: 'Generate trending and relevant hashtags',
+      description: 'Discover high-reach trending hashtags and topic keywords tailored to your niche.',
       icon: Hash,
-      gradient: 'bg-gradient-to-r from-blue-500 to-purple-500',
-      path: '/premium/socialpro/hashtagstrategist'
+      gradient: 'from-purple-500 to-indigo-500',
+      onClick: () => navigate('/premium/socialpro/hashtagstrategist'),
     },
     {
       title: 'Ad Caption Generator',
-      description: 'Create compelling ad copy for campaigns',
+      description: 'Generate high-converting Facebook, Google, and LinkedIn ad copy instantly.',
       icon: Megaphone,
-      gradient: 'bg-gradient-to-r from-green-500 to-teal-500',
-      path: '/premium/socialpro/adcaption'
+      gradient: 'from-amber-500 to-orange-500',
+      onClick: () => navigate('/premium/socialpro/adcaption'),
     },
     {
-      title: 'Caption Rewriter AI',
-      description: 'Rewrite and improve existing captions',
-      icon: Edit3,
-      gradient: 'bg-gradient-to-r from-blue-500 to-purple-500',
-      path: '/premium/socialpro/captionrewriter'
-    },
+      title: 'Caption Rewriter',
+      description: 'Remix existing captions to match brand tone, lengthen, or summarize.',
+      icon: RefreshCw,
+      gradient: 'from-cyan-500 to-blue-500',
+      onClick: () => navigate('/premium/socialpro/captionrewriter'),
+    }
   ];
 
-  const handleToolClick = (path: string) => {
-    navigate(path);
-  };
-
   return (
-    <div className="space-y-6 w-full">
-      <div>
-        <h1 className={`text-3xl font-bold mb-2 ${
-          isDarkMode ? 'text-gray-100' : 'text-white'
-        }`}>Social Pro Toolkit</h1>
-        <p className={`${
-          isDarkMode ? 'text-gray-400' : 'text-white'
-        }`}>AI tools for content creators and marketers</p>
+    <div className="space-y-8 w-full pt-2 pb-12">
+      {/* Header Banner */}
+      <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all duration-300 ${
+        isDarkMode 
+          ? 'bg-gradient-to-r from-pink-950/40 via-purple-950/30 to-gray-900 border-pink-500/30 shadow-xl shadow-pink-900/10' 
+          : 'bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-50 border-pink-200 shadow-lg'
+      }`}>
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-pink-500/10 text-pink-400 border border-pink-500/20">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Social Growth Suite</span>
+          </div>
+          <h1 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            Social Pro Toolkit
+          </h1>
+          <p className={`text-sm max-w-2xl leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            Accelerate social media growth with viral caption generation, hashtag analytics, and ad copy optimization.
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full items-start justify-start">
+      {/* Tool Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-stretch">
         {tools.map((tool) => (
           <ToolCard
             key={tool.title}
@@ -67,7 +77,7 @@ const SocialPro: React.FC<SocialProProps> = () => {
             icon={tool.icon}
             gradient={tool.gradient}
             isDarkMode={isDarkMode}
-            onClick={() => handleToolClick(tool.path)}
+            onClick={tool.onClick}
           />
         ))}
       </div>

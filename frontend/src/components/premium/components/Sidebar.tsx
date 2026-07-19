@@ -24,7 +24,7 @@ const sidebarItems = [
   { id: 'ai-chat', label: 'AI Workmate', icon: MessageSquare, path: '/premium/aiworkmate' },
   { id: 'mailcraft', label: 'MailCraft AI', icon: Mail, path: '/premium/mailcraft' },
   { id: 'socialpro', label: 'Social Pro Toolkit', icon: Share2, path: '/premium/socialpro' },
-  { id: 'smartdocs', label: 'SmartDocs Generator', icon: FileCheck, path: '/premium/smartdocs' },
+  { id: 'smartdocs', label: 'SmartDocs Suite', icon: FileCheck, path: '/premium/smartdocs' },
   { id: 'bulkmailer', label: 'BulkMailer Pro', icon: Send, path: '/premium/bulkmailer' },
   { id: 'settings', label: 'Settings', icon: SettingsIcon, path: '/premium/settings' },
 ];
@@ -72,9 +72,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isDarkMode }) => {
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                 >
-                  <div className="flex items-center space-x-3 w-full">
-                    <item.icon className="w-5 h-5" />
-                    <span className="font-medium text-sm">{item.label}</span>
+                  <div className="flex items-center space-x-3 w-full min-w-0">
+                    <item.icon className="w-5 h-5 flex-shrink-0" />
+                    <span className="font-medium text-sm truncate">{item.label}</span>
                   </div>
                 </button>
               );
