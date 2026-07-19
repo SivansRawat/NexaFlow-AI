@@ -315,7 +315,10 @@ app.use('/api', healthRoutes);
 
 // Import all other routes
 const userRoutes = safeLoadRoute('./routes/user', 'User');
-if (userRoutes) app.use('/api/user', userRoutes);
+if (userRoutes) {
+  app.use('/api/user', userRoutes);
+  app.use('/user', userRoutes);
+}
 
 const adminRoutes = safeLoadRoute('./routes/admin', 'Admin');
 if (adminRoutes) app.use('/api/admin', adminRoutes);
