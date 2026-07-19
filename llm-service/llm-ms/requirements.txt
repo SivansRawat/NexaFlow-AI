@@ -18,6 +18,6 @@ aiohttp==3.11.7
 # Vector Database / RAG
 chromadb==1.1.0
 
-# Optional but Recommended
-httpx==0.28.0          # Modern async HTTP client (alternative to requests)
-python-multipart==0.0.17  # For file uploads if needed
+# Caching
+redis>=5.0.0
+

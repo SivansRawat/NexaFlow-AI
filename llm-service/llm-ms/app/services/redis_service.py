@@ -1,5 +1,11 @@
 import os
-import redis.asyncio as aioredis
+import redis
+
+# Safe import for redis.asyncio across different Python versions and IDE interpreters
+try:
+    import redis.asyncio as aioredis
+except AttributeError:
+    from redis import asyncio as aioredis
 
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
