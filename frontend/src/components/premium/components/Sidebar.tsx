@@ -1,10 +1,12 @@
-import React from 'react';
 import { 
   LayoutDashboard, 
   FileSpreadsheet, 
   FileText, 
   MessageSquare, 
   FileCheck, 
+  Mail,
+  Share2,
+  Send,
   Settings as SettingsIcon
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -20,7 +22,10 @@ const sidebarItems = [
   { id: 'excel', label: 'Excel Genius Suite', icon: FileSpreadsheet, path: '/premium/excel' },
   { id: 'pdf', label: 'PDF Intelligence Hub', icon: FileText, path: '/premium/pdfhub' },
   { id: 'ai-chat', label: 'AI Workmate', icon: MessageSquare, path: '/premium/aiworkmate' },
+  { id: 'mailcraft', label: 'MailCraft AI', icon: Mail, path: '/premium/mailcraft' },
+  { id: 'socialpro', label: 'Social Pro Toolkit', icon: Share2, path: '/premium/socialpro' },
   { id: 'smartdocs', label: 'SmartDocs Generator', icon: FileCheck, path: '/premium/smartdocs' },
+  { id: 'bulkmailer', label: 'BulkMailer Pro', icon: Send, path: '/premium/bulkmailer' },
   { id: 'settings', label: 'Settings', icon: SettingsIcon, path: '/premium/settings' },
 ];
 
@@ -57,14 +62,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isDarkMode }) => {
                     navigate(item.path);
                     onClose();
                   }}
-                  className={`w-full flex items-center px-4 py-3 rounded-lg transition-all duration-300 group ${
+                  className={`w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 group ${
                     isActive
                       ? isDarkMode 
-                        ? 'bg-gray-700 text-white shadow-lg shadow-gray-700/20' 
-                        : 'bg-gray-900 text-white'
+                        ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 text-white shadow-lg shadow-purple-500/25 font-semibold scale-[1.02]' 
+                        : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md font-semibold'
                       : isDarkMode
-                        ? 'text-gray-300 hover:text-white hover:bg-gray-800/50'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                        ? 'text-gray-300 hover:text-white hover:bg-gray-800/60'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                 >
                   <div className="flex items-center space-x-3 w-full">
