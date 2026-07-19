@@ -77,9 +77,8 @@ function HomePage() {
 // Route guards
 
 function PremiumRoute() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (!user?.isPremium) return <Navigate to="/" replace />;
   return <Outlet />;
 }
 
@@ -97,12 +96,8 @@ function App() {
 
   useEffect(() => {
     if (loading) return; // Wait until authentication check is complete
-    if (isAuthenticated && user) {
-      if (user.isPremium && location.pathname === '/') {
-        navigate('/premium', { replace: true });
-      } else if (!user.isPremium && location.pathname.startsWith('/premium')) {
-        navigate('/', { replace: true });
-      }
+    if (isAuthenticated && user && location.pathname === '/') {
+      navigate('/premium', { replace: true });
     }
     // eslint-disable-next-line
   }, [isAuthenticated, user, loading, location.pathname, navigate]);

@@ -130,7 +130,21 @@ export function Header() {
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
             {isAuthenticated && user ? (
-              <div className="relative flex items-center gap-2">
+              <div className="relative flex items-center gap-3">
+                <Link
+                  to="/premium"
+                  className="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-lg shadow transition-all duration-150 flex items-center gap-1.5"
+                >
+                  <span>Dashboard</span> 🚀
+                </Link>
+
+                <Link
+                  to="/paynow"
+                  className="px-3 py-2 text-xs font-semibold text-yellow-300 border border-yellow-500/40 bg-yellow-500/10 hover:bg-yellow-500/20 rounded-lg transition-all duration-150 flex items-center gap-1"
+                >
+                  <span>Upgrade</span> ⭐
+                </Link>
+
                 <button
                   className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white focus:outline-none"
                   onClick={handleProfileDropdown}
@@ -159,6 +173,23 @@ export function Header() {
                         {user.email && <span className="text-xs text-gray-300">{user.email}</span>}
                       </div>
                     </div>
+                    
+                    {/* Nav Links */}
+                    <Link
+                      to="/premium"
+                      className="block px-5 py-2 text-sm text-gray-200 hover:bg-gray-800 rounded-lg transition"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      🚀 AI Tools Dashboard
+                    </Link>
+                    <Link
+                      to="/paynow"
+                      className="block px-5 py-2 text-sm text-yellow-300 hover:bg-gray-800 rounded-lg transition"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      ⭐ Upgrade Plan
+                    </Link>
+
                     {/* Divider */}
                     <div className="my-1 border-t border-gray-700" />
                     {/* Logout Button */}
