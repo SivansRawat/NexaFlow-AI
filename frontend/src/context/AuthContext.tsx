@@ -69,11 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setToken(token);
     localStorage.setItem('user', JSON.stringify(userWithPremium));
     localStorage.setItem('accessToken', token);
-    if (userWithPremium.isPremium) {
-      navigate('/premium');
-    } else {
-      navigate('/');
-    }
+    navigate('/premium');
   }, [navigate]);
 
   const isAuthenticated = !!user && !!token;

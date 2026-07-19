@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useEffect } from "react";
-import { Routes, Route, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import React from "react";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
 import EmailWizardPage from "./components/premium/mailcraftai/EmailWizardPage";
@@ -90,17 +90,10 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
-  const { isAuthenticated, user, loading } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
+  const { loading } = useAuth();
 
-  useEffect(() => {
-    if (loading) return; // Wait until authentication check is complete
-    if (isAuthenticated && user && location.pathname === '/') {
-      navigate('/premium', { replace: true });
-    }
-    // eslint-disable-next-line
-  }, [isAuthenticated, user, loading, location.pathname, navigate]);
+
+
 
   if (loading) {
     return (
