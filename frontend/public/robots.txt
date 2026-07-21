@@ -1,9 +1,12 @@
 User-agent: *
 Allow: /
 
-# Block query-param variants to avoid duplicate content
+# Allow crawling of main public routes
+Allow: /login
+Allow: /signup
+Allow: /premium
+
+# Block query-param variants to avoid duplicate content indexing
 Disallow: /*?
 
-Sitemap: https://www.NexaFlow AI.com/sitemap.xml
-
-
+Sitemap: https://nexa-flow-ai.vercel.app/sitemap.xml
