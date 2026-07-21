@@ -3,14 +3,14 @@ ChromaDB Service - Manages vector storage and retrieval
 Handles collections, document storage, and semantic search
 """
 
-from chromadb import HttpClient
+from chromadb import HttpClient, PersistentClient
 import os
 from typing import List, Dict, Optional, Tuple
 from dotenv import load_dotenv
 
 load_dotenv()
 
-CHROMA_HOST = os.getenv("CHROMA_HOST", "localhost")
+CHROMA_HOST = os.getenv("CHROMA_HOST", "")
 CHROMA_PORT = int(os.getenv("CHROMA_PORT", "8000"))
 
 
@@ -18,8 +18,17 @@ class ChromaDBService:
     """Service to interact with ChromaDB for vector storage"""
 
     def __init__(self):
-        """Initialize ChromaDB client"""
-        self.client = HttpClient(host=CHROMA_HOST, port=CHROMA_PORT)
+        """Initialize ChromaDB client with automatic PersistentClient fallback"""
+        try:
+            if CHROMA_HOST and CHROMA_HOST != "localhost":
+                self.client = HttpClient(host=CHROMA_HOST, port=CHROMA_PORT)
+            else:
+                db_dir = os.path.join(os.getcwd(), "chroma_db")
+                self.client = PersistentClient(path=db_dir)
+        except Exception as e:
+            print(f"⚠️ ChromaDB HttpClient failed ({e}). Using embedded PersistentClient...")
+            db_dir = os.path.join(os.getcwd(), "chroma_db")
+            self.client = PersistentClient(path=db_dir)
         self.collections = {}
 
     async def check_health(self) -> bool:
