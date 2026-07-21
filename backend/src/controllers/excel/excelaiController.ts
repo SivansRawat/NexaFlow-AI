@@ -2,44 +2,48 @@ import { Request, Response } from 'express';
 import * as XLSX from 'xlsx';
 import { aiClient, AI_MODEL, requireAIKey } from '../../services/aiProvider';
 import prisma from '../../lib/prisma';
-import { JwtPayload } from 'jsonwebtoken';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 
 // POST /api/ai/analyze-excel
 export const analyzeExcel = async (req: Request, res: Response) => {
   try {
+    const rawUser = req.user;
+    const userId = Number(rawUser?.id || rawUser?.userId);
+    if (!userId || isNaN(userId)) {
+      return res.status(401).json({ error: 'Authentication required. Invalid or missing user session.' });
+    }
+
     requireAIKey();
     const openai = aiClient;
 
-    const user = req.user as JwtPayload;
     let { chatId, prompt } = req.body;
-
     const file = req.file;
-    if (!file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+
+    if (!file || !file.buffer) {
+      return res.status(400).json({ error: 'No file uploaded or file buffer is empty.' });
     }
 
     let currentChat;
-    if (chatId) {
-      currentChat = await prisma.chat.findUnique({
-        where: { id: Number(chatId) }
+    if (chatId && !isNaN(Number(chatId))) {
+      currentChat = await prisma.chat.findFirst({
+        where: { id: Number(chatId), userId }
       });
-      if (!currentChat || currentChat.userId !== user.id) {
-        return res.status(403).json({ error: "Access denied." });
-      }
-    } else {
+    }
+
+    if (!currentChat) {
       currentChat = await prisma.chat.create({
         data: {
-          userId: user.id,
+          userId,
           toolType: 'sheet_summarizer',
-          title: file.originalname
+          title: file.originalname || 'Excel Document'
         }
       });
+
       await prisma.chatMessage.create({
         data: {
           chatId: currentChat.id,
           sender: 'user',
-          content: `File: ${file.originalname}`,
+          content: `File: ${file.originalname || 'Excel Document'}`,
           metadata: { fileName: file.originalname, fileSize: file.size, fileType: file.mimetype }
         }
       });
@@ -61,7 +65,7 @@ export const analyzeExcel = async (req: Request, res: Response) => {
     }
 
     if (!jsonData || jsonData.length === 0) {
-      return res.status(400).json({ error: 'No readable data rows found in uploaded file.' });
+      return res.status(400).json({ error: 'No readable data rows found in uploaded Excel sheet.' });
     }
 
     // Limit sample size for LLM context to prevent token overload
