@@ -80,15 +80,12 @@ export function Header() {
         }`}
       >
         <div className="flex items-center justify-between px-4 sm:px-6 h-full">
-          <Link to="/" className="flex items-center gap-3 flex-shrink-0 group">
+          <Link to="/" className="flex items-center flex-shrink-0 group py-1">
             <img 
               src="/nexaflow-logo-header.png" 
               alt="NexaFlow AI" 
-              className="h-10 sm:h-11 w-auto object-contain transition-transform duration-200 group-hover:scale-105" 
+              className="h-10 sm:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-105" 
             />
-            <span className="font-extrabold text-xl sm:text-2xl tracking-tight bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              NexaFlow AI
-            </span>
           </Link>
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
