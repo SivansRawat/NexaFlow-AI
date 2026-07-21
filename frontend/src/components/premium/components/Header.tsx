@@ -59,12 +59,19 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isSidebarOpen, onSearch, 
         </button>
 
         {/* Logo Section */}
-        <Link to="/" className="flex items-center flex-shrink-0 group py-1">
+        <Link to="/" className="flex items-center gap-2.5 flex-shrink-0 group">
           <img 
-            src="/nexaflow-logo-header.png" 
+            src="/nexaflow-logo2.png" 
             alt="NexaFlow AI" 
-            className="h-10 sm:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-105" 
+            className="h-8 sm:h-9 w-auto object-contain transition-transform duration-200 group-hover:scale-105" 
           />
+          <span className={`font-extrabold text-xl sm:text-2xl tracking-tight ${
+            isDarkMode
+              ? 'bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent'
+              : 'bg-gradient-to-r from-purple-700 via-indigo-700 to-cyan-700 bg-clip-text text-transparent'
+          }`}>
+            NexaFlow AI
+          </span>
         </Link>
         {/* Search Bar */}
         <div className="hidden md:flex items-center flex-1 max-w-md mx-4 lg:mx-8">
