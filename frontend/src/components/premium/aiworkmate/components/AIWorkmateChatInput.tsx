@@ -35,7 +35,7 @@ export default function AIWorkmateChatInput({ chatId, onSend }: AIWorkmateChatIn
       formData.append('chatId', chatId);
       formData.append('message', input);
       if (file) formData.append('file', file);
-      const res = await axios.post(`${API_BASE}/aiworkmate/chat/send`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const res = await axios.post(`${API_BASE}/aiworkmate/chat/send`, formData);
       onSend(res.data.aiMessage);
       setInput('');
       setFile(null);

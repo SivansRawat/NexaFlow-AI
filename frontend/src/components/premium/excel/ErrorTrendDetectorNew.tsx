@@ -33,9 +33,7 @@ const ErrorTrendDetectorNew: React.FC = () => {
     const formData = new FormData();
     formData.append('file', file);
     
-    const response = await api.post('/error-trend/analyze', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+    const response = await api.post('/error-trend/analyze', formData);
     
     return response.data;
   };

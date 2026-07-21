@@ -115,9 +115,7 @@ export async function analyzeExcelWithAI(file: File, prompt: string) {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('prompt', prompt);
-  const res = await api.post(`/ai/analyze-excel`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const res = await api.post(`/ai/analyze-excel`, formData);
   return res.data;
 } 
 
@@ -125,9 +123,7 @@ export async function analyzeExcelWithAI(file: File, prompt: string) {
 export const analyzeExcelForErrorsAndTrends = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    const res = await api.post(`/error-trend/analyze`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const res = await api.post(`/error-trend/analyze`, formData);
     return res.data;
 };
 

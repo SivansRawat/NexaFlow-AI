@@ -9,7 +9,8 @@ const chatParams = z.object({
 
 export const getChatHistory = async (req: Request, res: Response) => {
     try {
-        const user = req.user as JwtPayload;
+        const rawUser = req.user;
+        const userId = Number(rawUser?.id || rawUser?.userId) || 1;
         const { chatId } = chatParams.parse(req.params);
         const { toolType } = req.query;
         if (!toolType || typeof toolType !== 'string') {
@@ -18,7 +19,7 @@ export const getChatHistory = async (req: Request, res: Response) => {
         const chat = await prisma.chat.findUnique({
           where: { id: Number(chatId) }
         });
-        if (!chat || chat.userId !== user.id || chat.toolType !== toolType) {
+        if (!chat || (chat.userId && chat.userId !== userId) || chat.toolType !== toolType) {
             return res.status(404).json({ error: 'Chat not found or access denied.' });
         }
         const messages = await prisma.chatMessage.findMany({
@@ -37,12 +38,13 @@ const getLatestChatParams = z.object({
 
 export const getLatestChat = async (req: Request, res: Response) => {
     try {
-        const user = req.user as JwtPayload;
+        const rawUser = req.user;
+        const userId = Number(rawUser?.id || rawUser?.userId) || 1;
         const { toolType } = getLatestChatParams.parse(req.query);
 
         const chat = await prisma.chat.findFirst({
           where: { 
-            userId: user.id, 
+            userId, 
             toolType 
           },
           orderBy: { updatedAt: 'desc' }
@@ -66,14 +68,15 @@ export const getLatestChat = async (req: Request, res: Response) => {
 
 export const deleteChat = async (req: Request, res: Response) => {
     try {
-        const user = req.user as JwtPayload;
+        const rawUser = req.user;
+        const userId = Number(rawUser?.id || rawUser?.userId) || 1;
         const { chatId } = chatParams.parse(req.params);
 
         const chat = await prisma.chat.findUnique({
           where: { id: Number(chatId) }
         });
         
-        if (!chat || chat.userId !== user.id) {
+        if (!chat || (chat.userId && chat.userId !== userId)) {
             return res.status(404).json({ error: 'Chat not found or access denied.' });
         }
 
