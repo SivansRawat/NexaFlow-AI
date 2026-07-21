@@ -84,27 +84,27 @@ class ChromaDBService:
         documents: List[str],
         metadatas: List[Dict],
         ids: List[str],
-        embeddings: List[List[float]]
+        embeddings: Optional[List[List[float]]] = None
     ) -> None:
         """
-        Add documents (with pre-computed embeddings) to a collection
-        
-        Args:
-            collection_name: Name of the collection
-            documents: List of document texts
-            metadatas: List of metadata dicts
-            ids: List of document IDs
-            embeddings: List of pre-computed embeddings
+        Add documents to a collection (using pre-computed or ChromaDB default embeddings)
         """
         try:
             collection = self.get_collection(collection_name)
             
-            collection.add(
-                ids=ids,
-                documents=documents,
-                metadatas=metadatas,
-                embeddings=embeddings
-            )
+            if embeddings:
+                collection.add(
+                    ids=ids,
+                    documents=documents,
+                    metadatas=metadatas,
+                    embeddings=embeddings
+                )
+            else:
+                collection.add(
+                    ids=ids,
+                    documents=documents,
+                    metadatas=metadatas
+                )
             
             print(f"✅ Added {len(documents)} documents to '{collection_name}'")
         except Exception as e:

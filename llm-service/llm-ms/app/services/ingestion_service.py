@@ -51,10 +51,14 @@ class IngestionService:
                 raise ValueError(f"No textual content extracted from document '{document_id}'")
             print(f"📦 Created {len(chunks)} chunks from document '{document_id}'")
 
-            # 3. Generate embeddings for chunks (batch processing)
+            # 3. Generate embeddings for chunks (with fallback to ChromaDB internal embedding if Ollama is offline)
             chunk_texts = [chunk[0] for chunk in chunks]
-            embeddings = await embedding_service.generate_embeddings_batch(chunk_texts)
-            print(f"🧠 Generated {len(embeddings)} embeddings")
+            try:
+                embeddings = await embedding_service.generate_embeddings_batch(chunk_texts)
+                print(f"🧠 Generated {len(embeddings)} embeddings via Ollama")
+            except Exception as emb_err:
+                print(f"⚠️ Ollama embedding unavailable ({emb_err}). Falling back to internal ChromaDB embeddings...")
+                embeddings = None
 
             # 4. Prepare documents for ChromaDB
             ids = [f"{document_id}_chunk_{i}" for i, _ in chunks]

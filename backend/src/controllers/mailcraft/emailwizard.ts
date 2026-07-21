@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import prisma from '../../lib/prisma';
 import { llmService } from '../../services/llmService';
 
-// Render deployment trigger: Active RAG Pipeline Permissions Sync
+// Render deployment trigger: Embedded ChromaDB Vector Search Sync
 
 export const sendMailChatMessage = async (req: Request, res: Response) => {
   try {

@@ -41,7 +41,11 @@ class QueryService:
         try:
             # 1. Generate query embedding if not provided
             if not query_embedding:
-                query_embedding = [await embedding_service.generate_embedding(query)]
+                try:
+                    query_embedding = [await embedding_service.generate_embedding(query)]
+                except Exception as emb_err:
+                    print(f"⚠️ Query embedding fallback to ChromaDB internal model: {emb_err}")
+                    query_embedding = None
 
             # 2. Query ChromaDB (semantic search)
             results = chroma_service.query(
