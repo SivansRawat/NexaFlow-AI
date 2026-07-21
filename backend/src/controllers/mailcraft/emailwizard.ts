@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import prisma from '../../lib/prisma';
 import { llmService } from '../../services/llmService';
 
+// Render deployment trigger: Sync MailCraft RAG controller
+
 export const sendMailChatMessage = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
