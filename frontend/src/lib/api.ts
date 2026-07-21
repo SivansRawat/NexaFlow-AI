@@ -166,9 +166,7 @@ export const analyzeExcelWithChat = async (chatId: number | null, file: File, pr
     if (chatId) formData.append('chatId', String(chatId));
     formData.append('file', file);
     formData.append('prompt', prompt);
-    const res = await api.post(`/ai/analyze-excel`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const res = await api.post(`/ai/analyze-excel`, formData);
     return res.data;
 };
 

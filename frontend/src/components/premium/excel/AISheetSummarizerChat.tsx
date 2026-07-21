@@ -158,7 +158,8 @@ const AISheetSummarizerChat: React.FC<AISheetSummarizerChatProps> = ({ onBack })
     } catch (err: any) {
       if (err?.response?.status === 429) handle429Error();
       setMessages(prev => prev.filter(m => !m.isLoading));
-      setMessages(prev => [...prev, { id: Date.now().toString(), sender: 'bot', content: 'Failed to analyze file.' }]);
+      const errMsg = err?.response?.data?.error || 'Failed to analyze file.';
+      setMessages(prev => [...prev, { id: Date.now().toString(), sender: 'bot', content: errMsg }]);
     } finally {
       setIsUploading(false);
     }
