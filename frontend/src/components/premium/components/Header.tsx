@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import {  User, Search, ChevronDown, Menu, X, Sun, Moon, LogOut } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 
+import { Link } from 'react-router-dom';
+
 interface HeaderProps {
   onMenuToggle: () => void;
   isSidebarOpen: boolean;
@@ -57,39 +59,20 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isSidebarOpen, onSearch, 
         </button>
 
         {/* Logo Section */}
-        {/* <div className="flex items-center space-x-3 lg:ml-0 ml-2 flex-shrink-0 min-w-0">
-          <div className="relative flex items-center h-20 overflow-hidden">
-               <img src="/nexaflow-logo-header2.png" alt="nexaFlow AI" className={`h-16 md:h-20 lg:h-24 w-auto rounded-lg transition-all duration-300 ${
-              isDarkMode ? 'filter brightness-0 invert' : 'filter brightness-0'
-            }`} />
-          </div>
-        </div> */}
-
-{/* <div className="flex items-center justify-center lg:justify-start flex-shrink-0">
-  <div className="flex items-center">
-    <img 
-      src="/nexaflow-logo-header2.png" 
-      alt="NexaFlow AI" 
-      className={`h-12 md:h-14 lg:h-16 w-auto rounded-lg transition-all duration-300 ${
-        isDarkMode ? 'filter brightness-0 invert' : 'filter brightness-0'
-      }`} 
-    />
-  </div>
-</div> */}
-
-
-
-<div className="flex items-center justify-center lg:justify-start flex-shrink-0">
-  <div className="flex items-center">
-    <img 
-      src="/nexaflow-logo-header2.png" 
-      alt="NexaFlow AI" 
-      className={`h-16 md:h-20 lg:h-24 w-auto rounded-lg transition-all duration-300 ${
-        isDarkMode ? 'filter brightness-0 invert' : 'filter brightness-0'
-      }`} 
-    />
-  </div>
-</div>
+        <Link to="/" className="flex items-center gap-3 flex-shrink-0 group">
+          <img 
+            src="/nexaflow-logo-header.png" 
+            alt="NexaFlow AI" 
+            className="h-10 sm:h-11 w-auto object-contain transition-transform duration-200 group-hover:scale-105" 
+          />
+          <span className={`font-extrabold text-xl sm:text-2xl tracking-tight ${
+            isDarkMode
+              ? 'bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent'
+              : 'bg-gradient-to-r from-purple-700 via-indigo-700 to-cyan-700 bg-clip-text text-transparent'
+          }`}>
+            NexaFlow AI
+          </span>
+        </Link>
         {/* Search Bar */}
         <div className="hidden md:flex items-center flex-1 max-w-md mx-4 lg:mx-8">
           <div className="relative w-full">

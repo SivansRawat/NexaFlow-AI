@@ -11,8 +11,6 @@ import { useRef } from "react";
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  // Track dark mode preference to adjust logo filter
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user, isAuthenticated, logout, token, login } = useAuth();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -24,19 +22,6 @@ export function Header() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
-
-  // detect system dark mode preference
-  useEffect(() => {
-    const mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
-    const apply = () => setIsDarkMode(!!(mq ? mq.matches : false));
-    apply();
-    if (mq && mq.addEventListener) mq.addEventListener('change', apply);
-    else if (mq && mq.addListener) mq.addListener(apply);
-    return () => {
-      if (mq && mq.removeEventListener) mq.removeEventListener('change', apply);
-      else if (mq && mq.removeListener) mq.removeListener(apply);
-    };
-  }, []);
 
   // Fetch latest user info on mount if authenticated
   useEffect(() => {
@@ -95,25 +80,16 @@ export function Header() {
         }`}
       >
         <div className="flex items-center justify-between px-4 sm:px-6 h-full">
-          {/* Logo - Fixed positioning to stay left-aligned */}
-          {/* <div className="flex items-center space-x-3 flex-shrink-0">
+          <Link to="/" className="flex items-center gap-3 flex-shrink-0 group">
             <img 
-              // src="/nexaflow-logo-header.png" 
-              src={isDarkMode ? "/nexaflow-logo2.png" : "/nexaflow-logo2.png"}
+              src="/nexaflow-logo-header.png" 
               alt="NexaFlow AI" 
-              className="h-12 sm:h-12 md:h-14 w-auto object-contain"            />
-          </div> */}
-<div className="flex items-center justify-center lg:justify-start flex-shrink-0">
-  <div className="flex items-center">
-    <img 
-      src="/nexaflow-logo-header2.png" 
-      alt="NexaFlow AI" 
-      className={`h-16 md:h-20 lg:h-24 w-auto rounded-lg transition-all duration-300 ${
-        isDarkMode ? 'filter brightness-0 invert' : 'filter brightness-0'
-      }`} 
-    />
-  </div>
-</div>
+              className="h-10 sm:h-11 w-auto object-contain transition-transform duration-200 group-hover:scale-105" 
+            />
+            <span className="font-extrabold text-xl sm:text-2xl tracking-tight bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              NexaFlow AI
+            </span>
+          </Link>
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {navItems.map((item) => (
