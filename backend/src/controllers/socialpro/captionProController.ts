@@ -60,11 +60,39 @@ Requirements:
 
 Return only the caption text.`;
 
+    // Retrieve RAG viral hooks & captions context if available
+    let ragContext = '';
+    try {
+      const ragUrl = process.env.RAG_SERVICE_URL || process.env.LLM_SERVICE_URL || 'https://nexaflow-llm-service.onrender.com';
+      const ragRes = await fetch(`${ragUrl}/api/rag/retrieve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: message,
+          collection_name: 'socialpro_templates',
+          n_results: 2
+        })
+      });
+      if (ragRes.ok) {
+        const ragData: any = await ragRes.json();
+        if (ragData.chunks && ragData.chunks.length > 0) {
+          ragContext = ragData.chunks.map((c: any) => c.text).join('\n\n');
+        }
+      }
+    } catch (ragErr) {
+      console.log('SocialPro RAG retrieval skipped:', ragErr);
+    }
+
     const openai = aiClient;
     const response = await openai.chat.completions.create({
       model: AI_MODEL,
       messages: [
-        { role: 'system', content: 'You are an expert social media content creator.' },
+        { 
+          role: 'system', 
+          content: `You are an expert social media content creator.${
+            ragContext ? `\n\n[VIRAL SOCIAL MEDIA HOOKS & TEMPLATES]:\n${ragContext}` : ''
+          }`
+        },
         { role: 'user', content: prompt }
       ]
     });

@@ -111,9 +111,11 @@ async def startup_event():
 
     try:
         from app.services.mailcraft_seed import seed_mailcraft_knowledge
+        from app.services.platform_rag_seed import seed_platform_knowledge
         asyncio.create_task(seed_mailcraft_knowledge())
+        asyncio.create_task(seed_platform_knowledge())
     except Exception as seed_err:
-        print(f"⚠️ MailCraft seeding skip: {seed_err}")
+        print(f"⚠️ Platform seeding skip: {seed_err}")
 
 # Shutdown event
 @app.on_event("shutdown")

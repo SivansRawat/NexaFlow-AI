@@ -123,8 +123,33 @@ export const aiEditTemplate = async (req: Request, res: Response) => {
       if (!tpl) return res.status(404).json({ error: 'Template not found' });
     }
 
+    // Retrieve RAG sequence & campaign context if available
+    let ragContext = '';
+    try {
+      const ragUrl = process.env.RAG_SERVICE_URL || process.env.LLM_SERVICE_URL || 'https://nexaflow-llm-service.onrender.com';
+      const ragRes = await fetch(`${ragUrl}/api/rag/retrieve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: instruction,
+          collection_name: 'bulkmailer_templates',
+          n_results: 2
+        })
+      });
+      if (ragRes.ok) {
+        const ragData: any = await ragRes.json();
+        if (ragData.chunks && ragData.chunks.length > 0) {
+          ragContext = ragData.chunks.map((c: any) => c.text).join('\n\n');
+        }
+      }
+    } catch (ragErr) {
+      console.log('Bulk Mailer RAG retrieval skipped:', ragErr);
+    }
+
     const openai = aiClient;
-    const system = 'You are a senior email copywriter. Edit the provided email template body according to the user instructions. Return only the edited email body. Keep subject and tone professional.';
+    const system = `You are a senior email copywriter. Edit the provided email template body according to the user instructions. Return only the edited email body. Keep subject and tone professional.${
+      ragContext ? `\n\n[BULK MAILER RAG SEQUENCE GUIDELINES]:\n${ragContext}` : ''
+    }`;
     const userContent = `Instruction: ${instruction}\n\nTemplate body:\n${tpl?.body || ''}`;
     const completion = await openai.chat.completions.create({
       model: AI_MODEL,
