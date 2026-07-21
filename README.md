@@ -7,48 +7,67 @@
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-1.1.0-orange)](https://trychroma.com)
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue?logo=docker)](https://docker.com)
 
-**NexaFlow AI** is an enterprise-grade, all-in-one AI automation platform designed for modern businesses. It provides a suite of 15+ AI-powered modules covering spreadsheets, PDF documents, email generation, copy writing, and template orchestration. 
+**NexaFlow AI** is an enterprise-grade, all-in-one AI automation platform designed for modern businesses. It provides a suite of 15+ AI-powered modules covering spreadsheets, PDF documents, email generation, copywriting, and document orchestration.
 
-At its core, the platform operates on a **self-hosted Retrieval-Augmented Generation (RAG)** pipeline utilizing local Large Language Models (LLMs) and vector embeddings, guaranteeing absolute data privacy and substantial API cost reductions compared to public cloud alternatives.
+At its core, the platform operates on a **Universal Retrieval-Augmented Generation (RAG)** pipeline powered by **ChromaDB vector stores** and a **High-Speed Hybrid LLM engine** (Local Ollama + Groq Cloud API fallback), guaranteeing 100% availability and ultra-low latency response times.
+
+---
+
+## 🌐 Live Production Deployments
+
+* **Frontend Dashboard (Vercel):** [https://nexa-flow-ai.vercel.app](https://nexa-flow-ai.vercel.app)
+* **Backend REST API (Render):** [https://nexaflow-ai.onrender.com](https://nexaflow-ai.onrender.com)
+* **LLM & RAG Microservice (Render):** [https://nexaflow-llm-service.onrender.com](https://nexaflow-llm-service.onrender.com)
 
 ---
 
 ## 🗺️ Architectural Topology
 
-NexaFlow AI is built as a microservices architecture to ensure scalability, ease of development, and strict separation of concerns.
+NexaFlow AI is built as a microservices architecture to ensure scalability, fault tolerance, and clean separation of concerns.
 
 ```mermaid
 graph TD
-    A[React Client] <-->|REST HTTP / Auth| B[Node.js Express Server]
-    B <-->|ORM| C[(PostgreSQL Metadata)]
-    B <-->|REST HTTP| D[FastAPI LLM Microservice]
-    D <-->|Embedding / Chat APIs| E[Ollama Server]
-    D <-->|Vector Queries| F[(ChromaDB Vector Store)]
-    B -.->|Graceful API Fallback| G[OpenAI Cloud API]
+    A[React Client / Vercel] <-->|REST HTTP / JWT Auth| B[Node.js Express Server / Render]
+    B <-->|ORM| C[(PostgreSQL Database)]
+    B <-->|Vector Retrieval & Completion| D[FastAPI LLM Microservice / Render]
+    D <-->|Vector Store / PersistentClient| E[(ChromaDB Vector Store)]
+    D <-->|Local Inference| F[Ollama Server]
+    D <-->|Ultra-Fast Fallback ~50ms| G[Groq Cloud API llama-3.1-8b]
 ```
 
 ---
 
-## 🌟 Modules & Features
+## 🌟 Tool Suites & Universal RAG Architecture
 
-### 📄 PDF Intelligence Hub
-* **PDF Brain:** Get rapid summary reports and key insight breakdowns of uploaded manuals, contracts, or long reports.
-* **PDF Chat Agent:** Converse directly with your documents. Ask questions, seek verification, and trace exact citations.
-* **Smart Data Extractor:** Automatically parse unstructured PDFs to pull structured fields (e.g., invoices, dates, amounts) into clean JSON data.
-* **Bulk PDF Toolkit:** Process multiple files in batch pipelines.
+Every module across NexaFlow AI is integrated with live vector search and RAG retrieval:
 
-### 📊 Excel Genius Suite
-* **AI Sheet Summarizer:** Synthesize sheets to understand data ranges, column schemas, and summary tables.
-* **Formula Master:** Convert plain-english commands into correct Excel or Google Sheets formulas.
-* **Error & Trend Detector:** Surface data anomalies, logical calculation errors, and future predictions.
+### 📄 PDF Intelligence Hub (Full Document RAG)
+* **PDF Brain:** Ingests long manuals, contracts, or financial reports into ChromaDB (`documents` collection) to generate key summaries and structural breakdowns.
+* **PDF Chat Agent:** Converse directly with uploaded PDF documents. Searches vector embeddings to retrieve exact snippets and return precise citations.
+* **Smart Data Extractor:** Parses unstructured PDFs to pull structured JSON fields (invoices, dates, line items).
 
-### 🧠 AI Workmate
-* **AI Chat:** A persistent chat dashboard featuring user prompt templates, search utilities, and conversation logging.
-* **Multi-Turn Context:** Preserves conversation threads using PostgreSQL state logs.
+### ✉️ MailCraft AI Suite (Template RAG)
+* **Email Wizard:** Queries `mailcraft_templates` vector store for AIDA, PAS, and B2B cold email frameworks before generating customized email drafts.
+* **Subject Line Optimizer:** Queries open-rate subject line formulas to generate high-converting subject lines.
+* **Tone Polisher:** Retrieves executive tone rules and grammar enhancement guidelines to refine user text.
 
-### ✉️ MailCraft AI & Social Pro
-* **Email Wizard:** Create drafts matching customized tones, contexts, or email lengths.
-* **CaptionPro & Ad Generator:** Build highly converting captions, advertisements, and optimized hashtag listings.
+### 📱 SocialPro AI Suite (Viral Hooks RAG)
+* **CaptionPro & Post Generator:** Queries `socialpro_templates` for viral openers, pattern-interrupt hooks, and call-to-action formulas.
+* **Ad Copy Generator:** Retrieves high-converting Meta and LinkedIn ad copy frameworks.
+* **Hashtag Strategist:** Queries hashtag categorization benchmarks to maximize post reach.
+
+### 📬 Bulk Mailer AI (Sequence RAG)
+* **Smart Sequence Engine:** Queries `bulkmailer_templates` for multi-touch cold outreach sequences (Intro ➔ Follow-up ➔ Value Add ➔ Breakup).
+* **MailMerge & Personalization:** Interpolates dynamic user tags with verified email templates.
+
+### 📝 SmartDocs Suite (Corporate Templates RAG)
+* **Smart Invoice Generator:** Queries `smartdocs_templates` for professional corporate invoice structures and line-item formatting.
+* **Offer Letter Generator:** Retrieves employment contract and offer letter legal guidelines.
+
+### 📊 Excel Genius Suite (Formula & Analysis RAG)
+* **Formula Master:** Queries `excel_templates` for advanced formulas (XLOOKUP, INDEX/MATCH, SUMIFS, IFERROR).
+* **Error & Trend Detector:** Retrieves data cleaning heuristics (#N/A, #VALUE!, #REF!) and trend prediction models.
+* **AI Sheet Summarizer:** Synthesize spreadsheet schemas and summary statistics.
 
 ---
 
@@ -56,13 +75,13 @@ graph TD
 
 | Layer | Technology | Key Usage |
 | :--- | :--- | :--- |
-| **Frontend** | React 18, TypeScript, Tailwind CSS, Vite | Responsive dashboard UI, charts, and file upload systems |
-| **Backend** | Node.js, Express.js, TypeScript | API routing, JWT session validation, user limits, payment webhook |
-| **Database** | PostgreSQL, Prisma ORM | Stores accounts, chat histories, transactions, and usage quotas |
-| **AI Service** | FastAPI (Python 3.10+), Uvicorn | High-performance embedding orchestration, chunking, and RAG routing |
-| **Vector DB** | ChromaDB | High-speed similarity search for user document vectors |
-| **Local LLM** | Ollama (`llama3.2`, `nomic-embed-text`) | Local vectorization and local text generation |
-| **Infrastructure** | Docker & Docker Compose | Multi-container setups for Postgres, Redis, ChromaDB, and Ollama |
+| **Frontend** | React 18, TypeScript, Vanilla CSS, Vite | Glassmorphic dashboard UI, charts, and file upload systems |
+| **Backend** | Node.js, Express.js, TypeScript | REST APIs, JWT session validation, user limits, payment webhooks |
+| **Database** | PostgreSQL, Prisma ORM | Stores accounts, chat logs, transactions, and usage quotas |
+| **AI Microservice** | FastAPI (Python 3.10+), Uvicorn | Embedding orchestration, document chunking, and RAG routing |
+| **Vector DB** | ChromaDB (`PersistentClient`) | In-memory & persistent vector search stored in writeable storage |
+| **LLM Engine** | Local Ollama + Groq Cloud API | Hybrid LLM inference (`llama-3.1-8b-instant` fallback) |
+| **Infrastructure** | Render, Vercel, Docker Compose | Automated CI/CD deployment pipelines |
 
 ---
 
@@ -79,8 +98,8 @@ graph TD
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/nexaflow-ai.git
-cd nexaflow-ai
+git clone https://github.com/SivansRawat/NexaFlow-AI.git
+cd NexaFlow-AI
 
 # Install Backend dependencies
 cd backend && npm install
@@ -96,80 +115,92 @@ cd ../llm-service/llm-ms && pip install -r requirements.txt
 
 ### Step 2: Spin Up Infrastructure Containers
 
-Run the core Docker containers (PostgreSQL, Redis, ChromaDB, and Ollama). This command downloads and boots all required services:
-
 ```bash
 cd .. # Back to the project root
 docker compose up -d
 ```
 
-*(Note: The Ollama container is pre-configured in [docker-compose.yml](file:///Users/sivansrawat/Documents/NexaFlow-AI/docker-compose.yml) to automatically pull `llama3.2:latest` and `nomic-embed-text:latest` on startup).*
-
 ---
 
-### Step 3: Run Migrations and Set Environment Variables
+### Step 3: Run Database Migrations
 
-1. Populate the database schema using Prisma:
 ```bash
 cd backend
 npx prisma db push
 ```
 
-2. Duplicate the environment configuration template:
-   * Rename `.env.example` files in both the `backend` and `frontend` folders to `.env`.
-   * Add your Google OAuth keys and Razorpay secrets in `backend/.env`.
-
 ---
 
 ### Step 4: Launch Applications
 
-Start the developments servers in three separate terminal screens:
+Start the development servers in separate terminal screens:
 
 #### 1. Backend Server
 ```bash
 cd backend
 npm run dev
+# App launches at: http://localhost:5000
 ```
-*App launches at:* `http://localhost:5000`
 
 #### 2. LLM Microservice
 ```bash
 cd llm-service/llm-ms
 python run.py
+# App launches at: http://localhost:8001 (Docs at http://localhost:8001/docs)
 ```
-*App launches at:* `http://localhost:8001` (Docs at `http://localhost:8001/docs`)
 
 #### 3. Frontend Web Dashboard
 ```bash
 cd frontend
 npm run dev
+# App launches at: http://localhost:3000
 ```
-*App launches at:* `http://localhost:3000`
 
 ---
 
-## 🔍 Ingestion & Query Verification (RAG Testing)
+## 🔍 Verification & RAG Retrieval Testing
 
-You can quickly verify that the FastAPI RAG service is working independently using `curl` commands:
+You can verify that vector retrieval is working live using `curl` against the deployed LLM service:
 
-### 1. Ingest a Test Document Chunk
+### 1. Test MailCraft RAG Retrieval (`mailcraft_templates`)
 ```bash
-curl -X POST http://localhost:8001/api/rag/ingest \
+curl -X POST https://nexaflow-llm-service.onrender.com/api/rag/retrieve \
   -H "Content-Type: application/json" \
-  -d '{
-    "document_id": "doc_test_101",
-    "document_text": "NexaFlow AI has recorded a net profit of 1.2 million dollars for Q2 of 2026.",
-    "collection_name": "user_demo_documents"
-  }'
+  -d '{"query":"sales email","collection_name":"mailcraft_templates","n_results":2}'
 ```
 
-### 2. Query the Knowledge Base (Retrieval Search)
+### 2. Test SocialPro RAG Retrieval (`socialpro_templates`)
 ```bash
-curl -X POST http://localhost:8001/api/rag/query \
+curl -X POST https://nexaflow-llm-service.onrender.com/api/rag/retrieve \
+  -H "Content-Type: application/json" \
+  -d '{"query":"instagram viral hook","collection_name":"socialpro_templates","n_results":1}'
+```
+
+### 3. Test Excel Genius RAG Retrieval (`excel_templates`)
+```bash
+curl -X POST https://nexaflow-llm-service.onrender.com/api/rag/retrieve \
+  -H "Content-Type: application/json" \
+  -d '{"query":"VLOOKUP formula error","collection_name":"excel_templates","n_results":1}'
+```
+
+### 4. Test PDF Brain Ingestion & RAG Query (`documents`)
+```bash
+# Ingest PDF Document
+curl -X POST https://nexaflow-llm-service.onrender.com/api/rag/ingest \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "How much profit was recorded for Q2?",
-    "collection_name": "user_demo_documents"
+    "document_id": "pdf_doc_101",
+    "document_text": "NexaFlow Secret Protocol Code: NF-ALPHA-998877.",
+    "metadata": {"source": "manual.pdf"}
+  }'
+
+# Query PDF Document RAG Answer
+curl -X POST https://nexaflow-llm-service.onrender.com/api/rag/query \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "What is the secret protocol code?",
+    "collection_name": "documents",
+    "n_context_chunks": 1
   }'
 ```
 
@@ -178,40 +209,34 @@ curl -X POST http://localhost:8001/api/rag/query \
 ## 📂 Project Structure Map
 
 ```
-nexaflow-ai/
+NexaFlow-AI/
 ├── backend/                  # Node.js + Express API
 │   ├── src/
-│   │   ├── controllers/      # Route controllers (AI, PDF, auth, etc.)
-│   │   ├── middlewares/      # Security, limit checks, and JWT auth
-│   │   └── services/         # Clients for LLM and RAG Python services
+│   │   ├── controllers/      # RAG & AI Controllers (MailCraft, SocialPro, Excel, SmartDocs)
+│   │   ├── middlewares/      # Security, rate limits, and JWT auth
+│   │   └── services/         # LLM service wrappers & Axios clients
 │   ├── prisma/               # PostgreSQL schema declaration
-│   └── package.json          # Node dependencies (see backend/package.json)
+│   └── package.json          # Node dependencies
 │
 ├── frontend/                 # React client
 │   ├── src/
-│   │   ├── components/       # Reusable views (PDF toolkit, Excel optimizer, etc.)
-│   │   ├── context/          # Auth state managers
+│   │   ├── components/       # Glassmorphic views (PDF toolkit, Excel optimizer, MailCraft)
+│   │   ├── context/          # Auth context state managers
 │   │   └── lib/              # API and helper utilities
-│   └── package.json          # React dependencies (see frontend/package.json)
+│   ├── vercel.json           # Vercel SPA rewrite routing
+│   └── package.json          # React dependencies
 │
-├── llm-service/llm-ms/       # Python FastAPI AI service
+├── llm-service/llm-ms/       # Python FastAPI AI microservice
 │   ├── app/
-│   │   ├── routes/           # FastAPI router endpoints (RAG, Chat completions)
-│   │   └── services/         # Vector searches, chunking, and Ollama clients
+│   │   ├── routes/           # FastAPI routers (Chat, RAG retrieval & ingestion)
+│   │   └── services/         # Vector search, ChromaDB PersistentClient, Groq fallback
+│   ├── Dockerfile            # Production Docker build spec
 │   └── requirements.txt      # Python dependencies
 │
-├── grafana/                  # System monitoring configurations
-├── docker-compose.yml        # Orchestration script for services
-├── install.sh                # Automation setup shell script
+├── vercel.json               # Root Vercel SPA routing
+├── docker-compose.yml        # Infrastructure orchestration
 └── README.md                 # Project guide
 ```
-
----
-
-## 📈 Monitoring & Health Checking
-* The system is provisioned to support telemetry using **Prometheus** and **Grafana** (configured in the `grafana` directory).
-* To track active load, spin times, and database metrics, uncomment the `prometheus` and `grafana` services in [docker-compose.yml](file:///Users/sivansrawat/Documents/NexaFlow-AI/docker-compose.yml) and launch.
-* A live health check is exposed at `http://localhost:8001/api/llm/health`.
 
 ---
 
