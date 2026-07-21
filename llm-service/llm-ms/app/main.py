@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 import os
 import time
+import asyncio
 
 # Load environment variables from .env file
 load_dotenv()
@@ -107,6 +108,12 @@ async def startup_event():
     print(f"🌐 CORS Origins: {CORS_ORIGINS}")
     print(f"📚 API Docs: http://localhost:{os.getenv('PORT', '8001')}/docs")
     print("=" * 50)
+
+    try:
+        from app.services.mailcraft_seed import seed_mailcraft_knowledge
+        asyncio.create_task(seed_mailcraft_knowledge())
+    except Exception as seed_err:
+        print(f"⚠️ MailCraft seeding skip: {seed_err}")
 
 # Shutdown event
 @app.on_event("shutdown")

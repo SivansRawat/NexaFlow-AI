@@ -32,12 +32,12 @@ async def chat_completion(request: ChatRequest):
         }
     """
     try:
-        # Check if Ollama is running
+        # Check if LLM engine (Ollama or Cloud API) is healthy
         is_healthy = await ollama_service.check_health()
         if not is_healthy:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Ollama service is not running. Please start Ollama with 'docker start llm-service'"
+                detail="LLM service is unavailable. Please check local Ollama or Cloud LLM API key."
             )
         
         # Convert Pydantic models to dictionaries

@@ -39,20 +39,38 @@ export const sendTonePolisherChatMessage = async (req: Request, res: Response) =
       content: msg.content
     }));
 
+    // Retrieve RAG tone guidelines if available
+    let ragContext = '';
+    try {
+      const ragUrl = process.env.RAG_SERVICE_URL || process.env.LLM_SERVICE_URL || 'https://nextflow-ai-llm-production.up.railway.app';
+      const ragRes = await fetch(`${ragUrl}/api/rag/retrieve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: message,
+          collection_name: 'mailcraft_templates',
+          n_results: 2
+        })
+      });
+      if (ragRes.ok) {
+        const ragData: any = await ragRes.json();
+        if (ragData.chunks && ragData.chunks.length > 0) {
+          ragContext = ragData.chunks.map((c: any) => c.text).join('\n\n');
+        }
+      }
+    } catch (ragErr) {
+      console.log('Tone Polisher RAG retrieval skipped:', ragErr);
+    }
+
     // Create system prompt for tone polishing
     const systemPrompt = `You are a professional tone polisher and writing assistant. Your role is to help users improve their text by:
 
 1. Analyzing the tone and style of their text
 2. Suggesting improvements for clarity, professionalism, and impact
 3. Providing polished versions that maintain the original intent
-4. Offering specific feedback on grammar, tone, and structure
-
-When responding:
-- Be constructive and helpful
-- Explain your suggestions clearly
-- Provide both the improved version and brief reasoning
-- Maintain the user's original message intent
-- Focus on tone, clarity, and professional presentation
+4. Offering specific feedback on grammar, tone, and structure${
+  ragContext ? `\n\n[RAG TONE GUIDELINES & FRAMEWORKS]:\n${ragContext}` : ''
+}
 
 Always respond in a helpful, professional manner.`;
 

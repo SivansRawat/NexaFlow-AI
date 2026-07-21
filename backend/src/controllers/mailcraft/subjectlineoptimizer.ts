@@ -24,9 +24,33 @@ export const sendSubjectLineChatMessage = async (req: Request, res: Response) =>
       data: { chatId: chat.id, sender: 'user', content: message }
     });
 
-    // Use self-hosted LLM for subject line optimization
-    const systemPrompt = 'You are an expert email subject line optimizer. Create compelling, engaging, and click-worthy subject lines.';
-    const userPrompt = `Create optimized subject lines for the following request:\n\n${message}\n\nReturn only the optimized subject line(s). If multiple options are requested, provide them in a numbered list.`;
+    // Retrieve RAG subject line formulas if available
+    let ragContext = '';
+    try {
+      const ragUrl = process.env.RAG_SERVICE_URL || process.env.LLM_SERVICE_URL || 'https://nextflow-ai-llm-production.up.railway.app';
+      const ragRes = await fetch(`${ragUrl}/api/rag/retrieve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: message,
+          collection_name: 'mailcraft_templates',
+          n_results: 2
+        })
+      });
+      if (ragRes.ok) {
+        const ragData: any = await ragRes.json();
+        if (ragData.chunks && ragData.chunks.length > 0) {
+          ragContext = ragData.chunks.map((c: any) => c.text).join('\n\n');
+        }
+      }
+    } catch (ragErr) {
+      console.log('Subject Line RAG retrieval skipped:', ragErr);
+    }
+
+    const systemPrompt = `You are an expert email subject line optimizer. Create compelling, engaging, and click-worthy subject lines.${
+      ragContext ? `\n\n[RAG SUBJECT LINE FORMULAS & STRATEGIES]:\n${ragContext}` : ''
+    }`;
+    const userPrompt = `Create optimized subject lines for the following request:\n\n${message}\n\nReturn only the optimized subject line(s). If multiple options are requested, provide them in a clean numbered list.`;
     
     const answer = await llmService.simpleCompletion(
       userPrompt,
