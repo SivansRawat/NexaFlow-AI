@@ -133,8 +133,8 @@ const AISheetSummarizerChat: React.FC<AISheetSummarizerChatProps> = ({ onBack })
       }
     } catch (err: any) {
       if (err?.response?.status === 429) handle429Error();
-      setMessages(prev => prev.filter(m => !m.isLoading));
-      setMessages(prev => [...prev, { id: Date.now().toString(), sender: 'bot', content: 'Sorry, something went wrong.' }]);
+      const errMsg = err?.response?.data?.error || 'Sorry, something went wrong.';
+      setMessages(prev => [...prev, { id: Date.now().toString(), sender: 'bot', content: errMsg }]);
     }
   };
 

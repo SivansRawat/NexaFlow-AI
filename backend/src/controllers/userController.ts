@@ -139,7 +139,7 @@ export const signup = async (req: Request, res: Response) => {
         });
         
         // Generate JWT like login
-        const accessSecret = process.env.JWT_ACCESS_SECRET as string;
+        const accessSecret = process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET || 'nexaflow_jwt_access_secret_key_2026';
         const accessToken = jwt.sign({
             id: user.id,
             role: 'user',
@@ -224,8 +224,8 @@ export const login = async (req: Request, res: Response) => {
             });
         }
         
-        const accessSecret = process.env.JWT_ACCESS_SECRET as string;
-        const refreshSecret = process.env.JWT_REFRESH_SECRET as string;
+        const accessSecret = process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET || 'nexaflow_jwt_access_secret_key_2026';
+        const refreshSecret = process.env.JWT_REFRESH_SECRET || 'nexaflow_jwt_refresh_secret_key_2026';
         const accessToken = jwt.sign({
             id: user.id,
             role: user.role,
@@ -296,8 +296,8 @@ export const refreshToken = (req: Request, res: Response) => {
         error: parsed.error.errors[0] && parsed.error.errors[0].message ? parsed.error.errors[0].message : 'Invalid input'
     });
     const { refreshToken } = parsed.data;
-    const accessSecret = process.env.JWT_ACCESS_SECRET as string;
-    const refreshSecret = process.env.JWT_REFRESH_SECRET as string;
+    const accessSecret = process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET || 'nexaflow_jwt_access_secret_key_2026';
+    const refreshSecret = process.env.JWT_REFRESH_SECRET || 'nexaflow_jwt_refresh_secret_key_2026';
     jwt.verify(refreshToken, refreshSecret, (err: VerifyErrors | null, decoded: any) => {
         if (err || !decoded || typeof decoded === 'string') return res.status(401).json({
             error: 'Invalid refresh token'

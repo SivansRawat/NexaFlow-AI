@@ -125,12 +125,16 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
         return res.status(401).json({ error: 'No token provided' });
     }
     const token = authHeader.split(' ')[1];
-    const accessSecret = process.env.JWT_ACCESS_SECRET as string;
-    jwt.verify(token, accessSecret, (err: VerifyErrors | null, decoded: any) => {
-        if (err) return res.status(401).json({ error: 'Invalid token' });
-        req.user = decoded;
-        next();
-    });
+    const accessSecret = process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET || 'nexaflow_jwt_access_secret_key_2026';
+    try {
+        jwt.verify(token, accessSecret, (err: VerifyErrors | null, decoded: any) => {
+            if (err) return res.status(401).json({ error: 'Invalid token' });
+            req.user = decoded;
+            next();
+        });
+    } catch (verifyErr) {
+        return res.status(401).json({ error: 'Invalid token' });
+    }
 };
 
 export const requireRole = (role: string) => (req: Request, res: Response, next: NextFunction) => {
