@@ -1,155 +1,66 @@
-
-
-
-
-// // backend/src/middlewares/rateLimiter.ts
-// import rateLimit from 'express-rate-limit';
-// import RedisStore from 'rate-limit-redis';
-// import Redis from 'ioredis';
-// import { logger } from '../utils/logger';
-
-// // Redis connection with fallback for development
-// let redis: Redis | null = null;
-
-// try {
-//   redis = new Redis({
-//     host: process.env.REDIS_HOST || 'localhost',
-//     port: parseInt(process.env.REDIS_PORT || '6379'),
-//     password: process.env.REDIS_PASSWORD,
-//     retryStrategy: (times: number) => {
-//       const delay = Math.min(times * 50, 2000);
-//       return delay;
-//     },
-//   });
-
-//   redis.on('error', (error: Error) => {
-//     logger.warn('Redis error, rate limiting will use memory store:', error);
-//     redis = null;
-//   });
-// } catch (error) {
-//   logger.warn('Redis connection failed, rate limiting will use memory store:', error);
-//   redis = null;
-// }
-
-// // Create Redis store if available
-// const getStore = () => {
-//   if (redis) {
-//     try {
-//       return new RedisStore({
-//         // @ts-ignore - sendCommand is a valid method
-//         sendCommand: (...args: string[]) => redis!.call(...args),
-//       });
-//     } catch (error) {
-//       logger.warn('Redis store creation failed, using memory store:', error);
-//       return undefined;
-//     }
-//   }
-//   return undefined;
-// };
-
-// // General API rate limiter
-// export const apiRateLimiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes
-//   max: 100, // 100 requests per window
-//   message: {
-//     success: false,
-//     error: 'Too many requests, please try again later',
-//     code: 'RATE_LIMIT_EXCEEDED'
-//   },
-//   standardHeaders: true,
-//   legacyHeaders: false,
-//   store: getStore(),
-//   skip: (req) => {
-//     // Skip rate limiting for health checks
-//     return req.path === '/api/health' || req.path === '/api/liveness' || req.path === '/api/readiness';
-//   }
-// });
-
-// // RAG specific rate limiter (stricter)
-// export const ragRateLimiter = rateLimit({
-//   windowMs: 60 * 60 * 1000, // 1 hour
-//   max: 50, // 50 RAG queries per hour
-//   message: {
-//     success: false,
-//     error: 'RAG query limit exceeded. Please upgrade your plan.',
-//     code: 'RAG_LIMIT_EXCEEDED'
-//   },
-//   standardHeaders: true,
-//   legacyHeaders: false,
-//   store: getStore(),
-// });
-
-// // Upload rate limiter
-// export const uploadRateLimiter = rateLimit({
-//   windowMs: 60 * 60 * 1000, // 1 hour
-//   max: 20, // 20 uploads per hour
-//   message: {
-//     success: false,
-//     error: 'Upload limit exceeded. Please try again later.',
-//     code: 'UPLOAD_LIMIT_EXCEEDED'
-//   },
-//   standardHeaders: true,
-//   legacyHeaders: false,
-//   store: getStore(),
-// });
-
-
-
-
-// backend/src/middlewares/rateLimiter.ts
 import rateLimit from 'express-rate-limit';
 import RedisStore from 'rate-limit-redis';
 import Redis from 'ioredis';
 import { logger } from '../utils/logger';
 
-// Redis connection with fallback for development
 let redis: Redis | null = null;
 
-try {
-  redis = new Redis({
-    host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT || '6379'),
-    password: process.env.REDIS_PASSWORD,
-    retryStrategy: (times: number) => {
-      const delay = Math.min(times * 50, 2000);
-      return delay;
-    },
-  });
-
-  redis.on('error', (error: Error) => {
-    logger.warn('Redis error, rate limiting will use memory store:', error);
-    redis = null;
-  });
-
-  redis.on('connect', () => {
-    logger.info('Redis connected for rate limiting');
-  });
-} catch (error) {
-  logger.warn('Redis connection failed, rate limiting will use memory store:', error);
-  redis = null;
+if (process.env.REDIS_URL) {
+  try {
+    redis = new Redis(process.env.REDIS_URL, { lazyConnect: true, maxRetriesPerRequest: 1 });
+  } catch (error: any) {
+    logger.warn('Redis initialization skipped:', error.message);
+  }
+} else if (process.env.REDIS_HOST) {
+  try {
+    redis = new Redis({
+      host: process.env.REDIS_HOST,
+      port: parseInt(process.env.REDIS_PORT || '6379'),
+      password: process.env.REDIS_PASSWORD,
+      lazyConnect: true,
+      maxRetriesPerRequest: 1
+    });
+  } catch (error: any) {
+    logger.warn('Redis initialization skipped:', error.message);
+  }
 }
 
-// Create Redis store if available
+if (redis) {
+  redis.on('error', (error: Error) => {
+    logger.warn('Redis connection error, rate limiting fallback to memory:', error.message);
+  });
+  redis.on('connect', () => {
+    logger.info('Redis connected successfully for rate limiting');
+  });
+}
+
 const getStore = () => {
-  if (redis) {
+  if (redis && (redis.status === 'ready' || redis.status === 'connecting')) {
     try {
-      // For rate-limit-redis v5
       return new RedisStore({
-        // @ts-ignore - The types might not match perfectly but this works
-        sendCommand: (...args: string[]) => redis!.call(...args),
+        // @ts-ignore
+        sendCommand: async (command: string, ...args: string[]) => {
+          try {
+            if (redis && redis.status === 'ready') {
+              return await redis.call(command, ...args);
+            }
+          } catch (e) {
+            // Silently fallback if redis call fails
+          }
+          return null;
+        },
       });
     } catch (error) {
-      logger.warn('Redis store creation failed, using memory store:', error);
-      return undefined;
+      logger.warn('RedisStore initialization failed, using memory store:', error);
     }
   }
-  return undefined;
+  return undefined; // In-memory store
 };
 
 // General API rate limiter
 export const apiRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requests per window
+  max: 200, // 200 requests per window
   message: {
     success: false,
     error: 'Too many requests, please try again later',
@@ -159,18 +70,17 @@ export const apiRateLimiter = rateLimit({
   legacyHeaders: false,
   store: getStore(),
   skip: (req) => {
-    // Skip rate limiting for health checks
     return req.path === '/health' || req.path === '/liveness' || req.path === '/readiness';
   }
 });
 
-// RAG specific rate limiter (stricter)
+// RAG specific rate limiter
 export const ragRateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 50, // 50 RAG queries per hour
+  max: 100, // 100 queries per hour
   message: {
     success: false,
-    error: 'RAG query limit exceeded. Please upgrade your plan.',
+    error: 'RAG query limit exceeded. Please try again later.',
     code: 'RAG_LIMIT_EXCEEDED'
   },
   standardHeaders: true,
@@ -181,7 +91,7 @@ export const ragRateLimiter = rateLimit({
 // Upload rate limiter
 export const uploadRateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 20, // 20 uploads per hour
+  max: 100, // 100 uploads per hour
   message: {
     success: false,
     error: 'Upload limit exceeded. Please try again later.',

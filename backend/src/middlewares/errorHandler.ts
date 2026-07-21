@@ -211,12 +211,11 @@ export const errorHandler = (
   }
 
   // Default error
-  const isDevelopment = process.env.NODE_ENV === 'development';
   res.status(500).json({
     success: false,
-    error: isDevelopment ? err.message : 'Internal server error',
+    error: err.message || 'Internal server error',
     code: 'INTERNAL_ERROR',
-    ...(isDevelopment && { stack: err.stack })
+    details: err.message || undefined
   });
 };
 
