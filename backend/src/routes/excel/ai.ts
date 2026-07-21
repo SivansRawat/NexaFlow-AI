@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import { analyzeExcel } from '../../controllers/excel/excelaiController';
 import { authenticate } from '../../middlewares/auth';
@@ -16,6 +16,16 @@ const upload = multer({
 // Apply authentication to all routes
 router.use(authenticate);
 
-router.post('/analyze-excel', upload.single('file'), analyzeExcel);
+const handleFileUpload = (req: Request, res: Response, next: NextFunction) => {
+  upload.single('file')(req, res, (err: any) => {
+    if (err) {
+      console.error('Multer upload error in analyze-excel:', err);
+      return res.status(400).json({ error: err.message || 'File upload error' });
+    }
+    next();
+  });
+};
 
-export default router; 
+router.post('/analyze-excel', handleFileUpload, analyzeExcel);
+
+export default router;
