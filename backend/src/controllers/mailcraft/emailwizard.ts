@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import prisma from '../../lib/prisma';
 import { llmService } from '../../services/llmService';
 
-// Render deployment trigger: Active RAG Pipeline Sync
+// Render deployment trigger: Active RAG Pipeline Permissions Sync
 
 export const sendMailChatMessage = async (req: Request, res: Response) => {
   try {

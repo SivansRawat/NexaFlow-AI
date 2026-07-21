@@ -19,15 +19,19 @@ class ChromaDBService:
 
     def __init__(self):
         """Initialize ChromaDB client with automatic PersistentClient fallback"""
+        db_dir = os.getenv("CHROMA_DB_DIR", "/tmp/chroma_db")
+        try:
+            os.makedirs(db_dir, exist_ok=True)
+        except Exception:
+            pass
+
         try:
             if CHROMA_HOST and CHROMA_HOST != "localhost":
                 self.client = HttpClient(host=CHROMA_HOST, port=CHROMA_PORT)
             else:
-                db_dir = os.path.join(os.getcwd(), "chroma_db")
                 self.client = PersistentClient(path=db_dir)
         except Exception as e:
-            print(f"⚠️ ChromaDB HttpClient failed ({e}). Using embedded PersistentClient...")
-            db_dir = os.path.join(os.getcwd(), "chroma_db")
+            print(f"⚠️ ChromaDB HttpClient failed ({e}). Using embedded PersistentClient at {db_dir}...")
             self.client = PersistentClient(path=db_dir)
         self.collections = {}
 
