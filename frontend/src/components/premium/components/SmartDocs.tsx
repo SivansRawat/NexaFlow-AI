@@ -2,6 +2,7 @@ import React from 'react';
 import ToolCard from './ToolCard';
 import { FileCheck, FileText, Sparkles } from 'lucide-react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
+import SEO from '../../common/SEO';
 
 interface SmartDocsProps {
   isDarkMode?: boolean;
@@ -31,6 +32,11 @@ const SmartDocs: React.FC<SmartDocsProps> = () => {
 
   return (
     <div className="space-y-8 w-full pt-2 pb-12">
+      <SEO 
+        title="SmartDocs - Intelligent Document Automation Suite"
+        description="Automate essential business documentation. Create custom invoices, job offer letters, contracts, and legal templates with AI."
+        canonical="/premium/smartdocs"
+      />
       {/* Header Banner */}
       <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all duration-300 ${
         isDarkMode 

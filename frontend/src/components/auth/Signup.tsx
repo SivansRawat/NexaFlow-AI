@@ -3,6 +3,7 @@ import { userSignup } from "../../lib/api";
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { Sparkles, Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
+import SEO from '../common/SEO';
 
 export default function Signup() {
   const [loading, setLoading] = useState(false);
@@ -39,6 +40,11 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#07070d] text-white relative overflow-hidden px-4 py-12">
+      <SEO 
+        title="Create Your Account"
+        description="Join NexaFlow AI today. Get instant access to PDF Chat Agent, Excel AI Formula Master, MailCraft AI, and enterprise workflow tools."
+        canonical="/signup"
+      />
       {/* Dynamic Background Glows */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-cyan-600/20 rounded-full blur-[120px] pointer-events-none" />

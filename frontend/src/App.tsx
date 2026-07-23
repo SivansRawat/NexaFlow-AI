@@ -53,10 +53,30 @@ import PDFConverterPro from "./components/premium/pdf/PDFConverterPro";
 import MailMergeAI from "./components/premium/bulkmailer/mailmergeai";
 
 import BulkPDFToolkitPage from "./components/premium/pdf/BulkPDFToolkitPage";
+import SEO from "./components/common/SEO";
 
 function HomePage() {
   return (
     <div className="text-white relative overflow-hidden">
+      <SEO
+        title="Universal RAG & Enterprise AI Automation Suite"
+        description="Transform your workflow with NexaFlow AI. Powerful PDF document intelligence, Excel formula automation, MailCraft AI copywriting, and enterprise vector search RAG."
+        canonical="/"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "NexaFlow AI",
+          "operatingSystem": "Web, All",
+          "applicationCategory": "BusinessApplication",
+          "description": "Enterprise AI automation suite featuring Universal RAG vector retrieval, PDF Intelligence, Excel analytics, MailCraft AI, and SocialPro AI.",
+          "url": "https://nexa-flow-ai.vercel.app/",
+          "offers": {
+            "@type": "Offer",
+            "price": "0.00",
+            "priceCurrency": "USD"
+          }
+        }}
+      />
       <Header />
       <div className="relative z-10">
         <div className="pb-8">

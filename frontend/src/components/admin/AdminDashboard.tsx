@@ -3,6 +3,7 @@ import AdminHeader from './AdminHeader';
 import AdminSidebar from './AdminSidebar';
 import UsersSection from './UsersSection';
 import { updateAdminPassword } from '../../lib/api';
+import SEO from '../common/SEO';
 
 function AdminDashboard() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -28,8 +29,14 @@ function AdminDashboard() {
 
   return (
     <div className={`min-h-screen transition-all duration-300 transition-colors duration-500 ${
-      isDarkMode ? 'bg-gray-900' : 'bg-gray-50'
+      isDarkMode ? 'bg-[#0f172a] text-[#f8fafc]' : 'bg-[#f8fafc] text-[#0f172a]'
     }`}>
+      <SEO 
+        title="Admin Dashboard"
+        description="NexaFlow AI System Administration Portal"
+        canonical="/admin"
+        noindex={true}
+      />
       <AdminHeader 
         isDarkMode={isDarkMode} 
         toggleTheme={toggleTheme}

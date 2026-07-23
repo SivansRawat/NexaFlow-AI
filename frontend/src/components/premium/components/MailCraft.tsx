@@ -2,6 +2,7 @@ import React from 'react';
 import ToolCard from './ToolCard';
 import { Mail, Type, Edit3, Sparkles } from 'lucide-react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
+import SEO from '../../common/SEO';
 
 interface MailCraftProps {
   isDarkMode?: boolean;
@@ -38,6 +39,11 @@ const MailCraft: React.FC<MailCraftProps> = () => {
 
   return (
     <div className="space-y-8 w-full pt-2 pb-12">
+      <SEO 
+        title="MailCraft AI - Intelligent Email Copywriting & Outreach"
+        description="Craft high-converting cold emails, optimize email subject lines for maximum open rates, and polish email tone with AI."
+        canonical="/premium/mailcraft"
+      />
       {/* Header Banner */}
       <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all duration-300 ${
         isDarkMode 

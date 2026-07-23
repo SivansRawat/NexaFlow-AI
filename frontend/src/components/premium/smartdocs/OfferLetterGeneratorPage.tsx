@@ -3,6 +3,7 @@ import { OfferLetterAPI } from '@/lib/api';
 import { Clock, ZoomIn, ZoomOut } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import SEO from '@/components/common/SEO';
 
 type EmploymentType = 'Internship' | 'Contract' | 'Full-time' | 'Part-time' | 'Other';
 
@@ -251,6 +252,11 @@ const OfferLetterGeneratorPage: React.FC = () => {
 
   return (
     <div className="w-full min-h-screen bg-white">
+      <SEO 
+        title="AI Offer Letter Generator"
+        description="Generate professional, customizable employment offer letters instantly with live PDF preview, digital signing fields, and corporate branding."
+        canonical="/smartdocs/offerletter"
+      />
       <div className="w-full max-w-[1400px] mx-auto px-4 py-4 flex gap-6 lg:gap-8 items-stretch" style={{ minHeight: '100vh' }}>
         {/* Left: Scrollable form */}
         <div className="w-full lg:w-1/2 xl:w-7/12 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">

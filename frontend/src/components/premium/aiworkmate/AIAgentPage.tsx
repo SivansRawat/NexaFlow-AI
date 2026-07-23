@@ -7,6 +7,7 @@ import axios from 'axios'; // Added axios import
 import { API_BASE } from '@/lib/api';
 import { useUserLimit } from '@/lib/useUserLimit';
 import { useNavigate, useParams } from 'react-router-dom';
+import SEO from '@/components/common/SEO';
 
 interface Message {
   id: string;
@@ -327,6 +328,11 @@ const AIAgentPage: React.FC<AIAgentPageProps> = ({ isDarkMode: initialTheme = tr
 
   return (
       <div className={`flex w-full ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}> 
+      <SEO 
+        title="AI Workmate Assistant & Multi-LLM Chat Agent"
+        description="Interact with leading LLM models including ChatGPT, Claude 3.5, DeepSeek, and Grok in one unified AI workmate workspace."
+        canonical="/premium/aiworkmate"
+      />
       {Snackbar}
       {/* Chat History Sidebar */}
       <ChatHistory

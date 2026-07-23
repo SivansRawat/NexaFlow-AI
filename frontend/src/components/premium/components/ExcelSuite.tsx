@@ -2,6 +2,7 @@ import React from 'react';
 import ToolCard from './ToolCard';
 import { BarChart3, Brain, FileDown, Calculator, AlertTriangle, Sparkles } from 'lucide-react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import SEO from '../../common/SEO';
 
 interface ExcelSuiteProps {
   isDarkMode?: boolean;
@@ -74,6 +75,11 @@ const ExcelSuite: React.FC<ExcelSuiteProps> = () => {
 
   return (
     <div className="space-y-8 w-full pt-2 pb-12">
+      <SEO 
+        title="AI Excel Analytics & Formula Master"
+        description="Supercharge spreadsheets with AI Chart Builder, Excel Formula Master, Error & Trend Detector, and AI Sheet Summarizer."
+        canonical="/premium/excel"
+      />
       {/* Header Section */}
       <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all duration-300 ${
         isDarkMode 

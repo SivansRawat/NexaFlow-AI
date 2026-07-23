@@ -2,6 +2,7 @@ import React from 'react';
 import ToolCard from './ToolCard';
 import { FileText, MessageSquare, FileDown, Package, Database, Sparkles } from 'lucide-react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
+import SEO from '../../common/SEO';
 
 interface PDFHubProps {
   isDarkMode?: boolean;
@@ -52,6 +53,11 @@ const PDFHub: React.FC<PDFHubProps> = () => {
 
   return (
     <div className="space-y-8 w-full pt-2 pb-12">
+      <SEO 
+        title="PDF Document Intelligence Hub & RAG Vector Search"
+        description="Interact with PDFs using vector search RAG, AI PDF Brain summarization, smart table extraction, and PDF batch processing."
+        canonical="/premium/pdfhub"
+      />
       {/* Header Section */}
       <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all duration-300 ${
         isDarkMode 

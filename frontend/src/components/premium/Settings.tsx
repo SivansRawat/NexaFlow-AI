@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { API_BASE } from '@/lib/api';
 import { ShieldCheck, Lock, CreditCard, Sparkles, Eye, EyeOff, CheckCircle, AlertCircle, ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SEO from '../common/SEO';
 
 const Settings: React.FC = () => {
   const { token, user } = useAuth();
@@ -70,6 +71,12 @@ const Settings: React.FC = () => {
 
   return (
     <div className="space-y-8 w-full max-w-5xl mx-auto pt-2 pb-12">
+      <SEO 
+        title="Account Settings & Subscription"
+        description="Manage your NexaFlow AI account settings, password security, and active subscription plan."
+        canonical="/premium/settings"
+        noindex={true}
+      />
       {/* Header Banner */}
       <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border bg-gradient-to-r from-purple-950/40 via-indigo-950/30 to-gray-900 border-purple-500/30 shadow-xl shadow-purple-900/10 text-white">
         <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />

@@ -13,6 +13,7 @@ import axios from 'axios';
 import { useAuth } from '../../../../src/context/AuthContext'; // Adjust path as needed
 import InvoicePreviewModal from './InvoicePreviewModal';
 import { API_BASE } from '@/lib/api'; // Import API_BASE
+import SEO from '@/components/common/SEO';
 
 interface Item {
   itemName: string;
@@ -301,6 +302,11 @@ const SmartInvoiceGeneratorPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4 bg-white text-gray-900 min-h-screen">
+      <SEO 
+        title="Smart AI Invoice Generator"
+        description="Create professional, tax-compliant business invoices in seconds with instant PDF download, live preview, and automated calculations."
+        canonical="/smartdocs/smartinvoice"
+      />
       <div className="flex flex-col lg:flex-row gap-4">
         {/* Left Column: Input Form */}
         <div className="flex-1">

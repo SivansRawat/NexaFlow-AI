@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { adminLogin } from "../../lib/api";
 import { useNavigate } from "react-router-dom";
+import SEO from "../common/SEO";
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
@@ -42,7 +43,13 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0a12] px-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-900 text-white relative overflow-hidden px-4">
+      <SEO 
+        title="Admin Portal Login"
+        description="Admin Login Portal for NexaFlow AI"
+        canonical="/adminlogin"
+        noindex={true}
+      />
       <div className="w-full max-w-md bg-[#18192a] rounded-2xl shadow-xl p-8 relative">
         <h2 className="text-3xl font-bold text-white mb-6 text-center">Admin Login</h2>
         <form className="space-y-5" onSubmit={handleSubmit}>

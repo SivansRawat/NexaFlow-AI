@@ -2,6 +2,7 @@ import React from 'react';
 import ToolCard from './ToolCard';
 import { Database, FileSpreadsheet, Table, Sparkles } from 'lucide-react';
 import { useOutletContext } from 'react-router-dom';
+import SEO from '../../common/SEO';
 
 interface DataFillProps {
   isDarkMode?: boolean;
@@ -39,6 +40,11 @@ const DataFill: React.FC<DataFillProps> = () => {
 
   return (
     <div className="space-y-6 w-full">
+      <SEO 
+        title="DataFill AI - Automated Form & Spreadsheet Engine"
+        description="Automate form filling, map Excel columns, extract structured data, and clean datasets automatically with AI."
+        canonical="/premium/datafill"
+      />
       <div>
         <h1 className={`text-3xl font-bold mb-2 ${
           isDarkMode ? 'text-gray-100' : 'text-white'

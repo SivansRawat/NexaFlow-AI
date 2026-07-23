@@ -2,6 +2,7 @@ import React from 'react';
 import ToolCard from './ToolCard';
 import { FileSpreadsheet, LayoutTemplate, Sparkles, MailCheck } from 'lucide-react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
+import SEO from '../../common/SEO';
 
 interface BulkMailerProps {
   isDarkMode?: boolean;
@@ -38,6 +39,11 @@ const BulkMailer: React.FC<BulkMailerProps> = () => {
 
   return (
     <div className="space-y-8 w-full pt-2 pb-12">
+      <SEO 
+        title="AI Bulk Mailer & Mail Merge Engine"
+        description="Launch personalized email campaigns from Excel files, select smart outreach templates, and automate mail merge with AI."
+        canonical="/premium/bulkmailer"
+      />
       {/* Header Banner */}
       <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all duration-300 ${
         isDarkMode 

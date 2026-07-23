@@ -1,12 +1,14 @@
 User-agent: *
 Allow: /
-
-# Allow crawling of main public routes
 Allow: /login
 Allow: /signup
+Allow: /smartdocs/
 Allow: /premium
 
-# Block query-param variants to avoid duplicate content indexing
+# Disallow private user/admin settings to prevent indexing internal user states
+Disallow: /admin
+Disallow: /adminlogin
+Disallow: /premium/settings
 Disallow: /*?
 
 Sitemap: https://nexa-flow-ai.vercel.app/sitemap.xml
