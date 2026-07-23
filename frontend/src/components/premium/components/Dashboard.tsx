@@ -13,6 +13,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
+import SEO from '../../common/SEO';
 
 interface DashboardProps {
   searchQuery?: string;
@@ -151,6 +152,11 @@ const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
 
   return (
     <div className="space-y-8 pt-2 pb-12">
+      <SEO 
+        title="AI Suite Workspace Dashboard"
+        description="Access all NexaFlow AI tools in one central workspace: Excel Suite, PDF Hub, MailCraft AI, SocialPro AI, SmartDocs, and AI Workmate."
+        canonical="/premium"
+      />
       {/* Welcome Hero Banner */}
       <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all duration-300 ${
         isDarkMode 

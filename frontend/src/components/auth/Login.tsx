@@ -3,6 +3,7 @@ import { userLogin } from "../../lib/api";
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { Sparkles, Lock, ArrowRight, ShieldCheck, User } from 'lucide-react';
+import SEO from '../common/SEO';
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
@@ -31,6 +32,11 @@ export default function Login() {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#07070d] text-white relative overflow-hidden px-4 py-12">
+      <SEO 
+        title="Sign In to Your Workspace"
+        description="Access your NexaFlow AI suite. Log in to use PDF Intelligence, AI Excel Formula Master, MailCraft AI, and vector search RAG."
+        canonical="/login"
+      />
       {/* Dynamic Background Glows */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-cyan-600/20 rounded-full blur-[120px] pointer-events-none" />

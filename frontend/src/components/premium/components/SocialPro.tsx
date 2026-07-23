@@ -2,6 +2,7 @@ import React from 'react';
 import ToolCard from './ToolCard';
 import { Share2, Hash, Sparkles, RefreshCw, Megaphone } from 'lucide-react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
+import SEO from '../../common/SEO';
 
 interface SocialProProps {
   isDarkMode?: boolean;
@@ -45,6 +46,11 @@ const SocialPro: React.FC<SocialProProps> = () => {
 
   return (
     <div className="space-y-8 w-full pt-2 pb-12">
+      <SEO 
+        title="SocialPro AI - Viral Social Captions & Ad Copy Generator"
+        description="Generate viral social media captions, trending hashtag strategies, high-converting ad copy, and content rewrites with AI."
+        canonical="/premium/socialpro"
+      />
       {/* Header Banner */}
       <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all duration-300 ${
         isDarkMode 
