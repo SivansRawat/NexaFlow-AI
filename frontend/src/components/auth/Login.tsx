@@ -78,18 +78,22 @@ export default function Login() {
           <p className="text-xs text-gray-400">Sign in to access your AI document & automation tools</p>
         </div>
 
-        <div className="flex flex-col items-center justify-center mb-5 w-full">
-          <div className="w-full flex justify-center [&>div]:w-full">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              theme="filled_black"
-              shape="pill"
-              size="large"
-              width="100%"
-              text="continue_with"
-            />
+        {error && (
+          <div className="mb-5 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 flex-shrink-0" />
+            <span>{error}</span>
           </div>
+        )}
+
+        <div className="flex justify-center w-full mb-5">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            theme="filled_black"
+            shape="rectangular"
+            size="large"
+            width="340"
+          />
         </div>
 
         <div className="relative mb-6">
@@ -143,13 +147,6 @@ export default function Login() {
               />
             </div>
           </div>
-
-          {error && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 flex-shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
 
           <button 
             type="submit" 

@@ -86,18 +86,23 @@ export default function Signup() {
           <p className="text-xs text-gray-400">Get 50 free credits instantly to start exploring AI tools</p>
         </div>
 
-        <div className="flex flex-col items-center justify-center mb-4 w-full">
-          <div className="w-full flex justify-center [&>div]:w-full">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              theme="filled_black"
-              shape="pill"
-              size="large"
-              width="100%"
-              text="signup_with"
-            />
+        {error && (
+          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 flex-shrink-0" />
+            <span>{error}</span>
           </div>
+        )}
+
+        <div className="flex justify-center w-full mb-4">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            theme="filled_black"
+            shape="rectangular"
+            size="large"
+            width="340"
+            text="signup_with"
+          />
         </div>
 
         <div className="relative mb-5">
@@ -189,13 +194,6 @@ export default function Signup() {
               />
             </div>
           </div>
-
-          {error && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 flex-shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
 
           <button 
             type="submit" 
