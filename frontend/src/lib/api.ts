@@ -47,8 +47,8 @@ export async function userLogin(payload: LoginPayload) {
   return res.data;
 }
 
-export async function googleLogin(idToken: string) {
-  const res = await api.post(`/user/google`, { idToken });
+export async function googleLogin(token: string) {
+  const res = await api.post(`/user/google`, { idToken: token, accessToken: token });
   return res.data;
 }
 

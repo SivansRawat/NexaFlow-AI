@@ -320,30 +320,63 @@ export const getUserLimits = async (req: Request, res: Response) => {
 
 // Google OAuth methods
 const googleLoginSchema = z.object({
-  idToken: z.string()
+  idToken: z.string().optional(),
+  accessToken: z.string().optional()
 });
 
 export const googleLogin = async (req: Request, res: Response) => {
   try {
     const parsed = googleLoginSchema.safeParse(req.body);
-    if (!parsed.success) {
-      return res.status(400).json({ error: 'Invalid token' });
+    if (!parsed.success || (!parsed.data.idToken && !parsed.data.accessToken)) {
+      return res.status(400).json({ error: 'Token is required' });
     }
 
-    const { idToken } = parsed.data;
+    const { idToken, accessToken: inputAccessToken } = parsed.data;
+    let googleId: string;
+    let email: string;
+    let name: string | undefined;
+    let picture: string | undefined;
 
-    // Verify Google token
-    const ticket = await googleClient.verifyIdToken({
-      idToken,
-      audience: process.env.GOOGLE_CLIENT_ID
-    });
-
-    const payload = ticket.getPayload();
-    if (!payload) {
-      return res.status(401).json({ error: 'Invalid Google token' });
+    if (idToken) {
+      try {
+        const ticket = await googleClient.verifyIdToken({
+          idToken,
+          audience: process.env.GOOGLE_CLIENT_ID
+        });
+        const payload = ticket.getPayload();
+        if (payload && payload.email) {
+          googleId = payload.sub;
+          email = payload.email;
+          name = payload.name;
+          picture = payload.picture;
+        } else {
+          return res.status(401).json({ error: 'Invalid Google token payload' });
+        }
+      } catch (verifyErr) {
+        if (!inputAccessToken) throw verifyErr;
+      }
     }
 
-    const { sub: googleId, email, name, picture } = payload;
+    if (!googleId! || !email!) {
+      if (inputAccessToken) {
+        const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${inputAccessToken}` }
+        });
+        if (!userInfoRes.ok) {
+          return res.status(401).json({ error: 'Invalid Google access token' });
+        }
+        const userInfo: any = await userInfoRes.json();
+        if (!userInfo || !userInfo.email) {
+          return res.status(401).json({ error: 'Failed to retrieve user profile from Google' });
+        }
+        googleId = userInfo.sub;
+        email = userInfo.email;
+        name = userInfo.name;
+        picture = userInfo.picture;
+      } else {
+        return res.status(401).json({ error: 'Invalid Google credentials' });
+      }
+    }
 
     if (!email) {
       return res.status(400).json({ error: 'Email is required' });
