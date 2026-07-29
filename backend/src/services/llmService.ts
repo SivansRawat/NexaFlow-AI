@@ -126,20 +126,20 @@ class LLMService {
         max_tokens: maxTokens,
       };
 
-      console.log('🔵 Sending request to LLM service:', `${LLM_SERVICE_URL}/api/llm/chat`);
-      console.log('🔵 Payload:', JSON.stringify(payload, null, 2));
+      console.log('Sending request to LLM service:', `${LLM_SERVICE_URL}/api/llm/chat`);
+      console.log('Payload:', JSON.stringify(payload, null, 2));
       
       const response = await this.client.post<ChatCompletionResponse>('/chat', payload);
       
-      console.log('✅ LLM service response received:', response.data);
+      console.log('LLM service response received:', response.data);
       return toResponseText(response.data.response);
     } catch (error: any) {
       // Handle different error types
-      console.error('❌ LLM service error:', error.code, error.message);
+      console.error('LLM service error:', error.code, error.message);
       
       if (error.response) {
         // Server responded with error status
-        console.error('❌ Response error:', error.response.status, error.response.data);
+        console.error('Response error:', error.response.status, error.response.data);
         throw new Error(
           `LLM service error (${error.response.status}): ${
             error.response.data?.detail || error.message
@@ -147,7 +147,7 @@ class LLMService {
         );
       } else if (error.request) {
         // Request made but no response
-        console.error('❌ No response from LLM service. Error code:', error.code);
+        console.error('No response from LLM service. Error code:', error.code);
         throw new Error('LLM service is not responding. Please check if it is running.');
       } else {
         // Something else went wrong

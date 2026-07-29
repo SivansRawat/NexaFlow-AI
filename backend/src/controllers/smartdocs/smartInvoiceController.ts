@@ -271,7 +271,7 @@ export const getSmartInvoiceById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const userId = (req as any).user.id;
-    const invoiceId = parseInt(String(id)); // ✅ FIXED
+    const invoiceId = parseInt(String(id));
     const smartInvoice = await prisma.smartInvoice.findUnique({
       where: { id: invoiceId, userId },
       include: { items: true },
@@ -292,7 +292,7 @@ export const updateSmartInvoice = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const userId = (req as any).user.id;
-    const invoiceId = parseInt(String(id)); // ✅ FIXED
+    const invoiceId = parseInt(String(id));
     const { businessName, businessLogo, clientName, items, clientEmail, businessAddress, clientAddress, businessEmail: newBusinessEmail, businessPhoneNumber, clientPhoneNumber } = req.body;
 
     let subtotal = 0;
@@ -373,7 +373,7 @@ export const deleteSmartInvoice = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const userId = (req as any).user.id;
-    const invoiceId = parseInt(String(id)); // ✅ FIXED
+    const invoiceId = parseInt(String(id));
 
     const existingInvoice = await prisma.smartInvoice.findUnique({
       where: { id: invoiceId, userId },

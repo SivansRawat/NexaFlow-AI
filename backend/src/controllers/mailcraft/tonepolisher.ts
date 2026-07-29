@@ -165,7 +165,7 @@ export const getTonePolisherChatById = async (req: Request, res: Response) => {
     if (!userId) return res.status(401).json({ error: 'User not authenticated.' });
 
     const { chat_id } = req.params;
-    const chatId = parseInt(String(chat_id));  // ✅ FIXED: ensure string type
+    const chatId = parseInt(String(chat_id));
 
     if (isNaN(chatId)) {
       return res.status(400).json({ error: 'Invalid chat ID' });

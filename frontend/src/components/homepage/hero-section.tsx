@@ -20,7 +20,7 @@ export function HeroSection() {
             
             <div className="mt-2 mb-4 sm:mb-6">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
-                <span className="text-purple-400 text-2xl sm:text-3xl md:text-4xl flex items-center leading-none align-middle flex-shrink-0" style={{lineHeight: 1}}>💼</span>
+                <span className="text-purple-400 font-bold text-xl sm:text-2xl flex items-center leading-none align-middle flex-shrink-0">PRO</span>
                 <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">
                   NexaFlow AI – Complete Business Automation Suite
                 </span>

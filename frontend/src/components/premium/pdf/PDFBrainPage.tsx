@@ -493,7 +493,7 @@ const PDFBrainPage: React.FC<PDFBrainPageProps> = ({ onBack }) => {
               <BarChart3 className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h2 className="text-3xl font-extrabold text-indigo-700 dark:text-indigo-300 tracking-tight">📊 Data Visualization</h2>
+              <h2 className="text-3xl font-extrabold text-indigo-700 dark:text-indigo-300 tracking-tight">Data Visualization</h2>
               <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Interactive charts and insights from your document</p>
             </div>
             {chartLoading && (

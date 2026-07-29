@@ -18,7 +18,6 @@ interface RAGState {
   progress: number;
   error: string | null;
 
-  // Actions
   addDocument: (doc: Document) => void;
   ingestDocument: (file: File, userId: number) => Promise<void>;
   queryDocument: (query: string, collectionName: string) => Promise<string>;
@@ -27,7 +26,6 @@ interface RAGState {
   reset: () => void;
 }
 
-// Helper: Chunk text with overlap
 function chunkText(text: string, chunkSize: number, overlap: number): string[] {
   const chunks: string[] = [];
   let start = 0;
@@ -60,21 +58,16 @@ export const useRAGStore = create<RAGState>()(
         set({ isIngesting: true, progress: 0, error: null });
 
         try {
-          // Read file as text
           const text = await file.text();
-
-          // Chunk the document
           const chunks = chunkText(text, 1000, 200);
           const totalChunks = chunks.length;
 
-          // Process chunks in batches
           const batchSize = 10;
           let processedChunks = 0;
 
           for (let i = 0; i < chunks.length; i += batchSize) {
             const batch = chunks.slice(i, i + batchSize);
 
-            // Ingest batch
             await api.post('/api/rag/ingest-batch', {
               document_id: `doc_${Date.now()}_${userId}`,
               chunks: batch,
@@ -92,7 +85,6 @@ export const useRAGStore = create<RAGState>()(
             set({ progress });
           }
 
-          // Add to document list
           const doc: Document = {
             id: `doc_${Date.now()}`,
             fileName: file.name,

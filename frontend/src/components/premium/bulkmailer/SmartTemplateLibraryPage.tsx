@@ -236,7 +236,7 @@ export default function SmartTemplateLibraryPage() {
               <span className="text-xl">+</span> Add Template
             </button>
             <button className="ml-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-purple-800 text-white font-semibold flex items-center gap-2 shadow-lg hover:scale-105 hover:from-purple-700 hover:to-purple-900 transition-all duration-150" onClick={() => setAiModalOpen(true)}>
-              <span className="text-xl">🤖</span> Create with AI
+              Create with AI
             </button>
           </>
         )}

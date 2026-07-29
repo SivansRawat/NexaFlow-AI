@@ -103,7 +103,7 @@ export function HowItWorks() {
                   R
                 </div>
                 <div className="bg-cyan-950/40 rounded-2xl p-3 text-cyan-300 text-xs border border-cyan-500/30 max-w-[85%] font-mono">
-                  🔍 Retrieved RAG Template: AIDA Framework (Rank 1, Distance: 0.89)
+                  Retrieved RAG Template: AIDA Framework (Rank 1, Distance: 0.89)
                 </div>
               </div>
 

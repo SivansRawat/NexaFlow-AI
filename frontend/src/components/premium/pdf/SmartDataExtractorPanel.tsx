@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { FileText, Upload, ArrowLeft, Download, Home } from 'lucide-react';
+import { FileText, Upload, ArrowLeft, Download, Home, AlertCircle } from 'lucide-react';
 import { API_BASE } from '@/lib/api';
 import { useUserLimit } from '@/lib/useUserLimit';
 
@@ -221,12 +221,12 @@ const SmartDataExtractorPanel: React.FC<SmartDataExtractorPanelProps> = ({ onBac
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                 {extracted.error ? (
                   <div className="col-span-2 flex flex-col items-center justify-center py-8">
-                    <div className="text-3xl text-red-400 mb-2">❌</div>
+                    <AlertCircle className="w-8 h-8 text-red-400 mb-2" />
                     <div className="text-lg font-semibold text-red-300">{extracted.error}</div>
                   </div>
                 ) : Object.keys(extracted).filter(k => k !== 'error').length === 0 ? (
                   <div className="col-span-2 flex flex-col items-center justify-center py-8">
-                    <div className="text-3xl text-blue-400 mb-2">📄</div>
+                    <FileText className="w-8 h-8 text-blue-400 mb-2" />
                     <div className="text-lg font-semibold text-blue-200">No structured data extracted from this PDF.</div>
                   </div>
                 ) : (

@@ -291,7 +291,7 @@ const PromptLibrary: React.FC<PromptLibraryProps> = ({ isOpen, onClose, onUsePro
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-bold text-lg tracking-tight text-blue-300">{prompt.title}</div>
                     {tab === 'my' && (
-                      <button className="text-red-400 hover:text-red-600 text-base font-semibold ml-2" onClick={() => handleDeletePrompt(prompt.id)} title="Delete">🗑️</button>
+                      <button className="text-red-400 hover:text-red-600 text-xs font-semibold ml-2" onClick={() => handleDeletePrompt(prompt.id)} title="Delete">Delete</button>
                     )}
                   </div>
                   <div className="text-gray-300 text-base mb-2 leading-relaxed">{prompt.prompt}</div>

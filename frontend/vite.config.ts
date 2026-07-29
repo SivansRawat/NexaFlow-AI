@@ -10,7 +10,7 @@ export default defineConfig({
     },
   },
   server: {
-    host: "0.0.0.0",   // 👈 allow LAN access
+    host: "0.0.0.0",   // allow LAN access
     port: 3000,
     open: true,
     proxy: {

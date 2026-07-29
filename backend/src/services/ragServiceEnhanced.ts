@@ -74,7 +74,7 @@ class RAGServiceEnhanced {
    */
   async ingestDocument(request: IngestDocumentRequest): Promise<any> {
     try {
-      logger.info(`📥 Ingesting document: ${request.documentId}`);
+      logger.info(`Ingesting document: ${request.documentId}`);
       
       const response = await this.client.post('/api/rag/ingest', {
         document_id: request.documentId,
@@ -86,10 +86,10 @@ class RAGServiceEnhanced {
       // Clear cache for this collection
       await cacheService.deletePattern(`rag:query:*${request.collectionName}*`);
 
-      logger.info(`✅ Document ingested: ${response.data.chunk_count} chunks`);
+      logger.info(`Document ingested: ${response.data.chunk_count} chunks`);
       return response.data;
     } catch (error: any) {
-      logger.error('❌ Document ingestion failed:', error.message);
+      logger.error('Document ingestion failed:', error.message);
       throw new Error(`Failed to ingest document: ${error.message}`);
     }
   }
@@ -99,7 +99,7 @@ class RAGServiceEnhanced {
    */
   async ingestBatch(request: BatchIngestRequest): Promise<any> {
     try {
-      logger.info(`📥 Batch ingesting ${request.chunks.length} chunks for: ${request.documentId}`);
+      logger.info(`Batch ingesting ${request.chunks.length} chunks for: ${request.documentId}`);
       
       const response = await this.client.post('/api/rag/ingest-batch', {
         document_id: request.documentId,
@@ -111,10 +111,10 @@ class RAGServiceEnhanced {
       // Clear cache for this collection
       await cacheService.deletePattern(`rag:query:*${request.collectionName}*`);
 
-      logger.info(`✅ Batch ingestion complete: ${response.data.chunk_count} chunks`);
+      logger.info(`Batch ingestion complete: ${response.data.chunk_count} chunks`);
       return response.data;
     } catch (error: any) {
-      logger.error('❌ Batch ingestion failed:', error.message);
+      logger.error('Batch ingestion failed:', error.message);
       throw new Error(`Failed to ingest batch: ${error.message}`);
     }
   }
@@ -133,11 +133,11 @@ class RAGServiceEnhanced {
       const cached = await cacheService.get<RetrieveContextResponse>(cacheKey);
       
       if (cached) {
-        logger.info(`✅ Cache hit for query: "${query}"`);
+        logger.info(`Cache hit for query: "${query}"`);
         return cached;
       }
 
-      logger.info(`🔍 Retrieving context for: "${query}"`);
+      logger.info(`Retrieving context for: "${query}"`);
       
       const response = await this.client.post('/api/rag/retrieve', {
         query,
@@ -162,10 +162,10 @@ class RAGServiceEnhanced {
       // Cache result
       await cacheService.set(cacheKey, result, this.cacheTTL);
 
-      logger.info(`✅ Retrieved ${result.sourceCount} chunks`);
+      logger.info(`Retrieved ${result.sourceCount} chunks`);
       return result;
     } catch (error: any) {
-      logger.error('❌ Context retrieval failed:', error.message);
+      logger.error('Context retrieval failed:', error.message);
       throw new Error(`Failed to retrieve context: ${error.message}`);
     }
   }
@@ -182,11 +182,11 @@ class RAGServiceEnhanced {
       const cached = await cacheService.get<RAGQueryResponse>(cacheKey);
       
       if (cached) {
-        logger.info(`✅ Cache hit for RAG query: "${request.query}"`);
+        logger.info(`Cache hit for RAG query: "${request.query}"`);
         return { ...cached, cached: true };
       }
 
-      logger.info(`🤖 RAG Query: "${request.query}"`);
+      logger.info(`RAG Query: "${request.query}"`);
       
       const response = await this.client.post('/api/rag/query', {
         query: request.query,
@@ -207,10 +207,10 @@ class RAGServiceEnhanced {
       // Cache result
       await cacheService.set(cacheKey, result, this.cacheTTL);
 
-      logger.info(`✅ Answer generated using ${result.sourceCount} sources`);
+      logger.info(`Answer generated using ${result.sourceCount} sources`);
       return result;
     } catch (error: any) {
-      logger.error('❌ RAG query failed:', error.message);
+      logger.error('RAG query failed:', error.message);
       throw new Error(`RAG query failed: ${error.message}`);
     }
   }

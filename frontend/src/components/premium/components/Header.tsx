@@ -101,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isSidebarOpen, onSearch, 
             <h2 className={`text-lg font-medium flex items-center justify-end ${
               isDarkMode ? 'text-gray-100' : 'text-gray-900'
             }`}>
-              Hi {user?.username} <span className="ml-2 text-xl">👋</span>
+              Hi {user?.username}
             </h2>
              <p className={`text-sm ${
               isDarkMode ? 'text-gray-400' : 'text-gray-500'

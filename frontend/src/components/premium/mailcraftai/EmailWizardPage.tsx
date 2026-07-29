@@ -78,7 +78,7 @@ const EmailWizardPage = () => {
     try {
       const res = await fetch(`${API_BASE}/mailcraft/emailwizard/chat/send`, {
         method: 'POST',
-        headers: getAuthHeaders(), // ✅ FIXED: Added auth headers
+        headers: getAuthHeaders(), // Added auth headers
         body: JSON.stringify({ message: input, chatId })
       });
       

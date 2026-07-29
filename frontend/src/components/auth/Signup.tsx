@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { userSignup } from "../../lib/api";
+import { userSignup, googleLogin } from "../../lib/api";
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { Sparkles, Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
 import SEO from '../common/SEO';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Signup() {
   const [loading, setLoading] = useState(false);
@@ -38,6 +39,27 @@ export default function Signup() {
     }
   }
 
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      setLoading(true);
+      setError("");
+      if (credentialResponse.credential) {
+        const data = await googleLogin(credentialResponse.credential);
+        login(data.user, data.accessToken);
+      } else {
+        setError("Google authentication failed.");
+      }
+    } catch (err: any) {
+      setError(err?.response?.data?.error || "Google authentication failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError("Google Sign-Up was cancelled or failed.");
+  };
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#07070d] text-white relative overflow-hidden px-4 py-12">
       <SEO 
@@ -45,15 +67,12 @@ export default function Signup() {
         description="Join NexaFlow AI today. Get instant access to PDF Chat Agent, Excel AI Formula Master, MailCraft AI, and enterprise workflow tools."
         canonical="/signup"
       />
-      {/* Dynamic Background Glows */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-cyan-600/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-pink-600/10 rounded-full blur-[100px] pointer-events-none" />
 
-      {/* Main Glassmorphic Auth Box */}
       <div className="w-full max-w-md bg-[#121324]/80 backdrop-blur-2xl rounded-3xl border border-purple-500/30 shadow-2xl shadow-purple-900/20 p-8 sm:p-10 relative z-10">
         
-        {/* Brand Header */}
         <div className="text-center mb-6">
           <Link to="/" className="inline-flex items-center gap-2 mb-3 group">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
@@ -67,7 +86,29 @@ export default function Signup() {
           <p className="text-xs text-gray-400">Get 50 free credits instantly to start exploring AI tools</p>
         </div>
 
-        {/* Signup Form */}
+        <div className="flex flex-col items-center justify-center mb-4 w-full">
+          <div className="w-full flex justify-center [&>div]:w-full">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="filled_black"
+              shape="pill"
+              size="large"
+              width="100%"
+              text="signup_with"
+            />
+          </div>
+        </div>
+
+        <div className="relative mb-5">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-700/60" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-[#16172b] px-3 text-gray-400 font-medium">Or register with email</span>
+          </div>
+        </div>
+
         <form className="space-y-3.5" onSubmit={handleSubmit}>
           <div>
             <label className="block text-xs font-semibold text-gray-300 mb-1 uppercase tracking-wider" htmlFor="username">
@@ -178,7 +219,6 @@ export default function Signup() {
           </button>
         </form>
 
-        {/* Footer Redirect */}
         <div className="mt-6 pt-5 border-t border-gray-800 text-center">
           <span className="text-gray-400 text-xs">Already have an account? </span>
           <Link to="/login" className="text-purple-400 hover:text-purple-300 font-semibold text-xs hover:underline">

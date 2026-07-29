@@ -37,11 +37,10 @@ export function MainHero() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
             </span>
-            <span>⚡ Universal RAG Vector Engine & 15+ Enterprise AI Tools</span>
+            <span>Universal RAG Vector Engine & 15+ Enterprise AI Tools</span>
           </div>
         </div>
 
-        {/* Main Headline */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 sm:mb-8 leading-tight tracking-tight text-white">
           Automate Your Business with <br className="hidden sm:inline" />
           <span className="bg-gradient-to-r from-cyan-300 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-sm">
@@ -49,18 +48,16 @@ export function MainHero() {
           </span>
         </h1>
 
-        {/* Subtitle */}
         <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 sm:mb-10 max-w-3xl mx-auto leading-relaxed px-4 font-light">
           NexaFlow AI empowers modern teams with self-hosted vector document retrieval, smart email synthesis, Excel analytics, and social media automation — in one unified workspace.
         </p>
 
-        {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 sm:mb-16">
           <button
             onClick={handleGetStarted}
             className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-600 hover:from-cyan-400 hover:via-purple-500 hover:to-pink-500 text-white font-semibold text-base sm:text-lg shadow-lg shadow-purple-900/40 hover:shadow-cyan-500/30 transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
           >
-            <span>Get Started Free</span> 🚀
+            <span>Get Started Free</span>
           </button>
           
           <a

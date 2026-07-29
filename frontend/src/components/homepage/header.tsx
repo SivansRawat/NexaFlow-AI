@@ -111,14 +111,14 @@ export function Header() {
                   to="/premium"
                   className="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-lg shadow transition-all duration-150 flex items-center gap-1.5"
                 >
-                  <span>Dashboard</span> 🚀
+                  <span>Dashboard</span>
                 </Link>
 
                 <Link
                   to="/paynow"
                   className="px-3 py-2 text-xs font-semibold text-yellow-300 border border-yellow-500/40 bg-yellow-500/10 hover:bg-yellow-500/20 rounded-lg transition-all duration-150 flex items-center gap-1"
                 >
-                  <span>Upgrade</span> ⭐
+                  <span>Upgrade</span>
                 </Link>
 
                 <button
@@ -139,7 +139,6 @@ export function Header() {
                     role="menu"
                   >
                     <div className="absolute -top-2 right-10 w-4 h-4 bg-gradient-to-br from-[#18192a] via-[#23243a] to-[#23243a] rotate-45 border-l border-t border-purple-500/40" style={{ zIndex: 1 }} />
-                    {/* User Info */}
                     <div className="flex items-center gap-3 px-5 pb-3 border-b border-gray-700">
                       <div className="bg-gradient-to-br from-purple-400 to-cyan-400 rounded-full w-10 h-10 flex items-center justify-center text-white font-bold text-lg shadow-md">
                         {user.username?.[0]?.toUpperCase() || <UserCircle className="w-7 h-7" />}
@@ -150,13 +149,12 @@ export function Header() {
                       </div>
                     </div>
                     
-                    {/* Nav Links */}
                     <Link
                       to="/premium"
                       className="block px-5 py-2 text-sm text-gray-200 hover:bg-gray-800 rounded-lg transition"
                       onClick={() => setDropdownOpen(false)}
                     >
-                      🚀 AI Tools Dashboard
+                      AI Tools Dashboard
                     </Link>
                     <Link
                       to="/paynow"

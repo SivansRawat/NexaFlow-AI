@@ -230,10 +230,10 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  logger.info(`🚀 Server started on port ${PORT}`);
-  logger.info(`📚 Environment: ${process.env.NODE_ENV || 'development'}`);
-  logger.info(`🔗 Health check: http://localhost:${PORT}/api/health`);
-  logger.info(`🔗 RAG health: http://localhost:${PORT}/api/rag/rag/health`);
+  logger.info(`Server started on port ${PORT}`);
+  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  logger.info(`Health check: http://localhost:${PORT}/api/health`);
+  logger.info(`RAG health: http://localhost:${PORT}/api/rag/rag/health`);
 });
 
 export default app;

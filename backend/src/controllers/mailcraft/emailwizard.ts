@@ -22,7 +22,6 @@ export const sendMailChatMessage = async (req: Request, res: Response) => {
       chat = await prisma.mailChat.create({ data: { userId } });
     }
 
-    // ✅ FIXED: Changed from chatMessage to mailChatMessage
     await prisma.mailChatMessage.create({
       data: { chatId: chat.id, sender: 'user', content: message }
     });
@@ -62,7 +61,6 @@ export const sendMailChatMessage = async (req: Request, res: Response) => {
       800  // max tokens - enough for full email
     );
     console.log(answer);
-    // ✅ This one was already correct
     await prisma.mailChatMessage.create({
       data: { chatId: chat.id, sender: 'bot', content: answer }
     });

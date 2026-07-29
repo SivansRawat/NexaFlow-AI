@@ -6,7 +6,6 @@ const api = axios.create({
   baseURL: API_BASE,
 });
 
-// This is the key part: the interceptor attaches the token to every request.
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('accessToken');
   if (token) {
@@ -37,8 +36,6 @@ export interface AdminLoginPayload {
   username: string;
   password: string;
 }
-
-// All functions below are now updated to use the secure 'api' instance.
 
 export async function userSignup(payload: SignupPayload) {
   const res = await api.post(`/user/signup`, payload);
@@ -119,7 +116,6 @@ export async function analyzeExcelWithAI(file: File, prompt: string) {
   return res.data;
 } 
 
-// New Error Trend Detector API functions
 export const analyzeExcelForErrorsAndTrends = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -170,7 +166,6 @@ export const deleteChatById = async (chatId: number) => {
     await api.delete(`/chat/${chatId}`);
 }; 
 
-// Offer Letter APIs
 export const OfferLetterAPI = {
   create: async (payload: { title?: string; data: any; logo?: string }) => {
     const res = await api.post(`/smartdocs/offer-letters`, payload);
@@ -186,7 +181,6 @@ export const OfferLetterAPI = {
   },
 };
 
-// Bulkmailer Smart Templates API
 export const SmartTemplateAPI = {
   list: async (params?: any) => {
     const res = await api.get(`/bulkmailer/smart-templates`, { params });

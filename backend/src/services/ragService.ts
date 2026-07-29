@@ -119,7 +119,7 @@ class RAGService {
    */
   async ingestDocument(request: IngestDocumentRequest): Promise<IngestDocumentResponse> {
     try {
-      console.log(`📥 Ingesting document: ${request.documentId}`);
+      console.log(`Ingesting document: ${request.documentId}`);
       
       const response = await this.client.post<IngestDocumentApiResponse>('/api/rag/ingest', {
         document_id: request.documentId,
@@ -135,10 +135,10 @@ class RAGService {
         collectionId: response.data.collection_id,
       };
 
-      console.log(`✅ Document ingested: ${mappedResponse.chunkCount} chunks`);
+      console.log(`Document ingested: ${mappedResponse.chunkCount} chunks`);
       return mappedResponse;
     } catch (error: any) {
-      console.error('❌ Document ingestion failed:', error.message);
+      console.error('Document ingestion failed:', error.message);
       throw new Error(`Failed to ingest document: ${error.message}`);
     }
   }
@@ -157,7 +157,7 @@ class RAGService {
     nResults: number = 5
   ): Promise<RetrieveContextResponse> {
     try {
-      console.log(`🔍 Retrieving context for: "${query}"`);
+      console.log(`Retrieving context for: "${query}"`);
       const response = await this.client.post<RetrieveContextApiResponse>('/api/rag/retrieve', {
         query,
         collection_name: collectionName,
@@ -178,10 +178,10 @@ class RAGService {
         sourceCount: response.data.source_count,
       };
 
-      console.log(`✅ Retrieved ${mappedResponse.sourceCount} chunks`);
+      console.log(`Retrieved ${mappedResponse.sourceCount} chunks`);
       return mappedResponse;
     } catch (error: any) {
-      console.error('❌ Context retrieval failed:', error.message);
+      console.error('Context retrieval failed:', error.message);
       throw new Error(`Failed to retrieve context: ${error.message}`);
     }
   }
@@ -194,7 +194,7 @@ class RAGService {
    */
   async ragQuery(request: RAGQueryRequest): Promise<RAGQueryResponse> {
     try {
-      console.log(`🤖 RAG Query: "${request.query}"`);
+      console.log(`RAG Query: "${request.query}"`);
       
       const response = await this.client.post<RAGQueryApiResponse>('/api/rag/query', {
         query: request.query,
@@ -219,10 +219,10 @@ class RAGService {
         model: response.data.model,
       };
 
-      console.log(`✅ Answer generated using ${mappedResponse.sourceCount} sources`);
+      console.log(`Answer generated using ${mappedResponse.sourceCount} sources`);
       return mappedResponse;
     } catch (error: any) {
-      console.error('❌ RAG query failed:', error.message);
+      console.error('RAG query failed:', error.message);
       throw new Error(`RAG query failed: ${error.message}`);
     }
   }

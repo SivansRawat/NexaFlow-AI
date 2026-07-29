@@ -8,8 +8,6 @@ import {
   Mail, 
   Share2, 
   Sparkles, 
-  Zap, 
-  ShieldCheck, 
   ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
@@ -173,26 +171,11 @@ const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
               <span>NexaFlow AI Workspace</span>
             </div>
             <h1 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              Welcome back, <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">{user?.username || 'User'}</span> 👋
+              Welcome back, <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">{user?.username || 'User'}</span>
             </h1>
             <p className={`text-sm max-w-2xl leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               Select an AI Suite below to start automating spreadsheets, chatting with PDFs, drafting emails, or generating smart documents.
             </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <div className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-medium ${
-              isDarkMode ? 'bg-gray-800/80 border-gray-700 text-emerald-400' : 'bg-white border-gray-200 text-emerald-600'
-            }`}>
-              <ShieldCheck className="w-4 h-4" />
-              <span>System: Online & Active</span>
-            </div>
-            <div className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-medium ${
-              isDarkMode ? 'bg-gray-800/80 border-gray-700 text-cyan-400' : 'bg-white border-gray-200 text-cyan-600'
-            }`}>
-              <Zap className="w-4 h-4" />
-              <span>RAG Engine: Enabled</span>
-            </div>
           </div>
         </div>
       </div>
