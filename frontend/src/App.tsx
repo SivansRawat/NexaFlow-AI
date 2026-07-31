@@ -1,59 +1,73 @@
 "use client"
 
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
-import EmailWizardPage from "./components/premium/mailcraftai/EmailWizardPage";
-import SubjectLineOptimizer from "./components/premium/mailcraftai/subjectlineoptimizer";
-import TonePolisher from "./components/premium/mailcraftai/tonepolisher";
 import PayButton from "./components/razorpay/PayButton";
 import { Header } from "@/components/homepage/header";
-
 import { InteractiveFeatureCards } from "@/components/homepage/interactive-feature-cards";
 import { HowItWorks } from "@/components/homepage/how-it-works";
 import { MainHero } from "@/components/homepage/main-hero";
 import { Footer } from "@/components/homepage/footer";
 import { ConnectUs } from "@/components/homepage/connectus";
-import PremiumDashboard from "./components/premium/premium";
-import ChartBuilderPage from "./components/premium/excel/ChartBuilderPage";
-import AISheetSummarizerPage from "./components/premium/excel/AISheetSummarizerPage";
-import ExcelSuitePage from "./components/premium/excel/ExcelSuitePage";
-import PDFHubPage from "./components/premium/pdf/PDFHubPage";
-import AIWorkmatePage from "./components/premium/aiworkmate/AIWorkmatePage";
-import AIAgentPage from "./components/premium/aiworkmate/AIAgentPage";
-import MailCraftPage from "./components/premium/mailcraftai/MailCraftPage";
-import SocialProPage from "./components/premium/socialpro/SocialProPage";
-import CaptionProPage from "./components/premium/socialpro/CaptionProPage";
-import HashtagStrategistPage from "./components/premium/socialpro/HashtagStrategistPage";
-import AdCaptionGeneratorPage from "./components/premium/socialpro/AdCaptionGeneratorPage";
-import SmartDocsPage from "./components/premium/smartdocs/SmartDocsPage";
-import OfferLetterGeneratorPage from "./components/premium/smartdocs/OfferLetterGeneratorPage";
-import DataFillPage from "./components/premium/datafill/DataFillPage";
-import BulkMailerPage from "./components/premium/bulkmailer/BulkMailerPage";
-import ExcelToEmailEnginePage from "./components/premium/bulkmailer/ExcelToEmailEnginePage";
-import SmartTemplateLibraryPage from "./components/premium/bulkmailer/SmartTemplateLibraryPage";
-import AdminDashboard from "./components/admin/AdminDashboard";
-import AdminLogin from "./components/admin/Adminlogin";
+import SEO from "./components/common/SEO";
 import { useAuth } from './context/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Dashboard from "./components/premium/components/Dashboard";
-import ExcelSuite from "./components/premium/components/ExcelSuite";
-import ErrorTrendDetectorNew from './components/premium/excel/ErrorTrendDetectorNew';
-import FormulaMaster from "./components/premium/excel/FormulaMaster";
-import ExportWizard from "./components/premium/excel/ExportWizard";
-import Settings from "./components/premium/Settings";
-import PDFBrainPageWrapper from "./components/premium/pdf/PDFBrainPageWrapper";
-import PDFChatAgentPage from "./components/premium/pdf/PDFChatAgentPage";
-import SmartInvoiceGeneratorPage from "./components/premium/smartdocs/SmartInvoiceGeneratorPage";
-import CaptionRewriterPage from "./components/premium/socialpro/CaptionRewriterPage";
-import SmartDataExtractorPage from "./components/premium/pdf/SmartDataExtractorPage";
-import PDFConverterPro from "./components/premium/pdf/PDFConverterPro";
-import MailMergeAI from "./components/premium/bulkmailer/mailmergeai";
 
-import BulkPDFToolkitPage from "./components/premium/pdf/BulkPDFToolkitPage";
-import SEO from "./components/common/SEO";
+// Lazy loaded suite & feature components
+const EmailWizardPage = lazy(() => import("./components/premium/mailcraftai/EmailWizardPage"));
+const SubjectLineOptimizer = lazy(() => import("./components/premium/mailcraftai/subjectlineoptimizer"));
+const TonePolisher = lazy(() => import("./components/premium/mailcraftai/tonepolisher"));
+const PremiumDashboard = lazy(() => import("./components/premium/premium"));
+const ChartBuilderPage = lazy(() => import("./components/premium/excel/ChartBuilderPage"));
+const AISheetSummarizerPage = lazy(() => import("./components/premium/excel/AISheetSummarizerPage"));
+const ExcelSuitePage = lazy(() => import("./components/premium/excel/ExcelSuitePage"));
+const PDFHubPage = lazy(() => import("./components/premium/pdf/PDFHubPage"));
+const AIWorkmatePage = lazy(() => import("./components/premium/aiworkmate/AIWorkmatePage"));
+const AIAgentPage = lazy(() => import("./components/premium/aiworkmate/AIAgentPage"));
+const MailCraftPage = lazy(() => import("./components/premium/mailcraftai/MailCraftPage"));
+const SocialProPage = lazy(() => import("./components/premium/socialpro/SocialProPage"));
+const CaptionProPage = lazy(() => import("./components/premium/socialpro/CaptionProPage"));
+const HashtagStrategistPage = lazy(() => import("./components/premium/socialpro/HashtagStrategistPage"));
+const AdCaptionGeneratorPage = lazy(() => import("./components/premium/socialpro/AdCaptionGeneratorPage"));
+const SmartDocsPage = lazy(() => import("./components/premium/smartdocs/SmartDocsPage"));
+const OfferLetterGeneratorPage = lazy(() => import("./components/premium/smartdocs/OfferLetterGeneratorPage"));
+const DataFillPage = lazy(() => import("./components/premium/datafill/DataFillPage"));
+const BulkMailerPage = lazy(() => import("./components/premium/bulkmailer/BulkMailerPage"));
+const ExcelToEmailEnginePage = lazy(() => import("./components/premium/bulkmailer/ExcelToEmailEnginePage"));
+const SmartTemplateLibraryPage = lazy(() => import("./components/premium/bulkmailer/SmartTemplateLibraryPage"));
+const AdminDashboard = lazy(() => import("./components/admin/AdminDashboard"));
+const AdminLogin = lazy(() => import("./components/admin/Adminlogin"));
+const Dashboard = lazy(() => import("./components/premium/components/Dashboard"));
+const ExcelSuite = lazy(() => import("./components/premium/components/ExcelSuite"));
+const ErrorTrendDetectorNew = lazy(() => import('./components/premium/excel/ErrorTrendDetectorNew'));
+const FormulaMaster = lazy(() => import("./components/premium/excel/FormulaMaster"));
+const ExportWizard = lazy(() => import("./components/premium/excel/ExportWizard"));
+const Settings = lazy(() => import("./components/premium/Settings"));
+const PDFBrainPageWrapper = lazy(() => import("./components/premium/pdf/PDFBrainPageWrapper"));
+const PDFChatAgentPage = lazy(() => import("./components/premium/pdf/PDFChatAgentPage"));
+const SmartInvoiceGeneratorPage = lazy(() => import("./components/premium/smartdocs/SmartInvoiceGeneratorPage"));
+const CaptionRewriterPage = lazy(() => import("./components/premium/socialpro/CaptionRewriterPage"));
+const SmartDataExtractorPage = lazy(() => import("./components/premium/pdf/SmartDataExtractorPage"));
+const PDFConverterPro = lazy(() => import("./components/premium/pdf/PDFConverterPro"));
+const MailMergeAI = lazy(() => import("./components/premium/bulkmailer/mailmergeai"));
+const BulkPDFToolkitPage = lazy(() => import("./components/premium/pdf/BulkPDFToolkitPage"));
+
+function SuiteLoadingFallback() {
+  return (
+    <div className="flex flex-col justify-center items-center h-screen bg-gray-950 text-white space-y-4">
+      <div className="relative flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
+        <div className="absolute w-6 h-6 border-4 border-indigo-500/20 border-b-indigo-500 rounded-full animate-spin [animation-duration:1.5s]"></div>
+      </div>
+      <p className="text-sm font-medium tracking-wide text-gray-400 animate-pulse">
+        Loading Suite Module...
+      </p>
+    </div>
+  );
+}
 
 function HomePage() {
   return (
@@ -85,7 +99,6 @@ function HomePage() {
         <div className="pt-4">
           <InteractiveFeatureCards />
         </div>
-        {/* Reduce gap here by removing extra div and py-12 */}
         <HowItWorks />
         <ConnectUs />
       </div>
@@ -112,9 +125,6 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 function App() {
   const { loading } = useAuth();
 
-
-
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-900 text-white">
@@ -140,60 +150,61 @@ function App() {
         toastClassName="custom-toast"
       />
       <div className="fade-in">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
+        <Suspense fallback={<SuiteLoadingFallback />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
             {/* Full-screen SmartDocs routes (outside premium layout) */}
-          <Route path="/smartdocs/offerletter" element={<OfferLetterGeneratorPage />} />
-          <Route path="/smartdocs/smartinvoice" element={<SmartInvoiceGeneratorPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/paynow" element={<PayButton />} />
-          <Route element={<PremiumRoute />}>
-            <Route path="/premium" element={<PremiumDashboard />}>
-              <Route index element={<Dashboard />} />
-              <Route path="excel" element={<ExcelSuitePage />}>
-                <Route index element={<ExcelSuite />} />
-                <Route path="chartbuilder" element={<ChartBuilderPage />} />
-     
-                <Route path="aisheet/:chatId?" element={<AISheetSummarizerPage />} />
-                <Route path="formulamaster/:chatId?" element={<FormulaMaster />} />
-                <Route path="detect/:analysisId?" element={<ErrorTrendDetectorNew />} />
-                <Route path="exportwizard" element={<ExportWizard />} />
+            <Route path="/smartdocs/offerletter" element={<OfferLetterGeneratorPage />} />
+            <Route path="/smartdocs/smartinvoice" element={<SmartInvoiceGeneratorPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/paynow" element={<PayButton />} />
+            <Route element={<PremiumRoute />}>
+              <Route path="/premium" element={<PremiumDashboard />}>
+                <Route index element={<Dashboard />} />
+                <Route path="excel" element={<ExcelSuitePage />}>
+                  <Route index element={<ExcelSuite />} />
+                  <Route path="chartbuilder" element={<ChartBuilderPage />} />
+                  <Route path="aisheet/:chatId?" element={<AISheetSummarizerPage />} />
+                  <Route path="formulamaster/:chatId?" element={<FormulaMaster />} />
+                  <Route path="detect/:analysisId?" element={<ErrorTrendDetectorNew />} />
+                  <Route path="exportwizard" element={<ExportWizard />} />
+                </Route>
+                <Route path="pdfhub" element={<PDFHubPage />} />
+                <Route path="pdfhub/brain" element={<PDFBrainPageWrapper />} />
+                <Route path="pdfhub/chatagent" element={<PDFChatAgentPage />} />
+                <Route path="pdfhub/smartdata" element={<SmartDataExtractorPage />} />  
+                <Route path="pdfhub/bulk-toolkit" element={<BulkPDFToolkitPage />} />
+                <Route path="pdfhub/converterpro" element={<PDFConverterPro />} />
+                <Route path="aiworkmate/:sessionId?" element={<AIWorkmatePage />} />
+                <Route path="aiworkmate/aiagent" element={<AIAgentPage />} />
+                <Route path="mailcraft" element={<MailCraftPage />} />
+                <Route path="mailcraft/emailwizard" element={<EmailWizardPage/>} />
+                <Route path="mailcraft/subjectlineoptimizer" element={<SubjectLineOptimizer/>} />
+                <Route path="mailcraft/tonepolisher" element={<TonePolisher/>} />
+                <Route path="socialpro" element={<SocialProPage />} />
+                <Route path="socialpro/captionpro" element={<CaptionProPage />} />
+                <Route path="socialpro/hashtagstrategist" element={<HashtagStrategistPage />} />
+                <Route path="socialpro/adcaption" element={<AdCaptionGeneratorPage />} />
+                <Route path="socialpro/captionrewriter" element={<CaptionRewriterPage />} />
+                <Route path="smartdocs" element={<SmartDocsPage />} />
+                <Route path="bulkmailer/mailmergeai" element={<MailMergeAI />} />
+                <Route path="datafill" element={<DataFillPage />} />
+                <Route path="bulkmailer" element={<BulkMailerPage />} />
+                <Route path="bulkmailer/smarttemplates" element={<SmartTemplateLibraryPage />} />
+                <Route path="bulkmailer/excel-engine" element={<ExcelToEmailEnginePage />} />
+                <Route path="settings" element={<Settings />} />
               </Route>
-              <Route path="pdfhub" element={<PDFHubPage />} />
-              <Route path="pdfhub/brain" element={<PDFBrainPageWrapper />} />
-              <Route path="pdfhub/chatagent" element={<PDFChatAgentPage />} />
-              <Route path="pdfhub/smartdata" element={<SmartDataExtractorPage />} />  
-                         <Route path="pdfhub/bulk-toolkit" element={<BulkPDFToolkitPage />} />
-              <Route path="pdfhub/converterpro" element={<PDFConverterPro />} />
-              <Route path="aiworkmate/:sessionId?" element={<AIWorkmatePage />} />
-              <Route path="aiworkmate/aiagent" element={<AIAgentPage />} />
-              <Route path="mailcraft" element={<MailCraftPage />} />
-              <Route path="mailcraft/emailwizard" element={<EmailWizardPage/>} />
-              <Route path="mailcraft/subjectlineoptimizer" element={<SubjectLineOptimizer/>} />
-              <Route path="mailcraft/tonepolisher" element={<TonePolisher/>} />
-              <Route path="socialpro" element={<SocialProPage />} />
-              <Route path="socialpro/captionpro" element={<CaptionProPage />} />
-              <Route path="socialpro/hashtagstrategist" element={<HashtagStrategistPage />} />
-              <Route path="socialpro/adcaption" element={<AdCaptionGeneratorPage />} />
-              <Route path="socialpro/captionrewriter" element={<CaptionRewriterPage />} />
-              <Route path="smartdocs" element={<SmartDocsPage />} />
-              <Route path="bulkmailer/mailmergeai" element={<MailMergeAI />} />
-              <Route path="datafill" element={<DataFillPage />} />
-              <Route path="bulkmailer" element={<BulkMailerPage />} />
-              <Route path="bulkmailer/smarttemplates" element={<SmartTemplateLibraryPage />} />
-              <Route path="bulkmailer/excel-engine" element={<ExcelToEmailEnginePage />} />
-              <Route path="settings" element={<Settings />} />
             </Route>
-          </Route>
-          <Route path="/admin" element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          } />
-          <Route path="/adminlogin" element={<AdminLogin/>}/>
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+            <Route path="/admin" element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            } />
+            <Route path="/adminlogin" element={<AdminLogin/>}/>
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </Suspense>
       </div>
     </>
   );

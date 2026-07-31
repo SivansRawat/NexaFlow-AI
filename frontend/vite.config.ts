@@ -24,6 +24,41 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (
+              id.includes("pdfjs-dist") ||
+              id.includes("pdf-lib") ||
+              id.includes("jspdf") ||
+              id.includes("jspdf-autotable")
+            ) {
+              return "pdf-vendor";
+            }
+            if (
+              id.includes("xlsx") ||
+              id.includes("docx") ||
+              id.includes("pptxgenjs")
+            ) {
+              return "excel-vendor";
+            }
+            if (id.includes("recharts")) {
+              return "chart-vendor";
+            }
+            if (
+              id.includes("react-router-dom") ||
+              id.includes("react-dom") ||
+              id.includes("react") ||
+              id.includes("zustand") ||
+              id.includes("axios")
+            ) {
+              return "framework-vendor";
+            }
+          }
+        },
+      },
+    },
   },
   base: '/',
 })
