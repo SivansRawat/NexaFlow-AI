@@ -46,15 +46,6 @@ export default defineConfig({
             if (id.includes("recharts")) {
               return "chart-vendor";
             }
-            if (
-              id.includes("react-router-dom") ||
-              id.includes("react-dom") ||
-              id.includes("react") ||
-              id.includes("zustand") ||
-              id.includes("axios")
-            ) {
-              return "framework-vendor";
-            }
           }
         },
       },
