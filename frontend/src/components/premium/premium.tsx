@@ -15,7 +15,7 @@ function PremiumDashboard() {
   const handleSearch = (query: string) => setSearchQuery(query);
 
   return (
-    <div className={`min-h-screen w-full overflow-x-hidden transition-all duration-300 transition-colors duration-500 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}> 
+    <div className={`min-h-screen w-full overflow-x-hidden transition-all duration-300 transition-colors duration-500 ${isDarkMode ? 'bg-[#050505]' : 'bg-gray-50'}`}> 
       <Header 
         isDarkMode={isDarkMode} 
         toggleTheme={toggleTheme}

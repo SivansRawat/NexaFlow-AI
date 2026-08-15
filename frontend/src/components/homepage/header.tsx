@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 import { Menu, X } from "lucide-react"
 import { useAuth } from '../../context/AuthContext';
 import { fetchCurrentUser } from '../../lib/api';
-import { UserCircle, ChevronDown } from 'lucide-react';
+import { UserCircle, ChevronDown, User } from 'lucide-react';
 import { useRef } from "react";
 
 export function Header() {
@@ -61,7 +61,7 @@ export function Header() {
     setIsMenuOpen(!isMenuOpen)
   }
 
-  const handleProfileDropdown = () => setDropdownOpen((open) => !open);
+
 
   const navItems = [
     { name: "FEATURES", href: "#interactive-feature-cards" },
@@ -74,29 +74,29 @@ export function Header() {
       {/* Fixed Header */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-20 ${
-          isScrolled
-            ? "bg-gray-900/80 backdrop-blur-md border-b border-gray-800/50"
-            : "bg-gray-900/60 backdrop-blur-sm border-b border-gray-800/30"
+          isScrolled 
+            ? "bg-[#050505]/90 backdrop-blur-md border-b border-[#2640D9]/20 shadow-lg shadow-[#000000]/30"
+            : "bg-[#050505]/65 backdrop-blur-sm border-b border-[#2640D9]/10"
         }`}
       >
         <div className="flex items-center justify-between px-4 sm:px-6 h-full">
           <Link to="/" className="flex items-center gap-3 flex-shrink-0 group">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-cyan-400 via-purple-500 to-pink-500 p-[1.5px] shadow-lg shadow-purple-950/40 transition-transform duration-200 group-hover:scale-105 flex items-center justify-center">
-              <div className="w-full h-full bg-[#0d0e1a] rounded-[10px] flex items-center justify-center">
-                <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400 text-lg sm:text-xl">N</span>
-              </div>
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-[#2640D9] via-[#8A66E6] to-[#6633E6] p-[1.5px] shadow-lg shadow-[#2640D9]/20 transition-transform duration-200 group-hover:scale-105 flex items-center justify-center">
+            <div className="w-full h-full rounded-full bg-[#050505] flex items-center justify-center">
+              <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2640D9] to-[#6633E6] text-lg sm:text-xl">N</span>
             </div>
-            <span className="font-extrabold text-xl sm:text-2xl tracking-tight bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              NexaFlow AI
-            </span>
-          </Link>
+          </div>
+          <span className="font-light text-xl sm:text-2xl tracking-tight text-white font-['Inter']">
+            NexaFlow <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-white to-[#8A66E6]">AI</span>
+          </span>
+        </Link>
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {navItems.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
-                className="text-white font-medium text-sm tracking-wide hover:text-gray-300 transition-colors duration-200"
+                className="text-[#E5E5E5] font-medium text-sm tracking-widest hover:text-[#8A66E6] transition-colors duration-200"
               >
                 {item.name}
               </a>
@@ -109,66 +109,63 @@ export function Header() {
               <div className="relative flex items-center gap-3">
                 <Link
                   to="/premium"
-                  className="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-lg shadow transition-all duration-150 flex items-center gap-1.5"
+                  className="px-5 py-2.5 text-xs font-bold tracking-wider text-white bg-[#2640D9] hover:bg-[#6633E6] rounded-full shadow-lg shadow-[#2640D9]/20 transition-all duration-200 flex items-center gap-1.5"
                 >
-                  <span>Dashboard</span>
+                  <span>DASHBOARD</span>
                 </Link>
 
                 <Link
                   to="/paynow"
-                  className="px-3 py-2 text-xs font-semibold text-yellow-300 border border-yellow-500/40 bg-yellow-500/10 hover:bg-yellow-500/20 rounded-lg transition-all duration-150 flex items-center gap-1"
+                  className="px-4 py-2.5 text-xs font-bold tracking-wider text-[#C968F7] border border-[#C968F7]/30 bg-[#C968F7]/5 hover:bg-[#C968F7]/15 rounded-full transition-all duration-200 flex items-center gap-1"
                 >
-                  <span>Upgrade</span>
+                  <span>UPGRADE</span>
                 </Link>
 
                 <button
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white focus:outline-none"
-                  onClick={handleProfileDropdown}
-                  aria-haspopup="true"
-                  aria-label="Profile menu"
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#0b0b0f] hover:bg-[#111116] border border-[#2640D9]/30 text-[#E5E5E5] focus:outline-none transition-all duration-200"
                 >
-                  <UserCircle className="w-6 h-6" />
-                  <span className="font-medium">{user.username?.split(' ')[0]}</span>
-                  <ChevronDown className="w-4 h-4 cursor-pointer" onClick={handleProfileDropdown} tabIndex={0} role="button" aria-label="Toggle profile menu" />
+                  <User className="w-4 h-4 text-[#8A66E6]" />
+                  <span className="text-xs font-bold uppercase tracking-wider">{user.username}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 text-[#737373] transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {dropdownOpen && (
                   <div
                     ref={dropdownRef}
-                    className="absolute right-0 top-full mt-2 w-72 bg-gradient-to-br from-[#18192a] via-[#23243a] to-[#23243a] rounded-2xl shadow-2xl py-4 z-50 border border-purple-500/40 flex flex-col gap-2 animate-fadeIn"
-                    style={{ minWidth: 240 }}
-                    role="menu"
+                    className="absolute right-0 top-full mt-3 w-72 bg-[#0b0b0f] rounded-2xl shadow-2xl py-4 z-50 border border-[#2640D9]/30 flex flex-col gap-2 animate-fadeIn"
                   >
-                    <div className="absolute -top-2 right-10 w-4 h-4 bg-gradient-to-br from-[#18192a] via-[#23243a] to-[#23243a] rotate-45 border-l border-t border-purple-500/40" style={{ zIndex: 1 }} />
-                    <div className="flex items-center gap-3 px-5 pb-3 border-b border-gray-700">
-                      <div className="bg-gradient-to-br from-purple-400 to-cyan-400 rounded-full w-10 h-10 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                    {/* Arrow */}
+                    <div className="absolute -top-1.5 right-10 w-3 h-3 bg-[#0b0b0f] rotate-45 border-l border-t border-[#2640D9]/30" style={{ zIndex: 1 }} />
+                    <div className="flex items-center gap-3 px-5 pb-3 border-b border-[#262626] relative z-10">
+                      <div className="bg-gradient-to-br from-[#2640D9] to-[#6633E6] rounded-full w-10 h-10 flex items-center justify-center text-white font-bold text-lg shadow-md">
                         {user.username?.[0]?.toUpperCase() || <UserCircle className="w-7 h-7" />}
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-semibold text-white text-base">{user.username}</span>
-                        {user.email && <span className="text-xs text-gray-300">{user.email}</span>}
+                        <span className="font-semibold text-[#E5E5E5] text-sm">{user.username}</span>
+                        {user.email && <span className="text-xs text-[#737373]">{user.email}</span>}
                       </div>
                     </div>
                     
                     <Link
                       to="/premium"
-                      className="block px-5 py-2 text-sm text-gray-200 hover:bg-gray-800 rounded-lg transition"
+                      className="block px-5 py-2 text-xs font-semibold text-[#E5E5E5] hover:bg-[#111116] rounded-lg transition"
                       onClick={() => setDropdownOpen(false)}
                     >
                       AI Tools Dashboard
                     </Link>
                     <Link
                       to="/paynow"
-                      className="block px-5 py-2 text-sm text-yellow-300 hover:bg-gray-800 rounded-lg transition"
+                      className="block px-5 py-2 text-xs font-semibold text-[#C968F7] hover:bg-[#111116] rounded-lg transition"
                       onClick={() => setDropdownOpen(false)}
                     >
                       ⭐ Upgrade Plan
                     </Link>
 
                     {/* Divider */}
-                    <div className="my-1 border-t border-gray-700" />
+                    <div className="my-1 border-t border-[#262626]" />
                     {/* Logout Button */}
                     <button
-                      className="block w-full text-left px-5 py-2 text-red-400 font-semibold hover:bg-gradient-to-r hover:from-purple-900/40 hover:to-cyan-900/40 rounded-xl transition-colors duration-150"
+                      className="block w-full text-left px-5 py-2 text-red-400 font-semibold hover:bg-red-500/5 rounded-lg transition-colors duration-150 text-xs"
                       onClick={logout}
                       role="menuitem"
                     >
@@ -179,11 +176,11 @@ export function Header() {
               </div>
             ) : (
               <>
-                <Link to="/signup" className="text-gray-400 text-sm font-medium tracking-wide hover:underline">NEW ACCOUNT</Link>
+                <Link to="/signup" className="text-[#737373] hover:text-[#E5E5E5] text-xs font-bold tracking-widest transition-colors duration-200">NEW ACCOUNT</Link>
                 {/* Fixed SIGN IN Button */}
-                <Link to="/login" className="relative bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 p-[1px] rounded-lg hover:shadow-lg transition-all duration-200">
-                  <div className="bg-gray-900 px-6 py-2 rounded-[7px] flex items-center justify-center">
-                    <span className="text-white font-medium text-sm tracking-wide">SIGN IN</span>
+                <Link to="/login" className="relative bg-gradient-to-r from-[#2640D9] via-[#8A66E6] to-[#6633E6] p-[1px] rounded-full hover:shadow-lg transition-all duration-200">
+                  <div className="bg-[#050505] hover:bg-[#111116] px-6 py-2 rounded-full flex items-center justify-center transition-colors">
+                    <span className="text-white font-bold text-xs tracking-widest">SIGN IN</span>
                   </div>
                 </Link>
               </>
@@ -193,9 +190,9 @@ export function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
-            className="md:hidden relative bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 p-[1px] rounded-lg flex-shrink-0"
+            className="md:hidden relative bg-gradient-to-r from-[#2640D9] via-[#8A66E6] to-[#6633E6] p-[1px] rounded-full flex-shrink-0"
           >
-            <div className="bg-gray-900 p-2 sm:p-3 rounded-[7px] flex items-center justify-center">
+            <div className="bg-[#050505] p-2 sm:p-3 rounded-full flex items-center justify-center">
               {isMenuOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
             </div>
           </button>

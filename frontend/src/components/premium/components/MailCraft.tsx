@@ -1,6 +1,6 @@
 import React from 'react';
 import ToolCard from './ToolCard';
-import { Mail, Type, Edit3, Sparkles } from 'lucide-react';
+import { Mail, Type, Edit3 } from 'lucide-react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import SEO from '../../common/SEO';
 
@@ -45,23 +45,13 @@ const MailCraft: React.FC<MailCraftProps> = () => {
         canonical="/premium/mailcraft"
       />
       {/* Header Banner */}
-      <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all duration-300 ${
-        isDarkMode 
-          ? 'bg-gradient-to-r from-cyan-950/40 via-blue-950/30 to-gray-900 border-cyan-500/30 shadow-xl shadow-cyan-900/10' 
-          : 'bg-gradient-to-r from-cyan-50 via-blue-50 to-indigo-50 border-cyan-200 shadow-lg'
-      }`}>
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Email Automation Suite</span>
-          </div>
-          <h1 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+      <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border border-[#2640D9]/20 bg-[#0b0b0f] shadow-xl shadow-black/40">
+        <div className="relative z-10 space-y-1">
+          <h1 className="text-2xl font-light tracking-tight text-white font-['Inter']">
             MailCraft AI
           </h1>
-          <p className={`text-sm max-w-2xl leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            Craft persuasive sales emails, generate click-worthy subject lines, and refine message tone with AI precision.
+          <p className="text-xs max-w-2xl leading-relaxed text-[#737373] font-normal">
+            Draft outreach templates, optimize subject lines, and refine professional tone.
           </p>
         </div>
       </div>

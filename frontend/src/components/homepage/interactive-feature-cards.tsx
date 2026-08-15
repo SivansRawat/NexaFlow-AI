@@ -17,82 +17,64 @@ export function InteractiveFeatureCards() {
 
   const features = [
     {
-      badge: "Team Workspace",
-      title: "Empower Your Whole Team with Cutting-Edge AI",
-      description: "Shared workspace & credit pools for seamless team productivity.",
-      features: ["Unlimited users with shared credit pool", "Zero per-user seat fees across your team"],
-      borderColor: "border-cyan-500/40 hover:shadow-cyan-500/20",
+      title: "Shared Workspaces & Access Control",
+      description: "Manage shared resources, copy templates, and access permissions in one place.",
+      features: ["Unified workspace with shared credit allocations", "No per-user seat fees across your team"],
       icon: Users,
-      iconBg: "from-cyan-500 to-blue-600",
-      badgeBg: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30",
     },
     {
-      badge: "Multi-Model Intelligence",
-      title: "Universal RAG & High-Speed Cloud LLMs",
-      description: "Access Groq Cloud LLM (~50ms) + Local Ollama + ChromaDB Vector RAG.",
+      title: "Integrated Retrieval & Model Access",
+      description: "Retrieve documents via self-hosted RAG, powered by Groq and Ollama backends.",
       features: [
         "Groq Cloud API fallback with ~50ms speed",
-        "100% Data Privacy with ChromaDB Vector Store",
-        "10x more cost-effective than public cloud APIs",
+        "Data privacy using ChromaDB vector collections",
+        "Cost-effective local LLM integration paths",
       ],
-      borderColor: "border-purple-500/40 hover:shadow-purple-500/20",
       icon: Zap,
-      iconBg: "from-purple-500 to-indigo-600",
-      badgeBg: "bg-purple-500/10 text-purple-400 border-purple-500/30",
     },
     {
-      badge: "Scalable Growth",
-      title: "Flexible AI Power for Growing Businesses",
-      description: "Add team members and AI tool suites anytime.",
+      title: "On-Demand Resource Allocation",
+      description: "Scale your workflows by allocating resources to key project areas as needed.",
       features: [
-        "Add unlimited team members with zero lock-in",
-        "Automate PDF, MailCraft, SocialPro & Excel",
-        "Ideal for startups to mid-sized enterprises",
+        "Dynamic credit assignment across members",
+        "Automated tools for Excel, PDF, Mail, and Social",
+        "Flexible infrastructure with no contract lock-ins",
       ],
-      borderColor: "border-pink-500/40 hover:shadow-pink-500/20",
       icon: TrendingUp,
-      iconBg: "from-pink-500 to-rose-600",
-      badgeBg: "bg-pink-500/10 text-pink-400 border-pink-500/30",
     },
     {
-      badge: "Collaborative RAG",
-      title: "Collaborate Smarter with Shared Vector Knowledge",
-      description: "Pool documents and copywriting templates into shared vector stores.",
+      title: "Shared Document Libraries",
+      description: "Upload PDFs, reference documents, and marketing assets to team vector stores.",
       features: [
-        "Shared vector template library across teams",
-        "Pooled credit resources for key projects",
-        "Collaborative PDF Brain document chat",
+        "Shared vector document indexes for team lookup",
+        "Centralized copy frameworks and templates",
+        "Collaborative PDF summarization and querying",
       ],
-      borderColor: "border-emerald-500/40 hover:shadow-emerald-500/20",
       icon: Share2,
-      iconBg: "from-emerald-500 to-teal-600",
-      badgeBg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
     },
     {
-      badge: "Enterprise Security",
-      title: "Future-Proof Your Business Risk-Free",
-      description: "Stay ahead with enterprise encryption and vector privacy.",
+      title: "Security & Infrastructure",
+      description: "Host your data securely with JWT authentication and granular document controls.",
       features: [
-        "Enterprise JWT authentication & vector privacy",
-        "No vendor lock-in with open microservices",
-        "Instant deployment on Vercel & Render",
+        "Secure JSON Web Token (JWT) user access control",
+        "Open microservices stack for deploy flexibility",
+        "Optimized client bundling for instant load speed",
       ],
-      borderColor: "border-amber-500/40 hover:shadow-amber-500/20",
       icon: Shield,
-      iconBg: "from-amber-500 to-orange-600",
-      badgeBg: "bg-amber-500/10 text-amber-400 border-amber-500/30",
     },
   ]
 
   return (
-    <section id="interactive-feature-cards" className="py-12 sm:py-16 px-4 sm:px-6 bg-[#0a0b16] relative">
+    <section id="interactive-feature-cards" className="py-20 sm:py-28 px-4 sm:px-6 bg-[#050505] relative">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-10 sm:mb-14">
-          <span className="text-xs sm:text-sm uppercase tracking-widest text-cyan-400 font-semibold">Features & Capabilities</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mt-2">
-            Unleash Enterprise AI Across Your Entire Team
+        <div className="text-center mb-16 sm:mb-20">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-[#2640D9]/5 text-[#8A66E6] border border-[#2640D9]/20">
+            <span>Features</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extralight text-white mt-4 font-['Outfit'] tracking-tight">
+            Integrated Document & <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-white to-[#8A66E6]">Workspace Automation</span>
           </h2>
-          <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto mt-3 font-light">
+          <p className="text-[#737373] text-sm sm:text-base max-w-2xl mx-auto mt-4 font-normal leading-relaxed">
             One platform combining document intelligence, spreadsheet analytics, email copy, and social media automation.
           </p>
         </div>
@@ -101,33 +83,29 @@ export function InteractiveFeatureCards() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className={`relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border ${feature.borderColor} p-6 sm:p-8 transition-all duration-300 transform hover:-translate-y-1.5 shadow-xl flex flex-col justify-between`}
+              className="relative overflow-hidden rounded-2xl border border-[#262626] bg-[#0b0b0f] shadow-xl flex flex-col justify-between"
             >
-              {/* Top Accent Line */}
-              <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.iconBg}`} />
-
-              <div>
-                {/* Header Row */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.iconBg} flex items-center justify-center shadow-lg shadow-purple-950/30`}>
-                    <feature.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${feature.badgeBg}`}>
-                    {feature.badge}
-                  </span>
-                </div>
-
-                <h3 className="text-xl font-bold text-white mb-3 leading-snug">{feature.title}</h3>
-                <p className="text-gray-400 text-sm mb-6 leading-relaxed font-light">{feature.description}</p>
-
-                {/* Feature Checkmarks */}
-                <div className="space-y-3 mb-6 border-t border-gray-800/60 pt-4">
-                  {feature.features.map((item, idx) => (
-                    <div key={idx} className="flex items-start space-x-2.5">
-                      <CheckCircle2 className="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-300 text-xs sm:text-sm font-light">{item}</span>
+              <div className="p-6 sm:p-8 h-full flex flex-col justify-between">
+                <div>
+                  {/* Header Row */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="w-12 h-12 rounded-xl bg-[#2640D9]/5 border border-[#2640D9]/20 flex items-center justify-center">
+                      <feature.icon className="w-5 h-5 text-[#8A66E6]" />
                     </div>
-                  ))}
+                  </div>
+
+                  <h3 className="text-lg font-semibold text-white mb-3 leading-snug font-['Outfit']">{feature.title}</h3>
+                  <p className="text-[#737373] text-sm mb-6 leading-relaxed font-normal">{feature.description}</p>
+
+                  {/* Feature Checkmarks */}
+                  <div className="space-y-3 border-t border-[#262626] pt-4">
+                    {feature.features.map((item, idx) => (
+                      <div key={idx} className="flex items-start space-x-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-[#8A66E6] mt-0.5 flex-shrink-0" />
+                        <span className="text-[#E5E5E5] text-xs sm:text-sm font-normal">{item}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -136,7 +114,7 @@ export function InteractiveFeatureCards() {
 
         <div className="text-center mt-12 sm:mt-16">
           <Button
-            className="bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-600 hover:from-cyan-400 hover:via-purple-500 hover:to-pink-500 text-white font-semibold px-8 py-4 text-lg rounded-xl shadow-lg shadow-purple-900/30 transition-all duration-300"
+            className="bg-white hover:bg-neutral-200 text-black font-semibold px-10 py-4 text-xs tracking-widest uppercase rounded-full shadow-lg transition-all duration-200 hover:scale-[1.02]"
             onClick={handleGetStarted}
           >
             Launch Your AI Workspace →

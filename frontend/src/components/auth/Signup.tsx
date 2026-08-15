@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { userSignup, googleLogin } from "../../lib/api";
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { Sparkles, Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
 import SEO from '../common/SEO';
 import { useGoogleLogin } from '@react-oauth/google';
 
@@ -63,172 +63,174 @@ export default function Signup() {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#07070d] text-white relative overflow-hidden px-4 py-12">
+    <div className="min-h-screen w-full flex items-center justify-center bg-[#050505] text-white relative overflow-hidden px-4 py-12">
       <SEO 
         title="Create Your Account"
         description="Join NexaFlow AI today. Get instant access to PDF Chat Agent, Excel AI Formula Master, MailCraft AI, and enterprise workflow tools."
         canonical="/signup"
       />
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-cyan-600/20 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-pink-600/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#2640D9]/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-[#8A66E6]/10 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-md bg-[#121324]/80 backdrop-blur-2xl rounded-3xl border border-purple-500/30 shadow-2xl shadow-purple-900/20 p-8 sm:p-10 relative z-10">
-        
-        <div className="text-center mb-6">
-          <Link to="/" className="inline-flex items-center gap-2 mb-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white via-gray-200 to-purple-400 bg-clip-text text-transparent">
-              NexaFlow AI
-            </span>
-          </Link>
-          <h2 className="text-2xl font-bold text-white mb-1">Create Your Account</h2>
-          <p className="text-xs text-gray-400">Get 50 free credits instantly to start exploring AI tools</p>
-        </div>
-
-        {error && (
-          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 flex-shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        <div className="mb-4 w-full">
-          <button
-            type="button"
-            onClick={() => handleGoogleLogin()}
-            disabled={loading}
-            className="w-full py-3 px-4 rounded-xl bg-[#1b1c33] hover:bg-[#232442] border border-gray-700/80 hover:border-purple-500/50 text-white font-medium text-sm flex items-center justify-center gap-3 transition-all duration-200 shadow-md group active:scale-[0.99]"
-          >
-            <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-            </svg>
-            <span>Sign up with Google</span>
-          </button>
-        </div>
-
-        <div className="relative mb-5">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-700/60" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[#16172b] px-3 text-gray-400 font-medium">Or register with email</span>
-          </div>
-        </div>
-
-        <form className="space-y-3.5" onSubmit={handleSubmit}>
-          <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1 uppercase tracking-wider" htmlFor="username">
-              Username
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                <User className="w-4 h-4" />
+      <div className="w-full max-w-md bg-gradient-to-br from-[#2640D9]/25 via-transparent to-[#262626]/40 p-[1px] rounded-[24px] shadow-2xl relative z-10">
+        <div className="bg-[#0b0b0f] w-full h-full rounded-[23px] p-8 sm:p-10 flex flex-col">
+          <div className="text-center mb-6">
+            <Link to="/" className="inline-flex items-center gap-2.5 mb-3 group">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#2640D9] via-[#8A66E6] to-[#6633E6] p-[1.5px] shadow-lg shadow-[#2640D9]/20 transition-transform duration-200 group-hover:scale-105 flex items-center justify-center">
+                <div className="w-full h-full bg-[#050505] rounded-full flex items-center justify-center">
+                  <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2640D9] to-[#6633E6] text-base">N</span>
+                </div>
               </div>
-              <input 
-                id="username" 
-                name="username" 
-                type="text" 
-                autoComplete="username" 
-                required 
-                placeholder="choose a username"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#1b1c33] text-white placeholder-gray-500 border border-gray-700/60 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all text-sm font-medium" 
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1 uppercase tracking-wider" htmlFor="email">
-              Email Address
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                <Mail className="w-4 h-4" />
-              </div>
-              <input 
-                id="email" 
-                name="email" 
-                type="email" 
-                autoComplete="email" 
-                required 
-                placeholder="name@company.com"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#1b1c33] text-white placeholder-gray-500 border border-gray-700/60 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all text-sm font-medium" 
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1 uppercase tracking-wider" htmlFor="password">
-              Password
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                <Lock className="w-4 h-4" />
-              </div>
-              <input 
-                id="password" 
-                name="password" 
-                type="password" 
-                autoComplete="new-password" 
-                required 
-                placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#1b1c33] text-white placeholder-gray-500 border border-gray-700/60 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all text-sm font-medium" 
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1 uppercase tracking-wider" htmlFor="confirmPassword">
-              Confirm Password
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                <Lock className="w-4 h-4" />
-              </div>
-              <input 
-                id="confirmPassword" 
-                name="confirmPassword" 
-                type="password" 
-                autoComplete="new-password" 
-                required 
-                placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#1b1c33] text-white placeholder-gray-500 border border-gray-700/60 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all text-sm font-medium" 
-              />
-            </div>
-          </div>
-
-          <button 
-            type="submit" 
-            disabled={loading} 
-            className="w-full mt-2 bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 hover:from-cyan-400 hover:via-purple-500 hover:to-pink-400 text-white font-semibold py-3 rounded-xl shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-200 flex items-center justify-center gap-2 text-sm"
-          >
-            {loading ? (
-              <span className="inline-flex items-center gap-2">
-                <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                </svg>
-                Creating Account...
+              <span className="text-2xl font-extralight tracking-tight bg-gradient-to-r from-white to-[#8A66E6] bg-clip-text text-transparent font-['Inter']">
+                NexaFlow <span className="font-semibold">AI</span>
               </span>
-            ) : (
-              <>
-                <span>Get Started Now</span>
-                <ArrowRight className="w-4 h-4" />
-              </>
-            )}
-          </button>
-        </form>
+            </Link>
+            <h2 className="text-2xl font-extralight text-white mb-1 font-['Inter']">Create Your Account</h2>
+            <p className="text-xs text-[#737373] font-normal">Get 50 free credits instantly to start exploring AI tools</p>
+          </div>
 
-        <div className="mt-6 pt-5 border-t border-gray-800 text-center">
-          <span className="text-gray-400 text-xs">Already have an account? </span>
-          <Link to="/login" className="text-purple-400 hover:text-purple-300 font-semibold text-xs hover:underline">
-            Sign In
-          </Link>
+          {error && (
+            <div className="mb-4 p-3.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 flex-shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <div className="mb-4 w-full">
+            <button
+              type="button"
+              onClick={() => handleGoogleLogin()}
+              disabled={loading}
+              className="w-full py-3.5 px-5 rounded-full bg-[#050505] hover:bg-[#2640D9]/5 border border-[#262626] hover:border-[#2640D9]/30 text-white font-bold text-xs tracking-widest uppercase flex items-center justify-center gap-3 transition-all duration-200 shadow-md group active:scale-[0.99]"
+            >
+              <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+              </svg>
+              <span>Sign up with Google</span>
+            </button>
+          </div>
+
+          <div className="relative mb-5">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-[#262626]" />
+            </div>
+            <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-widest">
+              <span className="bg-[#0b0b0f] px-3 text-[#737373]">Or register with email</span>
+            </div>
+          </div>
+
+          <form className="space-y-3.5" onSubmit={handleSubmit}>
+            <div>
+              <label className="block text-[10px] font-bold text-[#737373] mb-1.5 uppercase tracking-widest" htmlFor="username">
+                Username
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4.5 flex items-center pointer-events-none text-[#737373]">
+                  <User className="w-4 h-4" />
+                </div>
+                <input 
+                  id="username" 
+                  name="username" 
+                  type="text" 
+                  autoComplete="username" 
+                  required 
+                  placeholder="choose a username"
+                  className="w-full pl-11 pr-5 py-3 rounded-full bg-[#050505] text-white placeholder-[#737373] border border-[#262626] focus:border-[#2640D9] focus:outline-none transition-all text-xs sm:text-sm font-normal" 
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-bold text-[#737373] mb-1.5 uppercase tracking-widest" htmlFor="email">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4.5 flex items-center pointer-events-none text-[#737373]">
+                  <Mail className="w-4 h-4" />
+                </div>
+                <input 
+                  id="email" 
+                  name="email" 
+                  type="email" 
+                  autoComplete="email" 
+                  required 
+                  placeholder="name@company.com"
+                  className="w-full pl-11 pr-5 py-3 rounded-full bg-[#050505] text-white placeholder-[#737373] border border-[#262626] focus:border-[#2640D9] focus:outline-none transition-all text-xs sm:text-sm font-normal" 
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-bold text-[#737373] mb-1.5 uppercase tracking-widest" htmlFor="password">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4.5 flex items-center pointer-events-none text-[#737373]">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <input 
+                  id="password" 
+                  name="password" 
+                  type="password" 
+                  autoComplete="new-password" 
+                  required 
+                  placeholder="••••••••"
+                  className="w-full pl-11 pr-5 py-3 rounded-full bg-[#050505] text-white placeholder-[#737373] border border-[#262626] focus:border-[#2640D9] focus:outline-none transition-all text-xs sm:text-sm font-normal" 
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-bold text-[#737373] mb-1.5 uppercase tracking-widest" htmlFor="confirmPassword">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4.5 flex items-center pointer-events-none text-[#737373]">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <input 
+                  id="confirmPassword" 
+                  name="confirmPassword" 
+                  type="password" 
+                  autoComplete="new-password" 
+                  required 
+                  placeholder="••••••••"
+                  className="w-full pl-11 pr-5 py-3 rounded-full bg-[#050505] text-white placeholder-[#737373] border border-[#262626] focus:border-[#2640D9] focus:outline-none transition-all text-xs sm:text-sm font-normal" 
+                />
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              disabled={loading} 
+              className="w-full mt-2 bg-[#2640D9] hover:bg-[#6633E6] text-white font-bold py-3.5 rounded-full shadow-lg shadow-[#2640D9]/20 transition-all duration-200 flex items-center justify-center gap-2 text-xs tracking-widest uppercase"
+            >
+              {loading ? (
+                <span className="inline-flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  Creating Account...
+                </span>
+              ) : (
+                <>
+                  <span>Get Started Now</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-6 pt-5 border-t border-[#262626] text-center">
+            <span className="text-[#737373] text-xs font-normal">Already have an account? </span>
+            <Link to="/login" className="text-[#8A66E6] hover:text-[#2640D9] font-bold text-xs transition-colors hover:underline">
+              Sign In
+            </Link>
+          </div>
         </div>
       </div>
     </div>

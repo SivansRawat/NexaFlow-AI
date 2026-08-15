@@ -51,10 +51,17 @@ const AIWorkmate: React.FC<AIWorkmateProps> = ({ isDarkMode = false }) => {
   ];
 
   return (
-    <div className="w-full max-w-6xl mx-auto flex flex-col items-center justify-start py-6" style={{ minHeight: '60vh' }}>
-      <div className="w-full mb-12"> {/* Increased margin-bottom for a larger, consistent gap */}
-        <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-white'} text-center`}>AI Workmate</h1>
-        <p className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-white'}`}>Your smart virtual AI agent for all tasks</p>
+    <div className="w-full max-w-6xl mx-auto flex flex-col items-center justify-start py-6 space-y-8" style={{ minHeight: '60vh' }}>
+      {/* Header Section */}
+      <div className="w-full relative overflow-hidden rounded-3xl p-6 sm:p-8 border border-[#2640D9]/20 bg-[#0b0b0f] shadow-xl shadow-black/40">
+        <div className="relative z-10 space-y-1 text-left">
+          <h1 className="text-2xl font-light tracking-tight text-white font-['Inter']">
+            AI Workmate
+          </h1>
+          <p className="text-xs max-w-2xl leading-relaxed text-[#737373] font-normal">
+            Execute writing assistant pipelines, analyze resumes, and generate copy drafts.
+          </p>
+        </div>
       </div>
       {/* Message Input Box - Placed Above */}
       <div className="w-full flex justify-center mb-6">

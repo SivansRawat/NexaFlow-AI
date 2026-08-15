@@ -42,7 +42,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isSidebarOpen, onSearch, 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-xl transition-all duration-300 h-20 mb-6 ${
       isDarkMode 
-        ? 'bg-gray-900/95 border-b border-gray-700/50' 
+        ? 'bg-[#050505]/95 border-b border-[#262626]' 
         : 'bg-white/95 border-b border-gray-200/50'
     }`}>
       <div className="flex items-center justify-between px-4 lg:px-8 h-20">
@@ -60,19 +60,15 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isSidebarOpen, onSearch, 
 
         {/* Logo Section */}
         <Link to="/" className="flex items-center gap-3 flex-shrink-0 group">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-cyan-400 via-purple-500 to-pink-500 p-[1.5px] shadow-lg shadow-purple-950/40 transition-transform duration-200 group-hover:scale-105 flex items-center justify-center">
-            <div className={`w-full h-full rounded-[10px] flex items-center justify-center ${
-              isDarkMode ? 'bg-[#0d0e1a]' : 'bg-white'
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-[#2640D9] via-[#8A66E6] to-[#6633E6] p-[1.5px] shadow-lg transition-transform duration-200 group-hover:scale-105 flex items-center justify-center">
+            <div className={`w-full h-full rounded-full flex items-center justify-center ${
+              isDarkMode ? 'bg-[#050505]' : 'bg-white'
             }`}>
-              <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400 text-lg sm:text-xl">N</span>
+              <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2640D9] to-[#6633E6] text-lg sm:text-xl">N</span>
             </div>
           </div>
-          <span className={`font-extrabold text-xl sm:text-2xl tracking-tight ${
-            isDarkMode
-              ? 'bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent'
-              : 'bg-gradient-to-r from-purple-700 via-indigo-700 to-cyan-700 bg-clip-text text-transparent'
-          }`}>
-            NexaFlow AI
+          <span className={`font-light text-xl sm:text-2xl tracking-tight text-white font-['Inter']`}>
+            NexaFlow <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-white to-[#8A66E6]">AI</span>
           </span>
         </Link>
         {/* Search Bar */}
@@ -86,10 +82,10 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isSidebarOpen, onSearch, 
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Search tools, features..."
-              className={`w-full rounded-lg pl-11 pr-4 py-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${
+              className={`w-full rounded-full pl-11 pr-4 py-2 text-sm placeholder-gray-500 focus:outline-none transition-all duration-200 ${
                 isDarkMode 
-                  ? 'bg-gray-800 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-purple-500' 
-                  : 'bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-500 focus:ring-gray-900'
+                  ? 'bg-[#050505] border border-[#262626] text-gray-100 placeholder-gray-500 focus:border-[#2640D9]' 
+                  : 'bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-500 focus:border-gray-900'
               }`}
             />
           </div>
@@ -129,8 +125,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isSidebarOpen, onSearch, 
             isDarkMode ? 'border-gray-700' : 'border-gray-200'
           }`}>
             <button
-              className={`w-9 h-9 rounded-lg flex items-center justify-center focus:outline-none ${
-                isDarkMode ? 'bg-purple-600' : 'bg-gray-900'
+              className={`w-9 h-9 rounded-full flex items-center justify-center focus:outline-none transition-colors ${
+                isDarkMode ? 'bg-[#2640D9] hover:bg-[#6633E6]' : 'bg-gray-900'
               }`}
               onClick={() => setDropdownOpen((v) => !v)}
               aria-haspopup="true"
@@ -144,12 +140,12 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isSidebarOpen, onSearch, 
             {dropdownOpen && (
               <div
                 ref={dropdownRef}
-                className="absolute right-0 top-full mt-2 w-56 bg-gradient-to-br from-[#18192a] via-[#23243a] to-[#23243a] rounded-2xl shadow-2xl py-3 z-50 border border-purple-500/40 flex flex-col gap-1 animate-fadeIn"
+                className="absolute right-0 top-full mt-2 w-56 bg-[#0b0b0f] rounded-2xl shadow-2xl py-3 z-50 border border-[#262626] flex flex-col gap-1 animate-fadeIn"
                 style={{ minWidth: 200 }}
                 role="menu"
               >
-                <div className="flex items-center gap-3 px-5 pb-2 border-b border-gray-700">
-                  <div className="bg-gradient-to-br from-purple-400 to-cyan-400 rounded-full w-9 h-9 flex items-center justify-center text-white font-bold text-base shadow-md">
+                <div className="flex items-center gap-3 px-5 pb-2 border-b border-[#262626]">
+                  <div className="bg-[#2640D9] rounded-full w-9 h-9 flex items-center justify-center text-white font-bold text-base shadow-md">
                     {user?.username?.[0]?.toUpperCase() || <User className="w-5 h-5" />}
                   </div>
                   <div className="flex flex-col">
@@ -159,7 +155,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isSidebarOpen, onSearch, 
                 </div>
                
                 <button
-                  className="flex items-center gap-2 px-5 py-2 text-red-400 font-semibold hover:bg-gradient-to-r hover:from-purple-900/40 hover:to-cyan-900/40 rounded-xl transition-colors duration-150 text-sm"
+                  className="flex items-center gap-2 px-5 py-2 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors duration-150 text-sm font-semibold"
                   onClick={logout}
                   role="menuitem"
                 >

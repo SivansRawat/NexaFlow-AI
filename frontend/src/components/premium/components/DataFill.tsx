@@ -45,13 +45,16 @@ const DataFill: React.FC<DataFillProps> = () => {
         description="Automate form filling, map Excel columns, extract structured data, and clean datasets automatically with AI."
         canonical="/premium/datafill"
       />
-      <div>
-        <h1 className={`text-3xl font-bold mb-2 ${
-          isDarkMode ? 'text-gray-100' : 'text-white'
-        }`}>DataFill AI</h1>
-        <p className={`${
-          isDarkMode ? 'text-gray-400' : 'text-white'
-        }`}>Data entry automation and form processing</p>
+      {/* Header Section */}
+      <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border border-[#2640D9]/20 bg-[#0b0b0f] shadow-xl shadow-black/40 mb-8">
+        <div className="relative z-10 space-y-1">
+          <h1 className="text-2xl font-light tracking-tight text-white font-['Inter']">
+            DataFill AI
+          </h1>
+          <p className="text-xs max-w-2xl leading-relaxed text-[#737373] font-normal">
+            Ingest raw datasets, map matching columns, and resolve form schemas.
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full items-start justify-start">

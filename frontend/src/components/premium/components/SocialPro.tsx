@@ -1,6 +1,6 @@
 import React from 'react';
 import ToolCard from './ToolCard';
-import { Share2, Hash, Sparkles, RefreshCw, Megaphone } from 'lucide-react';
+import { Share2, Hash, RefreshCw, Megaphone } from 'lucide-react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import SEO from '../../common/SEO';
 
@@ -52,23 +52,13 @@ const SocialPro: React.FC<SocialProProps> = () => {
         canonical="/premium/socialpro"
       />
       {/* Header Banner */}
-      <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all duration-300 ${
-        isDarkMode 
-          ? 'bg-gradient-to-r from-pink-950/40 via-purple-950/30 to-gray-900 border-pink-500/30 shadow-xl shadow-pink-900/10' 
-          : 'bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-50 border-pink-200 shadow-lg'
-      }`}>
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-pink-500/10 text-pink-400 border border-pink-500/20">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Social Growth Suite</span>
-          </div>
-          <h1 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+      <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border border-[#2640D9]/20 bg-[#0b0b0f] shadow-xl shadow-black/40">
+        <div className="relative z-10 space-y-1">
+          <h1 className="text-2xl font-light tracking-tight text-white font-['Inter']">
             Social Pro Toolkit
           </h1>
-          <p className={`text-sm max-w-2xl leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            Accelerate social media growth with viral caption generation, hashtag analytics, and ad copy optimization.
+          <p className="text-xs max-w-2xl leading-relaxed text-[#737373] font-normal">
+            Generate social media captions, plan hashtags, and optimize ad copy.
           </p>
         </div>
       </div>

@@ -7,7 +7,6 @@ import {
   FileCheck, 
   Mail, 
   Share2, 
-  Sparkles, 
   ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
@@ -20,7 +19,7 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
   const { isDarkMode } = useOutletContext<{ isDarkMode: boolean }>();
-  const { user } = useAuth();
+  useAuth();
   const [loading, setLoading] = React.useState(true);
   const navigate = useNavigate();
 
@@ -158,23 +157,16 @@ const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
       {/* Welcome Hero Banner */}
       <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all duration-300 ${
         isDarkMode 
-          ? 'bg-gradient-to-r from-purple-950/40 via-indigo-950/30 to-gray-900 border-purple-500/30 shadow-xl shadow-purple-900/10' 
-          : 'bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 border-purple-200 shadow-lg'
+          ? 'bg-[#0b0b0f] border-[#262626] shadow-xl shadow-black/40' 
+          : 'bg-white border-gray-200 shadow-md'
       }`}>
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 -mb-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-
         <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>NexaFlow AI Workspace</span>
-            </div>
-            <h1 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              Welcome back, <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">{user?.username || 'User'}</span>
+          <div className="space-y-1">
+            <h1 className={`text-2xl font-light tracking-tight font-['Inter'] ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Workspace Dashboard
             </h1>
-            <p className={`text-sm max-w-2xl leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              Select an AI Suite below to start automating spreadsheets, chatting with PDFs, drafting emails, or generating smart documents.
+            <p className={`text-xs max-w-2xl leading-relaxed font-normal ${isDarkMode ? 'text-[#737373]' : 'text-gray-600'}`}>
+              Access active automation tools, document hubs, and analytics pipelines.
             </p>
           </div>
         </div>
@@ -183,7 +175,7 @@ const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
       {/* Search Results Info */}
       {searchQuery && (
         <div className="text-center">
-          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          <p className={`text-sm ${isDarkMode ? 'text-[#737373]' : 'text-gray-500'}`}>
             {filteredToolSuites.length > 0 
               ? `Found ${filteredToolSuites.length} tool suite${filteredToolSuites.length !== 1 ? 's' : ''} matching "${searchQuery}"`
               : `No results found for "${searchQuery}"`}
@@ -196,65 +188,67 @@ const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
         {filteredToolSuites.map((suite) => (
           <div 
             key={suite.title}
-            className={`group relative rounded-2xl p-6 border transition-all duration-300 cursor-pointer flex flex-col justify-between transform hover:-translate-y-1 ${
+            className={`group relative rounded-2xl p-[1px] transition-all duration-300 cursor-pointer flex flex-col justify-between transform hover:-translate-y-1 ${
               isDarkMode 
-                ? 'bg-gray-900/80 backdrop-blur-xl border-gray-800 hover:border-purple-500/40 hover:shadow-2xl hover:shadow-purple-500/10 text-white' 
-                : 'bg-white border-gray-200 hover:border-purple-300 hover:shadow-xl text-gray-900'
+                ? 'bg-gradient-to-br from-[#2640D9]/25 via-transparent to-[#262626]/40 hover:shadow-2xl hover:shadow-[#2640D9]/10' 
+                : 'bg-white border border-gray-200 hover:border-purple-300 hover:shadow-xl'
             }`}
             onClick={() => handleSuiteClick(suite.path)}
           >
-            {/* Top Header */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className={`w-11 h-11 rounded-xl flex items-center justify-center border ${suite.iconBg}`}>
-                  <suite.icon className="w-6 h-6" />
-                </div>
-                <span className={`text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full border ${
-                  isDarkMode ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-gray-100 text-gray-700 border-gray-200'
-                }`}>
-                  {suite.badge}
-                </span>
-              </div>
-
-              <h3 className={`font-bold text-lg mb-2 group-hover:text-purple-400 transition-colors ${
-                isDarkMode ? 'text-white' : 'text-gray-900'
-              }`}>
-                {suite.title}
-              </h3>
-              <p className={`text-xs sm:text-sm leading-relaxed mb-5 ${
-                isDarkMode ? 'text-gray-400' : 'text-gray-600'
-              }`}>
-                {suite.description}
-              </p>
-
-              {/* Tools List */}
-              <div className="space-y-2 mb-6">
-                {suite.tools.map((tool, toolIndex) => (
-                  <div 
-                    key={toolIndex}
-                    className={`flex items-center space-x-2.5 ${
-                      isDarkMode ? 'text-gray-300' : 'text-gray-700'
-                    }`}
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-purple-500 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm font-medium">
-                      {tool}
-                    </span>
+            <div className={`p-6 rounded-[15px] h-full flex flex-col justify-between ${isDarkMode ? 'bg-[#0b0b0f] text-[#E5E5E5]' : 'bg-white text-gray-900'}`}>
+              {/* Top Header */}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center border border-[#2640D9]/20 bg-[#2640D9]/5 text-[#8A66E6]">
+                    <suite.icon className="w-5 h-5" />
                   </div>
-                ))}
-              </div>
-            </div>
+                  <span className={`text-[9px] uppercase font-extrabold tracking-widest px-2.5 py-1 rounded-full border ${
+                    isDarkMode ? 'bg-[#050505] text-[#8A66E6] border-[#2640D9]/20' : 'bg-gray-100 text-gray-700 border-gray-200'
+                  }`}>
+                    {suite.badge}
+                  </span>
+                </div>
 
-            {/* Action Footer */}
-            <div className={`pt-4 border-t ${isDarkMode ? 'border-gray-800' : 'border-gray-100'}`}>
-              <button className={`w-full py-2.5 px-4 rounded-xl font-semibold text-xs transition-all duration-200 flex items-center justify-center gap-2 group-hover:shadow-md ${
-                isDarkMode 
-                  ? 'bg-gray-800 hover:bg-purple-600 text-white' 
-                  : 'bg-gray-900 hover:bg-purple-600 text-white'
-              }`}>
-                <span>Launch Suite</span>
-                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-              </button>
+                <h3 className={`font-semibold text-lg mb-2 group-hover:text-[#2640D9] transition-colors font-['Outfit'] ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
+                  {suite.title}
+                </h3>
+                <p className={`text-xs sm:text-sm leading-relaxed mb-5 ${
+                  isDarkMode ? 'text-[#737373]' : 'text-gray-600'
+                }`}>
+                  {suite.description}
+                </p>
+
+                {/* Tools List */}
+                <div className="space-y-2 mb-6">
+                  {suite.tools.map((tool, toolIndex) => (
+                    <div 
+                      key={toolIndex}
+                      className={`flex items-center space-x-2.5 ${
+                        isDarkMode ? 'text-[#E5E5E5]' : 'text-gray-700'
+                      }`}
+                    >
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#2640D9] flex-shrink-0" />
+                      <span className="text-xs font-normal">
+                        {tool}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Footer */}
+              <div className={`pt-4 border-t ${isDarkMode ? 'border-[#262626]' : 'border-gray-100'}`}>
+                <button className={`w-full py-2.5 px-4 rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-200 flex items-center justify-center gap-2 group-hover:shadow-md ${
+                  isDarkMode 
+                    ? 'bg-[#2640D9]/10 border border-[#2640D9]/30 hover:bg-[#2640D9] text-white' 
+                    : 'bg-gray-900 hover:bg-purple-600 text-white'
+                }`}>
+                  <span>Launch Suite</span>
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                </button>
+              </div>
             </div>
           </div>
         ))}

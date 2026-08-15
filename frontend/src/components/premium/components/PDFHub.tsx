@@ -1,6 +1,6 @@
 import React from 'react';
 import ToolCard from './ToolCard';
-import { FileText, MessageSquare, FileDown, Package, Database, Sparkles } from 'lucide-react';
+import { FileText, MessageSquare, FileDown, Package, Database } from 'lucide-react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import SEO from '../../common/SEO';
 
@@ -59,23 +59,13 @@ const PDFHub: React.FC<PDFHubProps> = () => {
         canonical="/premium/pdfhub"
       />
       {/* Header Section */}
-      <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all duration-300 ${
-        isDarkMode 
-          ? 'bg-gradient-to-r from-purple-950/40 via-indigo-950/30 to-gray-900 border-purple-500/30 shadow-xl shadow-purple-900/10' 
-          : 'bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 border-purple-200 shadow-lg'
-      }`}>
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Document AI Suite</span>
-          </div>
-          <h1 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+      <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border border-[#2640D9]/20 bg-[#0b0b0f] shadow-xl shadow-black/40">
+        <div className="relative z-10 space-y-1">
+          <h1 className="text-2xl font-light tracking-tight text-white font-['Inter']">
             PDF Intelligence Hub
           </h1>
-          <p className={`text-sm max-w-2xl leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            Automate document workflows, chat with long PDF files using RAG embeddings, extract data tables, and batch process documents.
+          <p className="text-xs max-w-2xl leading-relaxed text-[#737373] font-normal">
+            Upload PDF assets to run queries, summarize pages, and extract data tables.
           </p>
         </div>
       </div>

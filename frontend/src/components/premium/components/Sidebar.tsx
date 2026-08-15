@@ -48,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isDarkMode }) => {
         isOpen ? 'translate-x-0' : '-translate-x-full'
       } lg:translate-x-0 ${
         isDarkMode 
-          ? 'bg-gray-900/95 border-r border-gray-700/50' 
+          ? 'bg-[#050505]/95 border-r border-[#262626]' 
           : 'bg-white/95 border-r border-gray-200/50'
       }`}>
         <div className="p-6">
@@ -62,13 +62,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isDarkMode }) => {
                     navigate(item.path);
                     onClose();
                   }}
-                  className={`w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 group ${
+                  className={`w-full flex items-center px-5 py-3 rounded-full transition-all duration-200 group ${
                     isActive
                       ? isDarkMode 
-                        ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 text-white shadow-lg shadow-purple-500/25 font-semibold scale-[1.02]' 
-                        : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md font-semibold'
+                        ? 'bg-[#2640D9] text-white shadow-lg shadow-[#2640D9]/20 font-semibold scale-[1.02]' 
+                        : 'bg-[#2640D9] text-white shadow-md font-semibold'
                       : isDarkMode
-                        ? 'text-gray-300 hover:text-white hover:bg-gray-800/60'
+                        ? 'text-[#737373] hover:text-[#E5E5E5] hover:bg-[#0b0b0f] border border-transparent hover:border-[#2640D9]/10'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                 >

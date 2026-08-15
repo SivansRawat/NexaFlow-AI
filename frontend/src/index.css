@@ -4,31 +4,37 @@
 
 @layer base {
   :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --background: 240 25% 1%; /* #030305 */
+    --foreground: 240 6% 90%; /* #E5E5E5 */
+    --card: 240 10% 5%; /* #0b0b0f */
+    --card-foreground: 240 6% 90%;
+    --popover: 240 10% 5%;
+    --popover-foreground: 240 6% 90%;
+    --primary: 231 74% 50%; /* #2640D9 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 257 78% 55%; /* #6633E6 */
+    --secondary-foreground: 0 0% 100%;
+    --tertiary: 257 75% 65%; /* #8A66E6 */
+    --muted: 240 5% 45%; /* #737373 */
+    --muted-foreground: 240 5% 70%;
+    --accent: 231 74% 50%; /* #2640D9 */
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --radius: 0.5rem;
+    --border: 231 74% 50% / 0.2; /* Subtle #2640D9 border */
+    --input: 240 5% 15%;
+    --ring: 231 74% 50%;
+    --radius: 9999px; /* Corner radius system anchor */
+
+    /* Spacing rhythm base 4.21px */
+    --space-base: 4.21px;
+    --space-sm: 4.21px;
+    --space-md: 8.42px;
+    --space-lg: 16.84px;
+    --space-xl: 25.26px;
+    --space-gap: 12.84px;
+    --space-card-padding: 51.36px;
+    --space-section-padding: 51.36px;
   }
 }
 
@@ -47,13 +53,14 @@
   }
 
   body {
-    background: var(--journova-card);
+    background-color: #030305;
+    background-image: radial-gradient(circle at 50% -20%, rgba(38, 64, 217, 0.15) 0%, #030305 70%);
     background-attachment: fixed;
     background-size: 100% 100%;
     background-repeat: no-repeat;
     @apply text-foreground;
-    font-feature-settings: "rlig"1, "calt"1;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -61,15 +68,8 @@
 
 /* Exact Journova dark background */
 .bg-journova-dark {
-  background: linear-gradient(180deg,
-      #0f1419 0%,
-      #1a1b2e 15%,
-      #1e2139 30%,
-      #252a4a 45%,
-      #2d3561 60%,
-      #3a4374 75%,
-      #4a5490 90%,
-      #5a6bb8 100%);
+  background-color: #030305;
+  background-image: radial-gradient(circle at 50% -20%, rgba(38, 64, 217, 0.15) 0%, #030305 70%);
   background-attachment: fixed;
   background-size: 100% 100%;
   min-height: 100vh;
@@ -79,15 +79,8 @@
 .min-h-screen {
   min-height: 100vh;
   width: 100vw;
-  background: linear-gradient(180deg,
-      #0f1419 0%,
-      #1a1b2e 15%,
-      #1e2139 30%,
-      #252a4a 45%,
-      #2d3561 60%,
-      #3a4374 75%,
-      #4a5490 90%,
-      #5a6bb8 100%);
+  background-color: #030305;
+  background-image: radial-gradient(circle at 50% -20%, rgba(38, 64, 217, 0.15) 0%, #030305 70%);
   background-attachment: fixed;
   background-size: 100% 100%;
 }
@@ -98,21 +91,25 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #1f2937;
+  background: #09090c;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4b5563;
-  border-radius: 4px;
+  background: #262626;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: #2640D9;
 }
 
 /* Smooth transitions */
 * {
-  transition: all 0.2s ease-in-out;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-meditative {
+  transition: all 2000ms cubic-bezier(0.4, 0, 0.6, 1);
 }
 
 /* Backdrop blur */
@@ -234,21 +231,21 @@ h6 {
 }
 
 :root {
-  --journova-bg-1: #13141c;
-  --journova-bg-2: #181924;
-  --journova-bg-3: #18192a;
-  --journova-bg-4: #1a1b2e;
-  --journova-bg-5: #20213a;
-  --journova-bg-6: #23243a;
-  --journova-bg-7: #26263d;
-  --journova-bg-8: #292a40;
-  --journova-card: #18192a;
-  --journova-card-border-blue: linear-gradient(90deg, #3a8fff, #6be7ff);
-  --journova-card-border-yellow: linear-gradient(90deg, #ffe066, #ffb86b);
-  --journova-card-border-purple: linear-gradient(90deg, #a685ff, #ff6bcb);
-  --journova-card-border: #23243a;
-  --journova-text: #fff;
-  --journova-text-muted: #b0b3c7;
+  --journova-bg-1: #050505;
+  --journova-bg-2: #09090c;
+  --journova-bg-3: #0b0b0e;
+  --journova-bg-4: #0b0b0f;
+  --journova-bg-5: #0e0e14;
+  --journova-bg-6: #0e0e14;
+  --journova-bg-7: #111118;
+  --journova-bg-8: #111118;
+  --journova-card: #0b0b0f;
+  --journova-card-border-blue: linear-gradient(90deg, #2640D9, #8A66E6);
+  --journova-card-border-yellow: linear-gradient(90deg, #8A66E6, #6633E6);
+  --journova-card-border-purple: linear-gradient(90deg, #2640D9, #6633E6);
+  --journova-card-border: rgba(38, 64, 217, 0.2);
+  --journova-text: #E5E5E5;
+  --journova-text-muted: #737373;
 }
 
 .bg-journova {
@@ -258,21 +255,21 @@ h6 {
 .card-journova {
   background: var(--journova-card);
   color: var(--journova-text);
-  border-radius: 1.5rem;
-  border: 2px solid var(--journova-card-border);
-  box-shadow: 0 2px 24px 0 rgba(20, 20, 40, 0.12);
+  border-radius: 24px;
+  border: 1px solid var(--journova-card-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
 }
 
 .card-border-blue {
-  border-image: var(--journova-card-border-blue) 1;
+  border-color: #2640D9;
 }
 
 .card-border-yellow {
-  border-image: var(--journova-card-border-yellow) 1;
+  border-color: #6633E6;
 }
 
 .card-border-purple {
-  border-image: var(--journova-card-border-purple) 1;
+  border-color: #8A66E6;
 }
 
 .text-journova {
@@ -283,15 +280,30 @@ h6 {
   color: var(--journova-text-muted);
 }
 
+/* Gradient border shell */
+.gradient-border-shell {
+  position: relative;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(38, 38, 38, 0.5) 100%);
+  padding: 1px;
+}
+
+.gradient-border-shell-inner {
+  border-radius: 23px;
+  background: #0b0b0f;
+  height: 100%;
+  width: 100%;
+}
+
 .custom-toast {
-  background-color: #1f2937;
-  /* A dark gray that fits the theme */
+  background-color: #0b0b0f;
   color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-radius: 9999px; /* Pill radius for toast buttons/controls */
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   font-family: inherit;
   font-size: 1rem;
-  padding: 1rem;
+  padding: 0.75rem 1.5rem;
 }
 
 .fade-in {

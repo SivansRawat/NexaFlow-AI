@@ -21,14 +21,16 @@ export function CustomerStoriesSection() {
   const [ref2, inView2] = useInView();
   const [ref3, inView3] = useInView();
 
-  // Gradient border style similar to SIGN IN button
-  const cardBorder = "p-[2px] bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 rounded-3xl";
-  const cardInner = "bg-[#23243a] rounded-[22px] flex flex-col items-center text-center min-h-[380px] sm:min-h-[420px] h-full";
+  // Gradient border style
+  const cardBorder = "p-[1px] bg-gradient-to-br from-[#2640D9]/30 via-transparent to-[#262626]/50 rounded-3xl";
+  const cardInner = "bg-[#0b0b0f] rounded-[23px] flex flex-col items-center text-center min-h-[380px] sm:min-h-[420px] h-full";
 
   return (
-    <section className="py-16 sm:py-20 px-4 bg-[#18192a]">
+    <section className="py-16 sm:py-24 px-4 bg-[#050505]">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-10 sm:mb-14 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 px-4">Customer Stories</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extralight text-center mb-10 sm:mb-14 text-white font-['Outfit']">
+          Customer <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-white to-[#818CF8]">Stories</span>
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 px-4">
           {/* Card 1 */}
           <div
@@ -36,11 +38,11 @@ export function CustomerStoriesSection() {
             className={`${cardBorder} transition-all duration-[1800ms] ease-out ${inView1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             style={{ willChange: 'opacity, transform' }}
           >
-            <div className={cardInner + " shadow-2xl p-6 sm:p-8 border border-purple-900/20"}>
-              <img src="/coustmer1.jpg" alt="Sudeep Bansal" className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full object-cover mb-4 sm:mb-6 border-4 border-purple-500/30" />
-              <div className="font-bold text-base sm:text-lg text-white mb-1">Sudeep Bansal</div>
-              <div className="text-xs sm:text-sm text-purple-300 mb-3 sm:mb-4">VP of Wow Skin Science</div>
-              <div className="text-sm sm:text-base text-gray-300 mb-4">NexaFlow AI helped us automate a major chunk of our backend operations.<br/>We believe AI is the future — and with NexaFlow AI, we're already there.<br/>Thanks to the team for building something so powerful, yet effortless to use.</div>
+            <div className={cardInner + " shadow-2xl p-6 sm:p-8 border border-[#2640D9]/10"}>
+              <img src="/coustmer1.jpg" alt="Sudeep Bansal" className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover mb-4 border-2 border-[#2640D9]/30" />
+              <div className="font-semibold text-base text-white mb-1">Sudeep Bansal</div>
+              <div className="text-xs text-[#8A66E6] mb-4">VP of Wow Skin Science</div>
+              <div className="text-xs sm:text-sm text-[#737373] leading-relaxed font-normal">NexaFlow AI helped us automate a major chunk of our backend operations. Their workflow tools are reliable and effortless to integrate into our daily tasks.</div>
             </div>
           </div>
           {/* Card 2 */}
@@ -49,11 +51,11 @@ export function CustomerStoriesSection() {
             className={`${cardBorder} transition-all duration-[1800ms] ease-out delay-200 ${inView2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             style={{ willChange: 'opacity, transform' }}
           >
-            <div className={cardInner + " shadow-2xl p-6 sm:p-8 border border-orange-900/20"}>
-              <img src="/coustmer2.jpg" alt="Karthik Ranganathan" className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full object-cover mb-4 sm:mb-6 border-4 border-orange-400/30" />
-              <div className="font-bold text-base sm:text-lg text-white mb-1">Karthik Ranganathan</div>
-              <div className="text-xs sm:text-sm text-orange-300 mb-3 sm:mb-4">Assistant VP, eCommerce, The ThickShake Factory</div>
-              <div className="text-sm sm:text-base text-gray-300 mb-4">We thought scaling meant hiring more people — until NexaFlow AI replaced our entire backend with automation.<br/>Now we run faster, leaner, and smarter — without extra staff.</div>
+            <div className={cardInner + " shadow-2xl p-6 sm:p-8 border border-[#8A66E6]/10"}>
+              <img src="/coustmer2.jpg" alt="Karthik Ranganathan" className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover mb-4 border-2 border-[#8A66E6]/30" />
+              <div className="font-semibold text-base text-white mb-1">Karthik Ranganathan</div>
+              <div className="text-xs text-[#8A66E6] mb-4">Assistant VP, eCommerce, The ThickShake Factory</div>
+              <div className="text-xs sm:text-sm text-[#737373] leading-relaxed font-normal">NexaFlow AI automated our eCommerce and document workflows. We can now scale our throughput without adding operations overhead.</div>
             </div>
           </div>
           {/* Card 3 */}
@@ -62,11 +64,11 @@ export function CustomerStoriesSection() {
             className={`${cardBorder} transition-all duration-[1800ms] ease-out delay-400 ${inView3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             style={{ willChange: 'opacity, transform' }}
           >
-            <div className={cardInner + " shadow-2xl p-6 sm:p-8 border border-pink-900/20"}>
-              <img src="/coustmer3.jpg" alt="Rajat Jaiswal" className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full object-cover mb-4 sm:mb-6 border-4 border-pink-400/30" />
-              <div className="font-bold text-base sm:text-lg text-white mb-1">Rajat Jaiswal</div>
-              <div className="text-xs sm:text-sm text-pink-300 mb-3 sm:mb-4">Co-founder, Wat-a-Burger</div>
-              <div className="text-sm sm:text-base text-gray-300 mb-4">NexaFlow AI helped us cut operational expenses by over 70%.<br/>We now manage everything without hiring additional staff — it's like having a full backend team on autopilot.</div>
+            <div className={cardInner + " shadow-2xl p-6 sm:p-8 border border-[#6633E6]/10"}>
+              <img src="/coustmer3.jpg" alt="Rajat Jaiswal" className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover mb-4 border-2 border-[#6633E6]/30" />
+              <div className="font-semibold text-base text-white mb-1">Rajat Jaiswal</div>
+              <div className="text-xs text-[#8A66E6] mb-4">Co-founder, Wat-a-Burger</div>
+              <div className="text-xs sm:text-sm text-[#737373] leading-relaxed font-normal">By automating recurring customer and PDF tasks with NexaFlow AI, we have reduced operational bottlenecks and improved response times significantly.</div>
             </div>
           </div>
         </div>
