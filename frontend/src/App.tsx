@@ -141,9 +141,9 @@ function App() {
         <Suspense fallback={<SuiteLoadingFallback />}>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            {/* Full-screen SmartDocs routes (outside premium layout) */}
-            <Route path="/smartdocs/offerletter" element={<OfferLetterGeneratorPage />} />
-            <Route path="/smartdocs/smartinvoice" element={<SmartInvoiceGeneratorPage />} />
+            {/* Redirect standalone SmartDocs routes to premium layout */}
+            <Route path="/smartdocs/offerletter" element={<Navigate to="/premium/smartdocs/offerletter" replace />} />
+            <Route path="/smartdocs/smartinvoice" element={<Navigate to="/premium/smartdocs/smartinvoice" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/paynow" element={<PayButton />} />
@@ -176,6 +176,8 @@ function App() {
                 <Route path="socialpro/adcaption" element={<AdCaptionGeneratorPage />} />
                 <Route path="socialpro/captionrewriter" element={<CaptionRewriterPage />} />
                 <Route path="smartdocs" element={<SmartDocsPage />} />
+                <Route path="smartdocs/smartinvoice" element={<SmartInvoiceGeneratorPage />} />
+                <Route path="smartdocs/offerletter" element={<OfferLetterGeneratorPage />} />
                 <Route path="bulkmailer/mailmergeai" element={<MailMergeAI />} />
                 <Route path="datafill" element={<DataFillPage />} />
                 <Route path="bulkmailer" element={<BulkMailerPage />} />

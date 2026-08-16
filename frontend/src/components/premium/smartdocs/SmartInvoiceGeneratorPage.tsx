@@ -1,19 +1,39 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { Input } from '../../ui/input';
 import { Button } from '../../ui/button';
 import { Label } from '../../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import Template1 from './smartinvoice/templates/Template1';
+import Template2 from './smartinvoice/templates/Template2';
 import Template3 from './smartinvoice/templates/Template3';
+import Template4 from './smartinvoice/templates/Template4';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-
 import axios from 'axios';
-import { useAuth } from '../../../../src/context/AuthContext'; // Adjust path as needed
+import { useAuth } from '../../../../src/context/AuthContext';
 import InvoicePreviewModal from './InvoicePreviewModal';
-import { API_BASE } from '@/lib/api'; // Import API_BASE
+import { API_BASE } from '@/lib/api';
 import SEO from '@/components/common/SEO';
+import {
+  FileText,
+  Sparkles,
+  Plus,
+  Trash2,
+  Download,
+  Eye,
+  Save,
+  UploadCloud,
+  CheckCircle2,
+  AlertTriangle,
+  Building2,
+  UserCheck,
+  Receipt,
+  Search,
+  LayoutGrid,
+  FileImage,
+  X
+} from 'lucide-react';
 
 interface Item {
   itemName: string;
@@ -31,60 +51,90 @@ interface Invoice {
   businessEmail: string;
   businessPhoneNumber: string;
   clientName: string;
-  clientEmail: string; 
-  clientAddress: string; 
+  clientEmail: string;
+  clientAddress: string;
   clientPhoneNumber: string;
   items: Item[];
   subtotal: number;
   taxAmount: number;
   grandTotal: number;
   createdAt: string;
+  invoiceNumber?: string;
+  currencySymbol?: string;
 }
 
+const CURRENCIES = [
+  { code: 'INR', symbol: '₹', label: 'INR (₹)' },
+  { code: 'USD', symbol: '$', label: 'USD ($)' },
+  { code: 'EUR', symbol: '€', label: 'EUR (€)' },
+  { code: 'GBP', symbol: '£', label: 'GBP (£)' },
+  { code: 'CAD', symbol: 'C$', label: 'CAD (C$)' },
+  { code: 'AUD', symbol: 'A$', label: 'AUD (A$)' },
+];
+
+const TEMPLATES = [
+  { id: 'Template1', name: 'Executive Indigo', badge: 'Popular', description: 'Clean corporate header with indigo accents' },
+  { id: 'Template2', name: 'Corporate Emerald', badge: 'Agency', description: 'Tech agency styling with emerald badges' },
+  { id: 'Template3', name: 'Sleek Minimalist', badge: 'Clean', description: 'Monospaced high-contrast typography' },
+  { id: 'Template4', name: 'Creative Modern', badge: 'Vibrant', description: 'Soft background glows with dual-color accents' },
+];
+
 const SmartInvoiceGeneratorPage: React.FC = () => {
-  const [businessName, setBusinessName] = useState<string>('');
+  // Form State
+  const [businessName, setBusinessName] = useState<string>('NexaFlow Enterprise');
   const [businessLogo, setBusinessLogo] = useState<string | null>(null);
-  const [businessAddress, setBusinessAddress] = useState<string>(''); 
-  const [businessEmail, setBusinessEmail] = useState<string>('');
-  const [businessPhoneNumber, setBusinessPhoneNumber] = useState<string>('');
-  const [clientName, setClientName] = useState<string>('');
-  const [clientEmail, setClientEmail] = useState<string>(''); 
-  const [clientAddress, setClientAddress] = useState<string>(''); 
-  const [clientPhoneNumber, setClientPhoneNumber] = useState<string>('');
+  const [businessAddress, setBusinessAddress] = useState<string>('100 Innovation Way, Tech Park, Suite 400');
+  const [businessEmail, setBusinessEmail] = useState<string>('billing@nexaflow.ai');
+  const [businessPhoneNumber, setBusinessPhoneNumber] = useState<string>('9876543210');
+
+  const [clientName, setClientName] = useState<string>('Acme Global Inc');
+  const [clientEmail, setClientEmail] = useState<string>('accounts@acme.com');
+  const [clientAddress, setClientAddress] = useState<string>('450 Corporate Blvd, New York, NY 10001');
+  const [clientPhoneNumber, setClientPhoneNumber] = useState<string>('9123456789');
+
+  const [invoiceNumber, setInvoiceNumber] = useState<string>(`INV-${new Date().getFullYear()}-001`);
+  const [invoiceDate, setInvoiceDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [dueDate, setDueDate] = useState<string>(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+  const [currencySymbol, setCurrencySymbol] = useState<string>('₹');
+
   const [items, setItems] = useState<Item[]>([
-    { itemName: '', rate: 0, quantity: 0, taxPercentage: 0, finalPrice: 0 },
+    { itemName: 'AI Architecture & Workflow Design', rate: 1200, quantity: 2, taxPercentage: 18, finalPrice: 2832 },
+    { itemName: 'Cloud Deployment & Monitoring Setup', rate: 800, quantity: 1, taxPercentage: 18, finalPrice: 944 },
   ]);
+  const [discountAmount, setDiscountAmount] = useState<number>(0);
+
   const [selectedTemplate, setSelectedTemplate] = useState<string>('Template1');
   const [invoiceHistory, setInvoiceHistory] = useState<Invoice[]>([]);
+  const [historySearch, setHistorySearch] = useState<string>('');
   const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
+
+  // UI / Modal / Notification State
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
-  const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
-  const [confirmDeleteSnackbarOpen, setConfirmDeleteSnackbarOpen] = useState<boolean>(false);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
   const [deleteInvoiceId, setDeleteInvoiceId] = useState<number | null>(null);
-  const [outcomeSnackbarOpen, setOutcomeSnackbarOpen] = useState<boolean>(false);
-  const [outcomeSnackbarMessage, setOutcomeSnackbarMessage] = useState<string>('');
-  const [outcomeSnackbarType, setOutcomeSnackbarType] = useState<'success' | 'error'>('success');
-  const [warningSnackbarOpen, setWarningSnackbarOpen] = useState<boolean>(false);
-  const [warningSnackbarMessage, setWarningSnackbarMessage] = useState<string>('');
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState<boolean>(false);
+
+  const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' | 'warning' } | null>(null);
 
   const invoicePreviewRef = useRef<HTMLDivElement>(null);
-
   const { token } = useAuth();
 
   const axiosInstance = axios.create({
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    baseURL: API_BASE, // Set the base URL from API_BASE
+    baseURL: API_BASE,
   });
 
-  // Regex for email validation
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-  // Regex for Indian phone number validation (10 digits)
   const phoneRegex = /^\d{10}$/;
 
-  // Fetch invoice history on component mount
+  const showToast = (text: string, type: 'success' | 'error' | 'warning') => {
+    setToastMessage({ text, type });
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
   const fetchInvoiceHistory = async () => {
     try {
       const response = await axiosInstance.get('/smartdocs/smart-invoices');
@@ -94,155 +144,126 @@ const SmartInvoiceGeneratorPage: React.FC = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchInvoiceHistory();
   }, [axiosInstance]);
 
   const handleDeleteInvoice = (invoiceId: number) => {
     setDeleteInvoiceId(invoiceId);
-    setConfirmDeleteSnackbarOpen(true);
+    setConfirmDeleteOpen(true);
   };
 
   const confirmDeletion = async () => {
-    setConfirmDeleteSnackbarOpen(false); // Close confirmation snackbar
+    setConfirmDeleteOpen(false);
     if (deleteInvoiceId === null) return;
 
     try {
       await axiosInstance.delete(`/smartdocs/smart-invoices/${deleteInvoiceId}`);
-      setOutcomeSnackbarMessage('Invoice deleted successfully.');
-      setOutcomeSnackbarType('success');
-      setOutcomeSnackbarOpen(true);
-      fetchInvoiceHistory(); // Refresh the list after deletion
+      showToast('Invoice deleted successfully.', 'success');
+      fetchInvoiceHistory();
     } catch (error) {
       console.error('Error deleting invoice:', error);
-      setOutcomeSnackbarMessage('Failed to delete invoice.');
-      setOutcomeSnackbarType('error');
-      setOutcomeSnackbarOpen(true);
+      showToast('Failed to delete invoice.', 'error');
     } finally {
       setDeleteInvoiceId(null);
-      setTimeout(() => setOutcomeSnackbarOpen(false), 3000); // Hide outcome snackbar after 3 seconds
     }
-  };
-
-  const validateExport = () => {
-    if (!businessName.trim() || !clientName.trim() || items.length === 0 || items.some(item => !item.itemName.trim() || item.rate <= 0 || item.quantity <= 0)) {
-      setWarningSnackbarMessage('Please fill in all essential invoice details  before exporting.');
-      setWarningSnackbarOpen(true);
-      setTimeout(() => setWarningSnackbarOpen(false), 5000); // Hide after 5 seconds
-      return false;
-    }
-    return true;
-  };
-
-  const handleExportPdf = async () => {
-    if (!validateExport()) return;
-    if (!invoicePreviewRef.current) return;
-
-    const canvas = await html2canvas(invoicePreviewRef.current, {
-      scale: 2,
-      useCORS: true, // Required for images from external sources
-      windowWidth: invoicePreviewRef.current.scrollWidth,
-      windowHeight: invoicePreviewRef.current.scrollHeight,
-      x: 0,
-      y: 0,
-    });
-    const imgData = canvas.toDataURL('image/png');
-
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
-
-    pdf.save(`Invoice_${clientName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
-  };
-
-  const handleExportImage = async () => {
-    if (!validateExport()) return;
-    if (!invoicePreviewRef.current) return;
-
-    const canvas = await html2canvas(invoicePreviewRef.current, {
-      scale: 2,
-      useCORS: true, // Required for images from external sources
-      windowWidth: invoicePreviewRef.current.scrollWidth,
-      windowHeight: invoicePreviewRef.current.scrollHeight,
-      x: 0,
-      y: 0,
-    });
-    const imgData = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.download = `Invoice_${clientName.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
-    link.href = imgData;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const handleAddItem = () => {
-    setItems([
-      ...items,
-      { itemName: '', rate: 0, quantity: 0, taxPercentage: 0, finalPrice: 0 },
-    ]);
-  };
-
-  const handleItemChange = (index: number, field: keyof Item, value: string | number) => {
-    const newItems = [...items];
-    // @ts-ignore
-    newItems[index][field] = value;
-
-    const item = newItems[index];
-    const itemSubtotal = (item.rate || 0) * (item.quantity || 0);
-    const itemTaxAmount = itemSubtotal * ((item.taxPercentage || 0) / 100);
-    item.finalPrice = itemSubtotal + itemTaxAmount;
-
-    setItems(newItems);
   };
 
   const calculateTotals = () => {
     let subtotal = 0;
-    items.forEach((item) => {
-      subtotal += (item.rate || 0) * (item.quantity || 0);
-    });
-
     let totalTaxAmount = 0;
+
     items.forEach((item) => {
-      totalTaxAmount += ((item.rate || 0) * (item.quantity || 0)) * ((item.taxPercentage || 0) / 100);
+      const lineSubtotal = (item.rate || 0) * (item.quantity || 0);
+      const lineTax = lineSubtotal * ((item.taxPercentage || 0) / 100);
+      subtotal += lineSubtotal;
+      totalTaxAmount += lineTax;
     });
 
-    const grandTotal = subtotal + totalTaxAmount;
+    const grandTotal = Math.max(0, subtotal + totalTaxAmount - (discountAmount || 0));
 
     return { subtotal, totalTaxAmount, grandTotal };
   };
 
   const { subtotal, totalTaxAmount, grandTotal } = calculateTotals();
 
+  const handleAddItem = () => {
+    setItems([
+      ...items,
+      { itemName: '', rate: 0, quantity: 1, taxPercentage: 0, finalPrice: 0 },
+    ]);
+  };
+
+  const handleRemoveItem = (index: number) => {
+    if (items.length <= 1) {
+      showToast('Invoice must contain at least one item.', 'warning');
+      return;
+    }
+    const updated = items.filter((_, i) => i !== index);
+    setItems(updated);
+  };
+
+  const handleItemChange = (index: number, field: keyof Item, value: string | number) => {
+    const updated = [...items];
+    // @ts-ignore
+    updated[index][field] = value;
+
+    const item = updated[index];
+    const lineSubtotal = (item.rate || 0) * (item.quantity || 0);
+    const lineTax = lineSubtotal * ((item.taxPercentage || 0) / 100);
+    item.finalPrice = lineSubtotal + lineTax;
+
+    setItems(updated);
+  };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('Logo file size must be under 2MB.', 'warning');
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         setBusinessLogo(reader.result as string);
+        showToast('Business logo uploaded.', 'success');
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleCreateInvoice = async () => {
-    // Validate form before creating invoice
-    const isValid = validateForm();
-    if (!isValid) {
-      return; // Stop if validation fails
+  const validateForm = () => {
+    const errors: { [key: string]: string } = {};
+
+    if (!businessName.trim()) errors.businessName = 'Business name is required.';
+    if (!businessAddress.trim()) errors.businessAddress = 'Business address is required.';
+    if (!businessPhoneNumber.trim()) errors.businessPhoneNumber = 'Phone number is required.';
+    else if (!phoneRegex.test(businessPhoneNumber)) errors.businessPhoneNumber = 'Phone must be 10 digits.';
+    if (!businessEmail.trim()) errors.businessEmail = 'Business email is required.';
+    else if (!emailRegex.test(businessEmail)) errors.businessEmail = 'Invalid business email.';
+
+    if (!clientName.trim()) errors.clientName = 'Client name is required.';
+    if (!clientAddress.trim()) errors.clientAddress = 'Client address is required.';
+    if (!clientPhoneNumber.trim()) errors.clientPhoneNumber = 'Client phone is required.';
+    else if (!phoneRegex.test(clientPhoneNumber)) errors.clientPhoneNumber = 'Client phone must be 10 digits.';
+    if (!clientEmail.trim()) errors.clientEmail = 'Client email is required.';
+    else if (!emailRegex.test(clientEmail)) errors.clientEmail = 'Invalid client email.';
+
+    items.forEach((item, index) => {
+      if (!item.itemName.trim()) errors[`itemName-${index}`] = 'Item name required.';
+      if (item.rate <= 0 || isNaN(item.rate)) errors[`rate-${index}`] = 'Rate must be > 0.';
+      if (item.quantity <= 0 || isNaN(item.quantity)) errors[`quantity-${index}`] = 'Qty must be > 0.';
+      if (item.taxPercentage < 0 || isNaN(item.taxPercentage)) errors[`taxPercentage-${index}`] = 'Invalid Tax %.';
+    });
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSaveInvoice = async () => {
+    if (!validateForm()) {
+      showToast('Please fix the validation errors before saving.', 'warning');
+      return;
     }
 
     try {
@@ -250,409 +271,796 @@ const SmartInvoiceGeneratorPage: React.FC = () => {
         businessName,
         clientName,
         clientEmail,
-        businessLogo, 
-        businessAddress, 
+        businessLogo,
+        businessAddress,
         businessEmail,
         businessPhoneNumber,
-        clientAddress, 
+        clientAddress,
         clientPhoneNumber,
         items,
         subtotal,
         taxAmount: totalTaxAmount,
         grandTotal,
+        invoiceNumber,
+        currencySymbol,
       };
-      const response = await axiosInstance.post('/smartdocs/smart-invoices', invoiceData);
-      console.log('Invoice created successfully:', response.data);
-      setShowSuccessMessage(true);
-      setTimeout(() => setShowSuccessMessage(false), 3000); // Hide after 3 seconds
-      const updatedHistoryResponse = await axiosInstance.get('/smartdocs/smart-invoices');
-      setInvoiceHistory(Array.isArray(updatedHistoryResponse.data) ? updatedHistoryResponse.data : []);
+
+      await axiosInstance.post('/smartdocs/smart-invoices', invoiceData);
+      showToast('Invoice saved successfully to history.', 'success');
+      fetchInvoiceHistory();
     } catch (error) {
-      console.error('Error creating invoice:', error);
-      alert('Failed to create invoice. Please ensure all required fields are filled and try again.');
+      console.error('Error saving invoice:', error);
+      showToast('Failed to save invoice.', 'error');
     }
   };
 
-  const validateForm = () => {
-    const errors: { [key: string]: string } = {};
+  const handleExportPdf = async () => {
+    if (!validateForm()) {
+      showToast('Please fill in essential invoice details before exporting.', 'warning');
+      return;
+    }
+    if (!invoicePreviewRef.current) return;
+    setIsExporting(true);
 
-    if (!businessName.trim()) errors.businessName = 'Business Name is required.';
-    if (!businessAddress.trim()) errors.businessAddress = 'Business Address is required.';
-    if (!businessPhoneNumber.trim()) errors.businessPhoneNumber = 'Business Phone Number is required.';
-    if (!phoneRegex.test(businessPhoneNumber)) errors.businessPhoneNumber = 'Invalid Business Phone Number. Must be 10 digits.';
-    if (!businessEmail.trim()) errors.businessEmail = 'Business Email is required.';
-    if (!emailRegex.test(businessEmail)) errors.businessEmail = 'Invalid Business Email address.';
-    if (!clientName.trim()) errors.clientName = 'Client Name is required.';
-    if (!clientAddress.trim()) errors.clientAddress = 'Client Address is required.';
-    if (!clientPhoneNumber.trim()) errors.clientPhoneNumber = 'Client Phone Number is required.';
-    if (!phoneRegex.test(clientPhoneNumber)) errors.clientPhoneNumber = 'Invalid Client Phone Number. Must be 10 digits.';
-    if (!clientEmail.trim()) errors.clientEmail = 'Client Email is required.';
-    if (!emailRegex.test(clientEmail)) errors.clientEmail = 'Invalid Client Email address.';
+    try {
+      const canvas = await html2canvas(invoicePreviewRef.current, {
+        scale: 2,
+        useCORS: true,
+      });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
 
-    items.forEach((item, index) => {
-      if (!item.itemName.trim()) errors[`itemName-${index}`] = 'Item Name is required.';
-      if (item.rate <= 0 || isNaN(item.rate)) errors[`rate-${index}`] = 'Rate must be greater than 0.';
-      if (item.quantity <= 0 || isNaN(item.quantity)) errors[`quantity-${index}`] = 'Quantity must be greater than 0.';
-      if (item.taxPercentage < 0 || isNaN(item.taxPercentage)) errors[`taxPercentage-${index}`] = 'Tax % cannot be negative.';
-    });
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
 
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save(`Invoice_${clientName.replace(/[^a-zA-Z0-9]/g, '_')}_${invoiceNumber}.pdf`);
+      showToast('PDF exported successfully!', 'success');
+    } catch (err) {
+      console.error('PDF export failed:', err);
+      showToast('Export to PDF failed.', 'error');
+    } finally {
+      setIsExporting(false);
+    }
   };
 
+  const handleExportImage = async () => {
+    if (!validateForm()) {
+      showToast('Please fill in essential invoice details before exporting.', 'warning');
+      return;
+    }
+    if (!invoicePreviewRef.current) return;
+    setIsExporting(true);
+
+    try {
+      const canvas = await html2canvas(invoicePreviewRef.current, {
+        scale: 2,
+        useCORS: true,
+      });
+      const imgData = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = `Invoice_${clientName.replace(/[^a-zA-Z0-9]/g, '_')}_${invoiceNumber}.png`;
+      link.href = imgData;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Image exported successfully!', 'success');
+    } catch (err) {
+      console.error('Image export failed:', err);
+      showToast('Export to Image failed.', 'error');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleLoadInvoiceToEditor = (inv: Invoice) => {
+    setBusinessName(inv.businessName || '');
+    setBusinessLogo(inv.businessLogo || null);
+    setBusinessAddress(inv.businessAddress || '');
+    setBusinessEmail(inv.businessEmail || '');
+    setBusinessPhoneNumber(inv.businessPhoneNumber || '');
+
+    setClientName(inv.clientName || '');
+    setClientEmail(inv.clientEmail || '');
+    setClientAddress(inv.clientAddress || '');
+    setClientPhoneNumber(inv.clientPhoneNumber || '');
+
+    setInvoiceNumber(inv.invoiceNumber || `INV-${inv.id}`);
+    setCurrencySymbol(inv.currencySymbol || '₹');
+    if (Array.isArray(inv.items) && inv.items.length > 0) {
+      setItems(inv.items);
+    }
+
+    showToast(`Loaded invoice for ${inv.clientName} into editor.`, 'success');
+  };
+
+  const filteredHistory = invoiceHistory.filter((inv) =>
+    inv.clientName.toLowerCase().includes(historySearch.toLowerCase()) ||
+    inv.businessName.toLowerCase().includes(historySearch.toLowerCase())
+  );
+
   return (
-    <div className="container mx-auto p-4 bg-white text-gray-900 min-h-screen">
-      <SEO 
-        title="Smart AI Invoice Generator"
-        description="Create professional, tax-compliant business invoices in seconds with instant PDF download, live preview, and automated calculations."
-        canonical="/smartdocs/smartinvoice"
+    <div className="w-full max-w-full text-gray-100 font-sans relative selection:bg-indigo-500/30 space-y-6 pb-12">
+      <SEO
+        title="Smart AI Invoice Suite & Generator | NexaFlow AI"
+        description="Create professional, tax-compliant business invoices in seconds with multi-currency support, live studio preview, customizable templates, and PDF export."
+        canonical="/premium/smartdocs/smartinvoice"
       />
-      <div className="flex flex-col lg:flex-row gap-4">
-        {/* Left Column: Input Form */}
-        <div className="flex-1">
-          <Card className="w-full shadow-lg bg-white text-gray-900 border border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold text-gray-900">Invoice Details</CardTitle>
+
+      {/* Floating Notification Toast */}
+      {toastMessage && (
+        <div
+          className={`fixed top-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl backdrop-blur-xl border transition-all animate-fade-in ${
+            toastMessage.type === 'success'
+              ? 'bg-emerald-950/80 border-emerald-500/30 text-emerald-200'
+              : toastMessage.type === 'error'
+              ? 'bg-red-950/80 border-red-500/30 text-red-200'
+              : 'bg-amber-950/80 border-amber-500/30 text-amber-200'
+          }`}
+        >
+          {toastMessage.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />}
+          {toastMessage.type === 'error' && <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />}
+          {toastMessage.type === 'warning' && <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />}
+          <span className="text-sm font-medium">{toastMessage.text}</span>
+          <button onClick={() => setToastMessage(null)} className="ml-2 hover:opacity-75">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Page Header */}
+      <div className="w-full mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/10 pb-6">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-2">
+              <Sparkles className="w-3.5 h-3.5" />
+              SmartDocs AI Suite
+            </div>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
+              Smart Invoice Studio
+            </h1>
+            <p className="text-gray-400 text-sm mt-1 max-w-xl">
+              Design, calculate, and export high-precision financial invoices with real-time live preview and template switcher.
+            </p>
+          </div>
+
+          {/* Quick Metrics Bar */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="bg-[#0b0b0f] px-3.5 py-2 rounded-xl border border-white/10 text-center">
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Total Saved</p>
+              <p className="text-lg font-bold text-indigo-400">{invoiceHistory.length}</p>
+            </div>
+            <div className="bg-[#0b0b0f] px-3.5 py-2 rounded-xl border border-white/10 text-center">
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Active Currency</p>
+              <p className="text-lg font-bold text-emerald-400">{currencySymbol}</p>
+            </div>
+            <Button
+              onClick={handleSaveInvoice}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-indigo-500/20 rounded-xl flex items-center gap-2 text-xs sm:text-sm px-4 py-2"
+            >
+              <Save className="w-4 h-4" />
+              Save Invoice
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Studio Grid */}
+      <div className="w-full grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Form Controls (7 cols on xl) */}
+        <div className="xl:col-span-7 space-y-6 w-full">
+          {/* Card 1: Company & Logo Details */}
+          <Card className="bg-[#0b0b0f] border-white/10 shadow-2xl rounded-2xl overflow-hidden">
+            <CardHeader className="border-b border-white/10 bg-white/[0.02]">
+              <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-indigo-400" />
+                Business & Sender Profile
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <CardContent className="p-6 space-y-4">
+              {/* Logo Upload Dropzone */}
+              <div>
+                <Label className="text-xs text-gray-300 font-semibold mb-1.5 block">Business Logo</Label>
+                <div className="flex items-center gap-4">
+                  {businessLogo ? (
+                    <div className="relative group">
+                      <img src={businessLogo} alt="Logo" className="h-16 w-28 object-contain p-2 bg-white rounded-xl border border-white/10" />
+                      <button
+                        onClick={() => setBusinessLogo(null)}
+                        className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 shadow hover:bg-red-500 transition"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex-1 flex items-center justify-center gap-3 p-4 rounded-xl border border-dashed border-white/20 bg-[#111118] hover:border-indigo-500/50 cursor-pointer transition-all">
+                      <UploadCloud className="w-5 h-5 text-indigo-400" />
+                      <span className="text-xs text-gray-400 font-medium">Click to upload company logo (PNG, JPG max 2MB)</span>
+                      <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                    </label>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="businessName" className="text-gray-900">Business Name</Label>
+                  <Label htmlFor="businessName" className="text-xs text-gray-300">Business Name</Label>
                   <Input
                     id="businessName"
                     value={businessName}
                     onChange={(e) => setBusinessName(e.target.value)}
                     placeholder="Your Business Name"
-                    className="bg-white text-gray-900 border border-gray-300"
+                    className="bg-[#111118] text-white border-white/10 hover:border-indigo-500/40 focus:border-indigo-500 rounded-xl text-sm"
                   />
-                  {validationErrors.businessName && <p className="text-red-500 text-sm mt-1">{validationErrors.businessName}</p>}
+                  {validationErrors.businessName && <p className="text-red-400 text-xs mt-1">{validationErrors.businessName}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="businessLogo" className="text-gray-900">Business Logo</Label>
-                  <Input
-                    id="businessLogo"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="text-gray-900 file:text-gray-900 file:bg-gray-100 bg-white border border-gray-300"
-                  />
-                  {businessLogo && <p className="text-sm text-gray-700 mt-1">Logo selected</p>}
-                </div>
-                <div>
-                  <Label htmlFor="businessEmail" className="text-gray-900">Business Email</Label>
+                  <Label htmlFor="businessEmail" className="text-xs text-gray-300">Business Email</Label>
                   <Input
                     id="businessEmail"
                     type="email"
                     value={businessEmail}
                     onChange={(e) => setBusinessEmail(e.target.value)}
-                    placeholder="business@example.com"
-                    className="bg-white text-gray-900 border border-gray-300"
+                    placeholder="billing@company.com"
+                    className="bg-[#111118] text-white border-white/10 hover:border-indigo-500/40 focus:border-indigo-500 rounded-xl text-sm"
                   />
-                  {validationErrors.businessEmail && <p className="text-red-500 text-sm mt-1">{validationErrors.businessEmail}</p>}
+                  {validationErrors.businessEmail && <p className="text-red-400 text-xs mt-1">{validationErrors.businessEmail}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="businessPhoneNumber" className="text-gray-900">Business Phone Number</Label>
+                  <Label htmlFor="businessPhone" className="text-xs text-gray-300">Phone Number (10 Digits)</Label>
                   <Input
-                    id="businessPhoneNumber"
+                    id="businessPhone"
                     type="tel"
                     value={businessPhoneNumber}
                     onChange={(e) => setBusinessPhoneNumber(e.target.value)}
-                    placeholder="(123) 456-7890"
-                    className="bg-white text-gray-900 border border-gray-300"
+                    placeholder="9876543210"
+                    className="bg-[#111118] text-white border-white/10 hover:border-indigo-500/40 focus:border-indigo-500 rounded-xl text-sm"
                   />
-                  {validationErrors.businessPhoneNumber && <p className="text-red-500 text-sm mt-1">{validationErrors.businessPhoneNumber}</p>}
+                  {validationErrors.businessPhoneNumber && <p className="text-red-400 text-xs mt-1">{validationErrors.businessPhoneNumber}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="businessAddress" className="text-gray-900">Business Address</Label>
+                  <Label htmlFor="businessAddress" className="text-xs text-gray-300">Address / City</Label>
                   <Input
                     id="businessAddress"
                     value={businessAddress}
                     onChange={(e) => setBusinessAddress(e.target.value)}
-                    placeholder="Your Business Address"
-                    className="bg-white text-gray-900 border border-gray-300"
+                    placeholder="Street Address, City, Zip"
+                    className="bg-[#111118] text-white border-white/10 hover:border-indigo-500/40 focus:border-indigo-500 rounded-xl text-sm"
                   />
-                  {validationErrors.businessAddress && <p className="text-red-500 text-sm mt-1">{validationErrors.businessAddress}</p>}
+                  {validationErrors.businessAddress && <p className="text-red-400 text-xs mt-1">{validationErrors.businessAddress}</p>}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Card 2: Client & Invoice Metadata */}
+          <Card className="bg-[#0b0b0f] border-white/10 shadow-2xl rounded-2xl overflow-hidden">
+            <CardHeader className="border-b border-white/10 bg-white/[0.02]">
+              <CardTitle className="text-lg font-bold text-white flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <UserCheck className="w-5 h-5 text-indigo-400" />
+                  Client & Invoice Parameters
+                </span>
+                <span className="text-xs text-indigo-400 font-mono bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-indigo-500/20">
+                  {invoiceNumber}
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <Label htmlFor="invNum" className="text-xs text-gray-300">Invoice #</Label>
+                  <Input
+                    id="invNum"
+                    value={invoiceNumber}
+                    onChange={(e) => setInvoiceNumber(e.target.value)}
+                    className="bg-[#111118] text-white border-white/10 focus:border-indigo-500 rounded-xl text-sm font-mono"
+                  />
                 </div>
                 <div>
-                  <Label htmlFor="clientName" className="text-gray-900">Client Name</Label>
+                  <Label htmlFor="invCurrency" className="text-xs text-gray-300">Billing Currency</Label>
+                  <Select
+                    value={currencySymbol}
+                    onValueChange={(val) => setCurrencySymbol(val)}
+                  >
+                    <SelectTrigger className="bg-[#111118] text-white border-white/10 focus:border-indigo-500 rounded-xl text-sm">
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#0b0b0f] text-white border-white/10">
+                      {CURRENCIES.map((c) => (
+                        <SelectItem key={c.code} value={c.symbol}>
+                          {c.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="invDate" className="text-xs text-gray-300">Invoice Date</Label>
+                  <Input
+                    id="invDate"
+                    type="date"
+                    value={invoiceDate}
+                    onChange={(e) => setInvoiceDate(e.target.value)}
+                    className="bg-[#111118] text-white border-white/10 focus:border-indigo-500 rounded-xl text-sm"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="dueDate" className="text-xs text-gray-300">Due Date</Label>
+                  <Input
+                    id="dueDate"
+                    type="date"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                    className="bg-[#111118] text-white border-white/10 focus:border-indigo-500 rounded-xl text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div>
+                  <Label htmlFor="clientName" className="text-xs text-gray-300">Client Name / Company</Label>
                   <Input
                     id="clientName"
                     value={clientName}
                     onChange={(e) => setClientName(e.target.value)}
-                    placeholder="Client Name"
-                    className="bg-white text-gray-900 border border-gray-300"
+                    placeholder="Client Company Name"
+                    className="bg-[#111118] text-white border-white/10 hover:border-indigo-500/40 focus:border-indigo-500 rounded-xl text-sm"
                   />
-                  {validationErrors.clientName && <p className="text-red-500 text-sm mt-1">{validationErrors.clientName}</p>}
+                  {validationErrors.clientName && <p className="text-red-400 text-xs mt-1">{validationErrors.clientName}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="clientEmail" className="text-gray-900">Client Contact Email</Label>
+                  <Label htmlFor="clientEmail" className="text-xs text-gray-300">Client Email</Label>
                   <Input
                     id="clientEmail"
                     type="email"
                     value={clientEmail}
                     onChange={(e) => setClientEmail(e.target.value)}
-                    placeholder="client@example.com"
-                    className="bg-white text-gray-900 border border-gray-300"
+                    placeholder="accounts@client.com"
+                    className="bg-[#111118] text-white border-white/10 hover:border-indigo-500/40 focus:border-indigo-500 rounded-xl text-sm"
                   />
-                  {validationErrors.clientEmail && <p className="text-red-500 text-sm mt-1">{validationErrors.clientEmail}</p>}
+                  {validationErrors.clientEmail && <p className="text-red-400 text-xs mt-1">{validationErrors.clientEmail}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="clientAddress" className="text-gray-900">Client Address</Label>
+                  <Label htmlFor="clientPhone" className="text-xs text-gray-300">Client Phone (10 Digits)</Label>
+                  <Input
+                    id="clientPhone"
+                    type="tel"
+                    value={clientPhoneNumber}
+                    onChange={(e) => setClientPhoneNumber(e.target.value)}
+                    placeholder="9123456789"
+                    className="bg-[#111118] text-white border-white/10 hover:border-indigo-500/40 focus:border-indigo-500 rounded-xl text-sm"
+                  />
+                  {validationErrors.clientPhoneNumber && <p className="text-red-400 text-xs mt-1">{validationErrors.clientPhoneNumber}</p>}
+                </div>
+                <div>
+                  <Label htmlFor="clientAddress" className="text-xs text-gray-300">Client Billing Address</Label>
                   <Input
                     id="clientAddress"
                     value={clientAddress}
                     onChange={(e) => setClientAddress(e.target.value)}
-                    placeholder="Client Address"
-                    className="bg-white text-gray-900 border border-gray-300"
+                    placeholder="Client Billing Address"
+                    className="bg-[#111118] text-white border-white/10 hover:border-indigo-500/40 focus:border-indigo-500 rounded-xl text-sm"
                   />
-                  {validationErrors.clientAddress && <p className="text-red-500 text-sm mt-1">{validationErrors.clientAddress}</p>}
-                </div>
-                <div>
-                  <Label htmlFor="clientPhoneNumber" className="text-gray-900">Client Phone Number</Label>
-                  <Input
-                    id="clientPhoneNumber"
-                    type="tel"
-                    value={clientPhoneNumber}
-                    onChange={(e) => setClientPhoneNumber(e.target.value)}
-                    placeholder="(987) 654-3210"
-                    className="bg-white text-gray-900 border border-gray-300"
-                  />
-                  {validationErrors.clientPhoneNumber && <p className="text-red-500 text-sm mt-1">{validationErrors.clientPhoneNumber}</p>}
+                  {validationErrors.clientAddress && <p className="text-red-400 text-xs mt-1">{validationErrors.clientAddress}</p>}
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              {showSuccessMessage && (
-                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                  <strong className="font-bold">Success!</strong>
-                  <span className="block sm:inline"> Invoice created successfully.</span>
-                </div>
-              )}
+          {/* Card 3: Line Items Editor */}
+          <Card className="bg-[#0b0b0f] border-white/10 shadow-2xl rounded-2xl overflow-hidden">
+            <CardHeader className="border-b border-white/10 bg-white/[0.02] flex flex-row items-center justify-between">
+              <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
+                <Receipt className="w-5 h-5 text-indigo-400" />
+                Line Items Breakdown
+              </CardTitle>
+              <Button
+                onClick={handleAddItem}
+                size="sm"
+                className="bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-xs rounded-xl flex items-center gap-1.5"
+              >
+                <Plus className="w-4 h-4" /> Add Item
+              </Button>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              {items.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 rounded-xl bg-[#111118] border border-white/10 space-y-3 relative group hover:border-indigo-500/30 transition-all"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono font-semibold text-gray-400">Item #{idx + 1}</span>
+                    <button
+                      onClick={() => handleRemoveItem(idx)}
+                      className="text-gray-500 hover:text-red-400 transition"
+                      title="Remove Item"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
 
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Items</h3>
-              {items.map((item, index) => (
-                <div key={index} className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 p-4 border rounded-md border-gray-200 bg-white">
-                  <div>
-                    <Label htmlFor={`itemName-${index}`} className="text-gray-900">Item Name</Label>
-                    <Input
-                      id={`itemName-${index}`}
-                      value={item.itemName}
-                      onChange={(e) => handleItemChange(index, 'itemName', e.target.value)}
-                      placeholder="Item Name"
-                      className="bg-white text-gray-900 border border-gray-300"
-                    />
-                    {validationErrors[`itemName-${index}`] && <p className="text-red-500 text-sm mt-1">{validationErrors[`itemName-${index}`]}</p>}
-                  </div>
-                  <div>
-                    <Label htmlFor={`rate-${index}`} className="text-gray-900">Rate</Label>
-                    <Input
-                      id={`rate-${index}`}
-                      type="number"
-                      value={item.rate === 0 ? '' : item.rate} // Allow clearing 0
-                      onChange={(e) => handleItemChange(index, 'rate', parseFloat(e.target.value) || '')}
-                      placeholder="Rate"
-                      className="bg-white text-gray-900 border border-gray-300"
-                    />
-                    {validationErrors[`rate-${index}`] && <p className="text-red-500 text-sm mt-1">{validationErrors[`rate-${index}`]}</p>}
-                  </div>
-                  <div>
-                    <Label htmlFor={`quantity-${index}`} className="text-gray-900">Quantity</Label>
-                    <Input
-                      id={`quantity-${index}`}
-                      type="number"
-                      value={item.quantity === 0 ? '' : item.quantity} // Allow clearing 0
-                      onChange={(e) => handleItemChange(index, 'quantity', parseInt(e.target.value) || '')}
-                      placeholder="Quantity"
-                      className="bg-white text-gray-900 border border-gray-300"
-                    />
-                    {validationErrors[`quantity-${index}`] && <p className="text-red-500 text-sm mt-1">{validationErrors[`quantity-${index}`]}</p>}
-                  </div>
-                  <div>
-                    <Label htmlFor={`taxPercentage-${index}`} className="text-gray-900">Tax %</Label>
-                    <Input
-                      id={`taxPercentage-${index}`}
-                      type="number"
-                      value={item.taxPercentage === 0 ? '' : item.taxPercentage} // Allow clearing 0
-                      onChange={(e) => handleItemChange(index, 'taxPercentage', parseFloat(e.target.value) || '')}
-                      placeholder="Tax %"
-                      className="bg-white text-gray-900 border border-gray-300"
-                    />
-                    {validationErrors[`taxPercentage-${index}`] && <p className="text-red-500 text-sm mt-1">{validationErrors[`taxPercentage-${index}`]}</p>}
-                  </div>
-                  <div>
-                    <Label className="text-gray-900">Final Price</Label>
-                    <Input value={item.finalPrice.toFixed(2)} readOnly className="bg-gray-100 text-gray-900 border border-gray-300" />
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                    <div className="md:col-span-4">
+                      <Label className="text-[11px] text-gray-400">Item Description</Label>
+                      <Input
+                        value={item.itemName}
+                        onChange={(e) => handleItemChange(idx, 'itemName', e.target.value)}
+                        placeholder="e.g. Design Consulting"
+                        className="bg-[#0b0b0f] text-white border-white/10 text-xs rounded-lg mt-1"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <Label className="text-[11px] text-gray-400">Rate ({currencySymbol})</Label>
+                      <Input
+                        type="number"
+                        value={item.rate === 0 ? '' : item.rate}
+                        onChange={(e) => handleItemChange(idx, 'rate', parseFloat(e.target.value) || 0)}
+                        placeholder="0.00"
+                        className="bg-[#0b0b0f] text-white border-white/10 text-xs rounded-lg mt-1 font-mono"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <Label className="text-[11px] text-gray-400">Qty</Label>
+                      <Input
+                        type="number"
+                        value={item.quantity === 0 ? '' : item.quantity}
+                        onChange={(e) => handleItemChange(idx, 'quantity', parseInt(e.target.value) || 0)}
+                        placeholder="1"
+                        className="bg-[#0b0b0f] text-white border-white/10 text-xs rounded-lg mt-1 font-mono text-center"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <Label className="text-[11px] text-gray-400">Tax %</Label>
+                      <Input
+                        type="number"
+                        value={item.taxPercentage === 0 ? '' : item.taxPercentage}
+                        onChange={(e) => handleItemChange(idx, 'taxPercentage', parseFloat(e.target.value) || 0)}
+                        placeholder="18"
+                        className="bg-[#0b0b0f] text-white border-white/10 text-xs rounded-lg mt-1 font-mono text-center"
+                      />
+                    </div>
+                    <div className="md:col-span-2 text-right">
+                      <Label className="text-[11px] text-gray-400">Total Price</Label>
+                      <p className="text-sm font-mono font-bold text-emerald-400 mt-2">
+                        {currencySymbol}{(item.finalPrice || 0).toFixed(2)}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))}
-              <Button onClick={handleAddItem} className="mb-6">Add Item</Button>
 
-              <div className="flex justify-end items-center space-x-4 text-lg font-semibold mb-6 text-gray-900">
-                <p>Subtotal: ₹{subtotal.toFixed(2)}</p>
-                <p>Tax Amount: ₹{totalTaxAmount.toFixed(2)}</p>
-                <p>Grand Total: ₹{grandTotal.toFixed(2)}</p>
-              </div>
-
-              <div className="flex justify-between items-center mb-6">
-                <Label htmlFor="templateSelect" className="text-gray-900">Select Template:</Label>
-                <Select onValueChange={setSelectedTemplate} value={selectedTemplate}>
-                  <SelectTrigger id="templateSelect" className="w-[180px] text-gray-900 bg-white border border-gray-300">
-                    <SelectValue placeholder="Select a template" />
-                  </SelectTrigger>
-                  <SelectContent className="text-gray-900 bg-white">
-                    <SelectItem value="Template1">Professional Template</SelectItem>
-                    <SelectItem value="Template3">Minimalist Template</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex justify-between">
-                <Button onClick={handleCreateInvoice}>Save</Button>
-                <div className="space-x-2">
-                  {/* Export buttons will be moved to modal */}
+              {/* Financial Calculation Bar */}
+              <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-indigo-950/30 to-purple-950/30 border border-indigo-500/20 space-y-2 text-sm">
+                <div className="flex justify-between text-gray-300">
+                  <span>Subtotal:</span>
+                  <span className="font-mono font-semibold">{currencySymbol}{subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-gray-300">
+                  <span>Tax Amount:</span>
+                  <span className="font-mono font-semibold">{currencySymbol}{totalTaxAmount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center text-gray-300">
+                  <span>Discount ({currencySymbol}):</span>
+                  <input
+                    type="number"
+                    value={discountAmount === 0 ? '' : discountAmount}
+                    onChange={(e) => setDiscountAmount(parseFloat(e.target.value) || 0)}
+                    placeholder="0"
+                    className="w-24 px-2 py-0.5 text-right font-mono text-xs bg-[#111118] text-white border border-white/10 rounded-md focus:border-indigo-500"
+                  />
+                </div>
+                <div className="pt-2 border-t border-white/10 flex justify-between items-center text-base font-extrabold text-white">
+                  <span>Grand Total:</span>
+                  <span className="font-mono text-emerald-400 text-xl">{currencySymbol}{grandTotal.toFixed(2)}</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Invoice History Section */}
-          <Card className="w-full shadow-lg mt-4 bg-white text-gray-900 border border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold text-gray-900">Invoice History</CardTitle>
+          {/* Card 4: History Table / Cards */}
+          <Card className="bg-[#0b0b0f] border-white/10 shadow-2xl rounded-2xl overflow-hidden">
+            <CardHeader className="border-b border-white/10 bg-white/[0.02] flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+              <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
+                <FileText className="w-5 h-5 text-indigo-400" />
+                Saved Invoices History ({filteredHistory.length})
+              </CardTitle>
+              <div className="relative w-full md:w-60">
+                <Search className="w-4 h-4 absolute left-3 top-2.5 text-gray-500" />
+                <input
+                  type="text"
+                  value={historySearch}
+                  onChange={(e) => setHistorySearch(e.target.value)}
+                  placeholder="Search client name..."
+                  className="w-full pl-9 pr-3 py-1.5 bg-[#111118] border border-white/10 text-xs text-white rounded-xl focus:border-indigo-500"
+                />
+              </div>
             </CardHeader>
-            <CardContent>
-              {
-                invoiceHistory.length === 0 ? (
-                  <p className="text-gray-700">No invoices generated yet.</p>
-                ) : (
-                  <div className="max-h-60 overflow-y-auto pr-2">
-                    <ul>
-                      {invoiceHistory.map((invoice) => (
-                        <li
-                          key={invoice.id}
-                          className="mb-2 p-2 border rounded-md flex justify-between items-center bg-gray-100 text-gray-900 border-gray-200 cursor-pointer hover:bg-gray-200"
-                        >
-                          <span
-                            onClick={() => {
-                              setSelectedInvoice(invoice);
-                              setIsModalOpen(true);
-                            }}
-                            className="flex-grow"
-                          >
-                            {invoice.clientName} - ₹{invoice.grandTotal.toFixed(2)} on {new Date(invoice.createdAt).toLocaleDateString()}
+            <CardContent className="p-4">
+              {filteredHistory.length === 0 ? (
+                <div className="p-8 text-center text-gray-500 text-sm">
+                  No invoices found in history. Click "Save Invoice" above to save drafts.
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
+                  {filteredHistory.map((inv) => (
+                    <div
+                      key={inv.id}
+                      className="p-3.5 rounded-xl bg-[#111118] border border-white/10 flex items-center justify-between hover:border-indigo-500/40 transition-all group"
+                    >
+                      <div
+                        onClick={() => handleLoadInvoiceToEditor(inv)}
+                        className="cursor-pointer flex-1"
+                      >
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-bold text-white group-hover:text-indigo-400 transition">
+                            {inv.clientName || 'Unnamed Client'}
+                          </p>
+                          <span className="text-[10px] font-mono bg-indigo-500/10 text-indigo-300 px-2 py-0.5 rounded-md border border-indigo-500/20">
+                            {inv.invoiceNumber || `#${inv.id}`}
                           </span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation(); // Prevent opening modal when clicking delete
-                              handleDeleteInvoice(invoice.id);
-                            }}
-                            className="text-red-500 hover:bg-red-100 p-1 rounded-full"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 01-2 0v6a1 1 0 112 0V8z" clipRule="evenodd" />
-                            </svg>
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )
-              }
+                        </div>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {inv.currencySymbol || '₹'}{(inv.grandTotal || 0).toFixed(2)} • {new Date(inv.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            setSelectedInvoice(inv);
+                            setIsModalOpen(true);
+                          }}
+                          className="h-8 text-xs text-gray-300 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-1"
+                        >
+                          <Eye className="w-3.5 h-3.5" /> Preview
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDeleteInvoice(inv.id)}
+                          className="h-8 text-xs text-red-400 hover:bg-red-500/20 rounded-lg"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
 
-        {/* Right Column: Invoice Preview Area */}
-        <div className="flex-1 mt-8 lg:mt-0">
-          <Card className="w-full shadow-lg bg-white text-gray-900 border border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold text-gray-900">Invoice Preview</CardTitle>
+        {/* Right Column: Studio Workbench Live Preview (5 cols on xl) */}
+        <div className="xl:col-span-5 space-y-6 w-full overflow-hidden">
+          <Card className="bg-[#0b0b0f] border-white/10 shadow-2xl rounded-2xl overflow-hidden sticky top-8">
+            <CardHeader className="border-b border-white/10 bg-white/[0.02] space-y-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
+                  <LayoutGrid className="w-5 h-5 text-indigo-400" />
+                  Live Document Workbench
+                </CardTitle>
+                <span className="text-xs text-emerald-400 flex items-center gap-1 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                  Live Preview
+                </span>
+              </div>
+
+              {/* Template Picker Pills */}
+              <div>
+                <Label className="text-[11px] text-gray-400 font-semibold mb-1.5 block">Select Invoice Template Style:</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {TEMPLATES.map((tmpl) => (
+                    <button
+                      key={tmpl.id}
+                      onClick={() => setSelectedTemplate(tmpl.id)}
+                      className={`p-2 rounded-xl text-left border transition-all ${
+                        selectedTemplate === tmpl.id
+                          ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-lg shadow-indigo-500/10'
+                          : 'bg-[#111118] border-white/10 text-gray-400 hover:text-white hover:border-white/20'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold">{tmpl.name}</span>
+                        <span className="text-[9px] px-1 py-0.5 rounded bg-white/10 text-indigo-300 font-mono">
+                          {tmpl.badge}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-gray-400 mt-1 line-clamp-1">{tmpl.description}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </CardHeader>
-            <CardContent className="p-0">
-              <div ref={invoicePreviewRef} className="p-4 bg-white rounded-lg">
-                {
-                  selectedTemplate === 'Template1' && (
-                    <Template1 invoiceData={{
-                      businessName,
-                      businessLogo,
-                      businessAddress,
-                      businessEmail,
-                      businessPhoneNumber,
-                      clientName,
-                      clientEmail,
-                      clientAddress,
-                      clientPhoneNumber,
-                      items,
-                      subtotal,
-                      taxAmount: totalTaxAmount,
-                      grandTotal,
-                    }} />
-                  )
-                }
-                {
-                  selectedTemplate === 'Template3' && (
-                    <Template3 invoiceData={{
-                      businessName,
-                      businessLogo,
-                      businessAddress,
-                      businessEmail,
-                      businessPhoneNumber,
-                      clientName,
-                      clientEmail,
-                      clientAddress,
-                      clientPhoneNumber,
-                      items,
-                      subtotal,
-                      taxAmount: totalTaxAmount,
-                      grandTotal,
-                    }} />
-                  )
-                }
+
+            <CardContent className="p-3 sm:p-4 space-y-4">
+              {/* Paper Canvas Display Box */}
+              <div className="bg-slate-950/80 p-2 sm:p-3 rounded-xl border border-white/5 shadow-inner overflow-x-auto overflow-y-auto max-h-[640px] w-full">
+                <div className="w-full min-w-[480px]">
+                  <div
+                    ref={invoicePreviewRef}
+                    className="bg-white rounded-lg shadow-2xl w-full transform origin-top transition-all"
+                  >
+                  {selectedTemplate === 'Template1' && (
+                    <Template1
+                      invoiceData={{
+                        businessName,
+                        businessLogo,
+                        businessAddress,
+                        businessEmail,
+                        businessPhoneNumber,
+                        clientName,
+                        clientEmail,
+                        clientAddress,
+                        clientPhoneNumber,
+                        items,
+                        subtotal,
+                        taxAmount: totalTaxAmount,
+                        discount: discountAmount,
+                        grandTotal,
+                        invoiceNumber,
+                        invoiceDate,
+                        dueDate,
+                        currencySymbol,
+                      }}
+                    />
+                  )}
+
+                  {selectedTemplate === 'Template2' && (
+                    <Template2
+                      invoiceData={{
+                        businessName,
+                        businessLogo,
+                        businessAddress,
+                        businessEmail,
+                        businessPhoneNumber,
+                        clientName,
+                        clientEmail,
+                        clientAddress,
+                        clientPhoneNumber,
+                        items,
+                        subtotal,
+                        taxAmount: totalTaxAmount,
+                        discount: discountAmount,
+                        grandTotal,
+                        invoiceNumber,
+                        invoiceDate,
+                        dueDate,
+                        currencySymbol,
+                      }}
+                    />
+                  )}
+
+                  {selectedTemplate === 'Template3' && (
+                    <Template3
+                      invoiceData={{
+                        businessName,
+                        businessLogo,
+                        businessAddress,
+                        businessEmail,
+                        businessPhoneNumber,
+                        clientName,
+                        clientEmail,
+                        clientAddress,
+                        clientPhoneNumber,
+                        items,
+                        subtotal,
+                        taxAmount: totalTaxAmount,
+                        discount: discountAmount,
+                        grandTotal,
+                        invoiceNumber,
+                        invoiceDate,
+                        dueDate,
+                        currencySymbol,
+                      }}
+                    />
+                  )}
+
+                  {selectedTemplate === 'Template4' && (
+                    <Template4
+                      invoiceData={{
+                        businessName,
+                        businessLogo,
+                        businessAddress,
+                        businessEmail,
+                        businessPhoneNumber,
+                        clientName,
+                        clientEmail,
+                        clientAddress,
+                        clientPhoneNumber,
+                        items,
+                        subtotal,
+                        taxAmount: totalTaxAmount,
+                        discount: discountAmount,
+                        grandTotal,
+                        invoiceNumber,
+                        invoiceDate,
+                        dueDate,
+                        currencySymbol,
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+
+              {/* Action Export Buttons */}
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <Button
+                  onClick={handleExportImage}
+                  disabled={isExporting}
+                  variant="outline"
+                  className="bg-[#111118] hover:bg-[#1a1a24] text-white border-white/10 rounded-xl text-xs flex items-center justify-center gap-2"
+                >
+                  <FileImage className="w-4 h-4 text-purple-400" /> Export Image
+                </Button>
+
+                <Button
+                  onClick={handleExportPdf}
+                  disabled={isExporting}
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2"
+                >
+                  <Download className="w-4 h-4" /> Export PDF
+                </Button>
               </div>
             </CardContent>
           </Card>
-
-          {/* Export Buttons Here */}
-          <div className="flex justify-end space-x-2 mt-4">
-            <Button onClick={handleExportPdf} variant="outline" className="text-gray-900 bg-white border border-gray-300">Export PDF</Button>
-            <Button onClick={handleExportImage} variant="outline" className="text-gray-900 bg-white border border-gray-300">Export Image</Button>
-          </div>
-
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {confirmDeleteOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0b0b0f] border border-white/10 p-6 rounded-2xl max-w-sm w-full text-center space-y-4 shadow-2xl">
+            <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center mx-auto">
+              <Trash2 className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-bold text-white">Delete Invoice?</h3>
+            <p className="text-xs text-gray-400">
+              Are you sure you want to delete this saved invoice? This action cannot be undone.
+            </p>
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => setConfirmDeleteOpen(false)}
+                className="bg-[#111118] text-gray-300 border-white/10 hover:bg-white/10 text-xs rounded-xl"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={confirmDeletion}
+                className="bg-red-600 hover:bg-red-500 text-white text-xs rounded-xl shadow-lg shadow-red-600/30"
+              >
+                Confirm Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Preview Modal Component */}
       <InvoicePreviewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         invoiceData={selectedInvoice}
         selectedTemplate={selectedTemplate}
       />
-
-      {/* Confirmation Snackbar */}
-      {confirmDeleteSnackbarOpen && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-blue-500 text-white p-4 rounded-md shadow-lg flex items-center space-x-4 z-50">
-          <span>Are you sure you want to delete this invoice?</span>
-          <Button onClick={confirmDeletion} className="bg-white text-blue-800 hover:bg-gray-100">Yes</Button>
-          <Button onClick={() => setConfirmDeleteSnackbarOpen(false)} className="bg-red-500 text-white hover:bg-red-600">No</Button>
-        </div>
-      )}
-
-      {/* Outcome Snackbar */}
-      {outcomeSnackbarOpen && (
-        <div className={`fixed bottom-16 left-1/2 -translate-x-1/2 p-4 rounded-md shadow-lg z-50 ${outcomeSnackbarType === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
-          <span>{outcomeSnackbarMessage}</span>
-        </div>
-      )}
-
-      {/* Warning Snackbar */}
-      {warningSnackbarOpen && (
-        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 p-4 rounded-md shadow-lg z-50 bg-yellow-500 text-white">
-          <span>{warningSnackbarMessage}</span>
-        </div>
-      )}
     </div>
   );
 };
 
 export default SmartInvoiceGeneratorPage;
-

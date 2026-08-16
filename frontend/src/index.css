@@ -24,7 +24,7 @@
     --border: 231 74% 50% / 0.2; /* Subtle #2640D9 border */
     --input: 240 5% 15%;
     --ring: 231 74% 50%;
-    --radius: 9999px; /* Corner radius system anchor */
+    --radius: 0.75rem; /* Corner radius system anchor (12px) */
 
     /* Spacing rhythm base 4.21px */
     --space-base: 4.21px;

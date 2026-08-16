@@ -19,14 +19,14 @@ const SmartDocs: React.FC<SmartDocsProps> = () => {
       description: 'Generate professional business invoices, tax calculations, and line item tables.',
       icon: FileCheck,
       gradient: 'from-emerald-500 to-teal-500',
-      onClick: () => navigate('/smartdocs/smartinvoice'),
+      onClick: () => navigate('/premium/smartdocs/smartinvoice'),
     },
     {
       title: 'Offer Letter Composer',
       description: 'Compose customized employment offer letters, compensation terms, and legal clauses.',
       icon: FileText,
       gradient: 'from-purple-500 to-indigo-500',
-      onClick: () => navigate('/smartdocs/offerletter'),
+      onClick: () => navigate('/premium/smartdocs/offerletter'),
     }
   ];
 
