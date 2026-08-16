@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
 import SEO from '../common/SEO';
+import NexaFlowLogo from '../common/NexaFlowLogo';
 import { useGoogleLogin } from '@react-oauth/google';
 
 export default function Signup() {
@@ -76,11 +77,7 @@ export default function Signup() {
         <div className="bg-[#0b0b0f] w-full h-full rounded-[23px] p-8 sm:p-10 flex flex-col">
           <div className="text-center mb-6">
             <Link to="/" className="inline-flex items-center gap-2.5 mb-3 group">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#2640D9] via-[#8A66E6] to-[#6633E6] p-[1.5px] shadow-lg shadow-[#2640D9]/20 transition-transform duration-200 group-hover:scale-105 flex items-center justify-center">
-                <div className="w-full h-full bg-[#050505] rounded-full flex items-center justify-center">
-                  <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2640D9] to-[#6633E6] text-base">N</span>
-                </div>
-              </div>
+              <NexaFlowLogo className="w-10 h-10 transition-transform duration-200 group-hover:scale-105" />
               <span className="text-2xl font-extralight tracking-tight bg-gradient-to-r from-white to-[#8A66E6] bg-clip-text text-transparent font-['Inter']">
                 NexaFlow <span className="font-semibold">AI</span>
               </span>

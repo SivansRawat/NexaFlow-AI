@@ -3,6 +3,7 @@ import ToolCard from './ToolCard';
 import { BarChart3, Brain, FileDown, Calculator, AlertTriangle } from 'lucide-react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import SEO from '../../common/SEO';
+import { WorkspaceToolLoader } from '../../common/PageLoader';
 
 interface ExcelSuiteProps {
   isDarkMode?: boolean;
@@ -20,13 +21,7 @@ const ExcelSuite: React.FC<ExcelSuiteProps> = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-start justify-start animate-pulse pt-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className={`rounded-2xl p-6 border ${isDarkMode ? 'bg-gray-800/60 border-gray-700/50' : 'bg-gray-200/60 border-gray-200'} h-52`}></div>
-        ))}
-      </div>
-    );
+    return <WorkspaceToolLoader title="Loading Excel Analytics Suite..." />;
   }
 
   const tools = [

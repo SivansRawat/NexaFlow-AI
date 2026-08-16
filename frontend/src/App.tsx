@@ -55,18 +55,10 @@ const PDFConverterPro = lazy(() => import("./components/premium/pdf/PDFConverter
 const MailMergeAI = lazy(() => import("./components/premium/bulkmailer/mailmergeai"));
 const BulkPDFToolkitPage = lazy(() => import("./components/premium/pdf/BulkPDFToolkitPage"));
 
+import PageLoader from "./components/common/PageLoader";
+
 function SuiteLoadingFallback() {
-  return (
-    <div className="flex flex-col justify-center items-center h-screen bg-gray-950 text-white space-y-4">
-      <div className="relative flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
-        <div className="absolute w-6 h-6 border-4 border-indigo-500/20 border-b-indigo-500 rounded-full animate-spin [animation-duration:1.5s]"></div>
-      </div>
-      <p className="text-sm font-medium tracking-wide text-gray-400 animate-pulse">
-        Loading Suite Module...
-      </p>
-    </div>
-  );
+  return <PageLoader label="Loading Suite Module..." />;
 }
 
 function HomePage() {
@@ -126,11 +118,7 @@ function App() {
   const { loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gray-900 text-white">
-        <div>Loading...</div>
-      </div>
-    );
+    return <PageLoader label="Authenticating Account..." />;
   }
 
   return (

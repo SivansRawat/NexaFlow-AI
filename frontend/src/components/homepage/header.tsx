@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { fetchCurrentUser } from '../../lib/api';
 import { UserCircle, ChevronDown, User } from 'lucide-react';
 import { useRef } from "react";
+import NexaFlowLogo from '../common/NexaFlowLogo';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -81,11 +82,7 @@ export function Header() {
       >
         <div className="flex items-center justify-between px-4 sm:px-6 h-full">
           <Link to="/" className="flex items-center gap-3 flex-shrink-0 group">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-[#2640D9] via-[#8A66E6] to-[#6633E6] p-[1.5px] shadow-lg shadow-[#2640D9]/20 transition-transform duration-200 group-hover:scale-105 flex items-center justify-center">
-            <div className="w-full h-full rounded-full bg-[#050505] flex items-center justify-center">
-              <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2640D9] to-[#6633E6] text-lg sm:text-xl">N</span>
-            </div>
-          </div>
+          <NexaFlowLogo className="w-9 h-9 sm:w-10 sm:h-10 transition-transform duration-200 group-hover:scale-105" />
           <span className="font-light text-xl sm:text-2xl tracking-tight text-white font-['Inter']">
             NexaFlow <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-white to-[#8A66E6]">AI</span>
           </span>

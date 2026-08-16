@@ -3,6 +3,7 @@ import {  User, Search, ChevronDown, Menu, X, Sun, Moon, LogOut } from 'lucide-r
 import { useAuth } from '../../../context/AuthContext';
 
 import { Link } from 'react-router-dom';
+import NexaFlowLogo from '../../common/NexaFlowLogo';
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -60,13 +61,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isSidebarOpen, onSearch, 
 
         {/* Logo Section */}
         <Link to="/" className="flex items-center gap-3 flex-shrink-0 group">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-[#2640D9] via-[#8A66E6] to-[#6633E6] p-[1.5px] shadow-lg transition-transform duration-200 group-hover:scale-105 flex items-center justify-center">
-            <div className={`w-full h-full rounded-full flex items-center justify-center ${
-              isDarkMode ? 'bg-[#050505]' : 'bg-white'
-            }`}>
-              <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2640D9] to-[#6633E6] text-lg sm:text-xl">N</span>
-            </div>
-          </div>
+          <NexaFlowLogo className="w-9 h-9 sm:w-10 sm:h-10 transition-transform duration-200 group-hover:scale-105" />
           <span className={`font-light text-xl sm:text-2xl tracking-tight text-white font-['Inter']`}>
             NexaFlow <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-white to-[#8A66E6]">AI</span>
           </span>
